@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.swiftbuy.admin.service.TokenService;
+import com.swiftbuy.user.service.TokenService;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;

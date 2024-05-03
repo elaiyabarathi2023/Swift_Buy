@@ -1,4 +1,4 @@
-package com.swiftbuy.admin.service;
+package com.swiftbuy.user.service;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
