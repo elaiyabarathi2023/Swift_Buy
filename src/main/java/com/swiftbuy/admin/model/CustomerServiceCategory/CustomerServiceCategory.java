@@ -1,30 +1,22 @@
 package com.swiftbuy.admin.model.CustomerServiceCategory;
 
 import jakarta.persistence.*;
+	
+	@Entity
+	@Table(name = "customer_service_categories")
+	public class CustomerServiceCategory {
+	
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
+	
+	    @Column(nullable = false, unique = true)
+	    private String name;
+	
+	    @Column(nullable = false)
+	    private String description;
+	
 
-@Entity
-@Table(name = "customer_service_categories")
-public class CustomerServiceCategory {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String name;
-
-    @Column(nullable = false)
-    private String description;
-
-    // Constructors
-
-    public CustomerServiceCategory() {
-    }
-
-    public CustomerServiceCategory(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
 
     // Getters and Setters
 

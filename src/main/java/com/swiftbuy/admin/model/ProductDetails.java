@@ -62,6 +62,11 @@ public class ProductDetails {
     public String getProductName() {
         return productName;
     }
+    @NotNull(message = "Category ID is mandatory")
+    private Long catId;
+
+    @NotNull(message = "Subcategory ID is mandatory")
+    private Long subCatId;
 
     public void setProductName(String productName) {
         this.productName = productName;
@@ -121,5 +126,20 @@ public class ProductDetails {
 
     public void setProductStock(Integer productStock) {
         this.productStock = productStock;
+    }
+    public Long getCatId() {
+        return catId;
+    }
+
+    public void setCatId(Long catId) {
+        this.catId = catId;
+    }
+
+    public Long getSubCatId() {
+        return subCatId;
+    }
+
+    public void setSubCatId(Long subCatId) {
+        this.subCatId = subCatId;
     }
 }

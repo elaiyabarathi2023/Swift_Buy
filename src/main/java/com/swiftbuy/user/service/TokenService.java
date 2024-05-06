@@ -39,7 +39,8 @@ public class TokenService {
 //	    }
 
 	    String email = claims.get("email").toString();
-	    UserDetails user = userRepository.findByEmail(email);
+	    String phoneNumber=claims.get("phoneNumber").toString();
+	    UserDetails user = userRepository.findByEmailOrPhoneNumber( email, phoneNumber);
 	    if (user == null || isTokenExpired(claims)) { // Check user existence and expiration
 	        return null;
 	    }
