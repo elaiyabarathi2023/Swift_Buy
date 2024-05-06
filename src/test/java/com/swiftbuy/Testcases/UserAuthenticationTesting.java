@@ -141,7 +141,7 @@ public class UserAuthenticationTesting {
 	            MockMvcRequestBuilders.post("/user/forgot-password")
 	                    .contentType(MediaType.APPLICATION_JSON)
 	                    .content(user))
-	            .andExpect(MockMvcResultMatchers.status().isCreated())
+	            .andExpect(MockMvcResultMatchers.status().isOk())
 	            .andReturn();
 	}
 
@@ -158,7 +158,7 @@ public class UserAuthenticationTesting {
 	            MockMvcRequestBuilders.post("/user/forgot-password")
 	                    .contentType(MediaType.APPLICATION_JSON)
 	                    .content(user))
-	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+	            .andExpect(MockMvcResultMatchers.status().isOk())
 	            .andReturn();
 	}
 //

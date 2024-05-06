@@ -61,23 +61,39 @@ public class UserService {
 
         return response;
     }
-    public Map<String, String> forgotPassword(String email, String newPassword) {
+    public Map<String, String> forgotPassword(Map<String, String> requestData) {
         Map<String, String> response = new HashMap<>();
+        String email = requestData.get("email");
+        String newPassword = requestData.get("newPassword");
+
+        // Check if the email is null or empty
+        if (email == null || email.isEmpty()) {
+            response.put("message", "Please enter a valid email address.");
+            return response;
+        }
+
         // Try to find the user by email
         UserDetails user = userRepository.findByEmail(email);
+
         // Check if the user exists
         if (user != null) {
             // Update the user's password
             user.setPassword(newPassword);
-            userRepository.save(user);
-            // Here you would typically have code to send the reset password link to the user's email.
-            // As this is a simple example, we will just put a message in the response.
-            response.put("message", "Your password has been updated.");
+            UserDetails updatedUser = userRepository.save(user);
+
+            // Generate a new token for the user
+            Map<String, String> tokenResponse = jwtGenerator.generateToken(updatedUser);
+
+            // Add the token to the response
+            response.putAll(tokenResponse);
+
+            // Add a success message to the response
+            response.put("message", "Your password has been updated successfully.");
         } else {
-            response.put("message", "Invalid email");
+            // If the user is not found, return a message asking for a valid email
+            response.put("message", "Please enter a valid email address.");
         }
+
         return response;
     }
-
-
 }

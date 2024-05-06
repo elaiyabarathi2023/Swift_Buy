@@ -57,10 +57,9 @@ public class UserController {
 		return new ResponseEntity<>(loggedInUser, HttpStatus.CREATED);
 	}
 
-	 @PostMapping("/forgot-password")
-	    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody String email, @RequestBody String newPassword) {
-	        Map<String, String> response = userService.forgotPassword(email, newPassword);
-	        return ResponseEntity.ok(response);
-	    }
-
+	@PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> requestData) {
+        Map<String, String> response = userService.forgotPassword(requestData);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
