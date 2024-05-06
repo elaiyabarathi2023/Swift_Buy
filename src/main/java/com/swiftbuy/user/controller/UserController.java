@@ -1,17 +1,19 @@
 package com.swiftbuy.user.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swiftbuy.user.model.UserDetails;
-
+import com.swiftbuy.user.repository.UserRepository;
 import com.swiftbuy.user.service.UserService;
 
 import jakarta.validation.Valid;
@@ -21,7 +23,8 @@ import jakarta.validation.Valid;
 public class UserController {
 	@Autowired
 	private UserService userService;
-
+	@Autowired
+	private UserRepository userRepository;
 	@Autowired
 	public UserController(UserService userService) {
 		this.userService = userService;
@@ -62,4 +65,10 @@ public class UserController {
         Map<String, String> response = userService.forgotPassword(requestData);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+	
+	@GetMapping
+
+	public Iterable<UserDetails> getAllUsers() {
+	    return userRepository.findAll();
+	}
 }

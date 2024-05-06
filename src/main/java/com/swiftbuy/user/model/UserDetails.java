@@ -1,28 +1,17 @@
 package com.swiftbuy.user.model;
 
 import java.util.Date;
-import java.util.List;
 
 import com.swiftbuy.CustomValidations.PasswordValidations;
 import com.swiftbuy.CustomValidations.ValidEmail;
 import com.swiftbuy.CustomValidations.ValidPhone;
 import com.swiftbuy.CustomValidations.ValidUsername;
-import com.swiftbuy.admin.model.AdminDetails;
-import com.swiftbuy.admin.model.ProductDetails;
 
-import jakarta.annotation.Nullable;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -46,19 +35,8 @@ public class UserDetails {
  
 @ValidPhone
     private String phoneNumber;
-	@OneToMany(mappedBy = "userdetails", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	
-	private List<ProductDetails> productdetails;
-	@ManyToOne(cascade=CascadeType.REFRESH,fetch = FetchType.EAGER)
-	private AdminDetails admindetails;
 	
 	
-	public AdminDetails getAdmindetails() {
-		return admindetails;
-	}
-	public void setAdmindetails(AdminDetails admindetails) {
-		this.admindetails = admindetails;
-	}
 	
 	public Long getUserId() {
 		return userId;
@@ -91,12 +69,7 @@ public class UserDetails {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	public List<ProductDetails> getProductdetails() {
-		return productdetails;
-	}
-	public void setProductdetails(List<ProductDetails> productdetails) {
-		this.productdetails = productdetails;
-	}
+	
 	public void setCreatedAt(Date date) {
 		// TODO Auto-generated method stub
 		

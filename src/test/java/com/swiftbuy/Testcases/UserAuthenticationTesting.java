@@ -1,7 +1,5 @@
 package com.swiftbuy.Testcases;
 
-import org.hamcrest.Matchers;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -33,6 +30,11 @@ public class UserAuthenticationTesting {
 	TokenService tokenService;
 	@Autowired
 	private MockMvc mockMvc;
+	@Test
+	public void Get_UserDetails()throws Exception{
+		mockMvc.perform(MockMvcRequestBuilders.get("/user").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+	}
 
 	@Test
 	public void whenPost_UserWithCorrectResponse() throws Exception {
@@ -161,6 +163,23 @@ public class UserAuthenticationTesting {
 	            .andExpect(MockMvcResultMatchers.status().isOk())
 	            .andReturn();
 	}
+	@Test
+	public void forgotPassword_NullEmail() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("email", null); 
+	    json.put("newPassword", "Rs7x@123");
+	   // Assuming this email does not exist in the database
+
+	    String user = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/user/forgot-password")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(user))
+	            .andExpect(MockMvcResultMatchers.status().isOk())
+	            .andReturn();
+	}
+	
 //
 //	@Test
 //	public void Invalid_User_Login() throws Exception {

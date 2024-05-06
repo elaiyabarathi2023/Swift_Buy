@@ -1,5 +1,6 @@
 package com.swiftbuy.admin.model;
 
+import java.util.Date;
 import java.util.List;
 
 import com.swiftbuy.user.model.UserDetails;
@@ -41,10 +42,7 @@ public class AdminDetails {
     @Size(min = 2, max = 100, message = "Last name must be between 2 and 100 characters")
     private String lastname;
 
-    // Getters and Setters
-
-    @OneToMany(mappedBy = "admindetails", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-   	private List<UserDetails> userdetails;
+  
     public Long getUserId() {
         return userId;
     }
@@ -84,4 +82,9 @@ public class AdminDetails {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
+
+	public void setCreatedAt(Date date) {
+		// TODO Auto-generated method stub
+		
+	}
 }

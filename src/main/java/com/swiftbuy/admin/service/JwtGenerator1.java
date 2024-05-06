@@ -1,4 +1,4 @@
-package com.swiftbuy.user.service;
+package com.swiftbuy.admin.service;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -10,38 +10,36 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.swiftbuy.user.config.TokenGeneratorAdmin;
-import com.swiftbuy.user.model.UserDetails;
-import com.swiftbuy.user.repository.UserRepository;
+import com.swiftbuy.admin.config.TokenGenerator;
+import com.swiftbuy.admin.model.AdminDetails;
+import com.swiftbuy.admin.repository.AdminRepository;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 @Service
-public class JwtGenerator implements TokenGeneratorAdmin {
+public class JwtGenerator1 implements TokenGenerator {
 	@Autowired
-	private UserRepository userRepository;
+	private AdminRepository adminRepository;
 
 	
-	public JwtGenerator(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public JwtGenerator1(AdminRepository adminRepository) {
+		this.adminRepository = adminRepository;
 	}
 	
 	@Override
-	public Map<String, String> generateToken(UserDetails userdata)throws InvalidKeyException {
+	public Map<String, String> generateToken(AdminDetails userdata)throws InvalidKeyException {
 		   Map<String, String> jwtTokenGen = new HashMap<>();
 		Map<String, String> claims = new HashMap<>();
 		claims.put("firstname", userdata.getFirstname());
-		 if (userdata.getEmail() != null && !userdata.getEmail().isEmpty()) {
-		        claims.put("email", userdata.getEmail());
-		    }
-		    if (userdata.getPhoneNumber() != null && !userdata.getPhoneNumber().isEmpty()) {
-		        claims.put("phoneNumber", userdata.getPhoneNumber());
-		    }
+	    claims.put("lastname", userdata.getLastname());
+	    claims.put("username", userdata.getUsername());
+		    
+		   
 		claims.put("userId", userdata.getUserId().toString());
 		userdata.setCreatedAt(new Date());
-       UserDetails savedUser = userRepository.save(userdata);
+       AdminDetails savedUser = adminRepository.save(userdata);
         
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
   		 String token = null;
