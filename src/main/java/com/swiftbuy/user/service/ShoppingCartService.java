@@ -41,23 +41,27 @@ public class ShoppingCartService {
 
     public double calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
-
+        double totalDiscount = 0.0;
+        
         for (ShoppingCart item : cartItems) {
             double itemPrice = item.getProduct().getProductPrice() * item.getQuantity();
+            
             if (item.getSelectedCouponId() != null) {
                 CouponCodes itemCoupon = item.getProduct().getCoupons().stream()
                         .filter(coupon -> coupon.getCouponId().equals(item.getSelectedCouponId()))
                         .findFirst()
                         .orElse(null);
+                
                 if (itemCoupon != null) {
-                	
-                    double discount = item.getProduct().getProductPrice() * itemCoupon.getDiscountPercentage() / 100;
-                    itemPrice -= discount;
+                    double discountPercentage = itemCoupon.getDiscountPercentage();
+                    totalDiscount += itemPrice * discountPercentage / 100;
+                    itemPrice -= itemPrice * discountPercentage / 100;
                 }
             }
+            
             totalPrice += itemPrice;
-           
         }
+        
         return totalPrice;
     }
 
@@ -119,7 +123,7 @@ public class ShoppingCartService {
         // Calculate the total price for all cart items of the user
         List<ShoppingCart> cartItems = shoppingCartRepository.findByUserUserId(userId);
         double totalPrice = calculateTotalPrice(cartItems);
-        System.out.println(totalPrice);
+       
 
         return savedCartItem;
     }
