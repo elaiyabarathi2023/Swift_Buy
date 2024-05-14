@@ -6,20 +6,21 @@ import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-
 @Configuration
 @SecurityScheme(   name = "Bearer Authentication",   type = SecuritySchemeType.HTTP,   bearerFormat = "JWT",   scheme = "bearer" )
-public class FilterConfigAdmin {
+public class FilterConfigUser {
     @Bean
-    public FilterRegistrationBean jwtFilter() {
+    public FilterRegistrationBean jwtFilterUser() {
         FilterRegistrationBean filter= new FilterRegistrationBean();
 
-//     filter.addUrlPatterns("/api/addresses");
+        filter.setFilter(new jwtFilterUser());
+      filter.addUrlPatterns("/api/shoppingcart/add","/api/shoppingcart/cart");
 
-        filter.setFilter(new jwtFilterAdmin( ));
-//       filter.addUrlPatterns("/phone/*","/person/*","/department/*");
+      
+
         
         filter.addUrlPatterns("/api/wishlist/add*");
+
 
      
      

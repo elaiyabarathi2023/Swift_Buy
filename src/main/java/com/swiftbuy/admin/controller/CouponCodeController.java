@@ -44,7 +44,7 @@ public class CouponCodeController {
 
     @PutMapping("/{couponId}")
     public ResponseEntity<CouponCodes> updateCouponCode(@PathVariable Long couponId, @RequestBody CouponCodes couponCode) {
-        couponCode.setCoup_id(couponId);
+        couponCode.setCouponId(couponId);
         CouponCodes updatedCouponCode = couponCodesService.updateCouponCode(couponCode);
         return ResponseEntity.ok(updatedCouponCode);
     }

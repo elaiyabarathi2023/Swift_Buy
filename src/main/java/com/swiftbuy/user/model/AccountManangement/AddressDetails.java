@@ -2,11 +2,11 @@ package com.swiftbuy.user.model.AccountManangement;
 
 
 
-import com.swiftbuy.CustomValidator.UserCustomValidator.AccountMangement.ValidAddressType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.UserDetails;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 
 //
@@ -33,46 +33,50 @@ public class AddressDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @OneToOne(cascade=CascadeType.REFRESH)
+    @JsonIgnore
+    private ShoppingCart shoppingCart;
 
+    public ShoppingCart getShoppingCart() {
+		return shoppingCart;
+	}
 
+	public void setShoppingCart(ShoppingCart shoppingCart) {
+		this.shoppingCart = shoppingCart;
+	}
 
-    
-    @NotNull(message = "Address type cannot be null")
-//    @ValidAddressType
+	@Column(nullable = false)
     private String addressType;
     
-    
-    @NotNull(message = "Permanent address cannot be null")
+    @Column(nullable = false)
     private String permanentAddress;
     
-   
-    @NotNull(message = "Current address cannot be null")
+    @Column(nullable = false)
     private String currentAddress;
     
 
-
-    @NotNull(message = "Street address cannot be null")
+    @Column(nullable = false)
     private String streetAddress;
 
- 
-    @NotNull(message = "City cannot be null")
+    @Column(nullable = false)
     private String city;
 
-    
-    @NotNull(message = "State cannot be null")
+    @Column(nullable = false)
     private String state;
 
-    
-    @NotNull(message = "Zip code cannot be null")
+    @Column(nullable = false)
     private String zipCode;
 
-   
-    @NotNull(message = "Country cannot be null")
+    @Column(nullable = false)
     private String country;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserDetails user;
+
+    
+
+    // Getters and Setters
 
     public Long getId() {
         return id;

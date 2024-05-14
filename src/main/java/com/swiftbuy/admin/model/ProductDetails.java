@@ -1,6 +1,22 @@
 package com.swiftbuy.admin.model;
 
-import jakarta.persistence.*;
+import java.util.Set;
+
+//import com.swiftbuy.user.model.ShoppingCart;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,155 +25,197 @@ import jakarta.validation.constraints.Size;
 @Table(name = "ProductDetails2")
 public class ProductDetails {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long productId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long productId;
 
-	public enum ProductStatus {
-		ACTIVE, INACTIVE, DISCONTINUED
-	}
+    public enum ProductStatus {
+        ACTIVE,
+        INACTIVE,
+        DISCONTINUED
+    }
 
-	@Enumerated(EnumType.STRING)
-	@NotNull(message = "Product status is mandatory")
-	private ProductStatus productStatus;
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "shopping_cart_id")
+//    private ShoppingCart shoppingCart;
 
-	@NotBlank(message = "Product name is mandatory")
-	@Size(min = 2, max = 100, message = "Product name must be between 2 and 100 characters")
-	private String productName;
+//    public ShoppingCart getShoppingCart() {
+//        return shoppingCart;
+//    }
+//
+//    public void setShoppingCart(ShoppingCart shoppingCart) {
+//        this.shoppingCart = shoppingCart;
+  //  }
 
-	@NotBlank(message = "Product description is mandatory")
-	private String productDescription;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Product status is mandatory")
+    private ProductStatus productStatus;
 
-	@NotBlank(message = "Product image URL is mandatory")
-	private String productImage;
+    @NotBlank(message = "Product name is mandatory")
+    @Size(min = 2, max = 100, message = "Product name must be between 2 and 100 characters")
+    private String productName;
 
-	@NotNull(message = "Product price is mandatory")
-	private Double productPrice;
+    @NotBlank(message = "Product description is mandatory")
+    private String productDescription;
 
-	@NotNull(message = "Product quantity is mandatory")
-	private Integer productQuantity;
+    @NotBlank(message = "Product image URL is mandatory")
+    private String productImage;
 
-	private String productOffers;
+    @NotNull(message = "Product price is mandatory")
+    private Double productPrice;
 
-	private String availableStocks;
-	
-	private double overallRating;
+    @NotNull(message = "Product quantity is mandatory")
+    private Integer productQuantity;
 
+    private String productOffers;
+    private String cancellationReason;
 
-	@NotBlank(message = "Estimated delivery is mandatory")
-	private String estimatedDelivery;
+    @NotBlank(message = "Estimated delivery is mandatory")
+    private String estimatedDelivery;
 
-//    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-//    private UserDetails userdetails;
+    @NotNull(message = "Product stock is mandatory")
+    private Integer productStock;
 
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-	@JoinColumn(name = "subcategory_id", nullable = false)
-	private SubCategory subcategory;
-	
-	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-	@JoinColumn(name = "category_id", nullable = false)
-	private Category category;
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinColumn(name = "subcategory_id", nullable = false)
+    private SubCategory subcategory;
 
-	public Category getCategory() {
-		return category;
-	}
+    @ManyToMany(cascade=CascadeType.ALL)
+    @JoinTable(
+        name = "product_coupons",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "coupon_id",nullable=true)
+    )
+    private Set<CouponCodes> coupons;
 
-	public void setCategory(Category category) {
-		this.category = category;
-	}
+    public Set<CouponCodes> getCoupons() {
+        return coupons;
+    }
 
-	public Long getProductId() {
-		return productId;
-	}
+    public void setCoupons(Set<CouponCodes> coupons) {
+        this.coupons = coupons;
+    }
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
+    public Long getProductId() {
+        return productId;
+    }
 
-	public ProductStatus getProductStatus() {
-		return productStatus;
-	}
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
-	public void setProductStatus(ProductStatus productStatus) {
-		this.productStatus = productStatus;
-	}
+    public ProductStatus getProductStatus() {
+        return productStatus;
+    }
 
-	public String getProductName() {
-		return productName;
-	}
+    public void setProductStatus(ProductStatus productStatus) {
+        if (productStatus == null) {
+            throw new IllegalArgumentException("Product status cannot be null");
+        }
+        this.productStatus = productStatus;
+    }
 
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
+    public String getProductName() {
+        return productName;
+    }
 
-	public String getProductDescription() {
-		return productDescription;
-	}
+    public void setProductName(String productName) {
+        if (productName == null || productName.isBlank()) {
+            throw new IllegalArgumentException("Product name cannot be null or blank");
+        }
+        this.productName = productName;
+    }
 
-	public void setProductDescription(String productDescription) {
-		this.productDescription = productDescription;
-	}
+    public String getProductDescription() {
+        return productDescription;
+    }
 
-	public String getProductImage() {
-		return productImage;
-	}
+    public void setProductDescription(String productDescription) {
+        if (productDescription == null || productDescription.isBlank()) {
+            throw new IllegalArgumentException("Product description cannot be null or blank");
+        }
+        this.productDescription = productDescription;
+    }
 
-	public void setProductImage(String productImage) {
-		this.productImage = productImage;
-	}
+    public String getProductImage() {
+        return productImage;
+    }
 
-	public Double getProductPrice() {
-		return productPrice;
-	}
+    public void setProductImage(String productImage) {
+        if (productImage == null || productImage.isBlank()) {
+            throw new IllegalArgumentException("Product image URL cannot be null or blank");
+        }
+        this.productImage = productImage;
+    }
 
-	public void setProductPrice(Double productPrice) {
-		this.productPrice = productPrice;
-	}
+    public Double getProductPrice() {
+        return productPrice;
+    }
 
-	public Integer getProductQuantity() {
-		return productQuantity;
-	}
+    public void setProductPrice(Double productPrice) {
+        if (productPrice == null) {
+            throw new IllegalArgumentException("Product price cannot be null");
+        }
+        this.productPrice = productPrice;
+    }
 
-	public void setProductQuantity(Integer productQuantity) {
-		this.productQuantity = productQuantity;
-	}
+    public Integer getProductQuantity() {
+        return productQuantity;
+    }
 
-	public String getProductOffers() {
-		return productOffers;
-	}
+    public void setProductQuantity(Integer productQuantity) {
+        if (productQuantity == null) {
+            throw new IllegalArgumentException("Product quantity cannot be null");
+        }
+        this.productQuantity = productQuantity;
+    }
 
-	public void setProductOffers(String productOffers) {
-		this.productOffers = productOffers;
-	}
+    public String getProductOffers() {
+        return productOffers;
+    }
 
-	public String getEstimatedDelivery() {
-		return estimatedDelivery;
-	}
+    public void setProductOffers(String productOffers) {
+        this.productOffers = productOffers;
+    }
 
-	public void setEstimatedDelivery(String estimatedDelivery) {
-		this.estimatedDelivery = estimatedDelivery;
-	}
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
 
-	public SubCategory getSubcategory() {
-		return subcategory;
-	}
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
 
-	public void setSubcategory(SubCategory subcategory) {
-		this.subcategory = subcategory;
-	}
-	public double getOverallRating() {
-		return overallRating;
-	}
+    public String getEstimatedDelivery() {
+        return estimatedDelivery;
+    }
 
-	public void setOverallRating(double overallRating) {
-		this.overallRating = overallRating;
-	}
-	public String getAvailableStocks() {
-		return availableStocks;
-	}
+    public void setEstimatedDelivery(String estimatedDelivery) {
+        if (estimatedDelivery == null || estimatedDelivery.isBlank()) {
+            throw new IllegalArgumentException("Estimated delivery cannot be null or blank");
+        }
+        this.estimatedDelivery = estimatedDelivery;
+    }
 
-	public void setAvailableStocks(String availableStocks) {
-		this.availableStocks = availableStocks;
-	}
+    public Integer getProductStock() {
+        return productStock;
+    }
 
+    public void setProductStock(Integer productStock) {
+        if (productStock == null) {
+            throw new IllegalArgumentException("Product stock cannot be null");
+        }
+        this.productStock = productStock;
+    }
+
+    public SubCategory getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(SubCategory subcategory) {
+        if (subcategory == null) {
+            throw new IllegalArgumentException("Subcategory cannot be null");
+        }
+        this.subcategory = subcategory;
+    }
 }

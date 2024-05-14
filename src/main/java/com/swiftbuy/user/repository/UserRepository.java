@@ -21,4 +21,5 @@ public interface UserRepository extends CrudRepository<UserDetails, Long> {
 	boolean existsByEmail(String value);
 	boolean existsByPhoneNumber(String value);
 	
+	
 }

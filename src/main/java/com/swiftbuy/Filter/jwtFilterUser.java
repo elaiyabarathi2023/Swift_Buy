@@ -9,7 +9,6 @@ import org.springframework.web.filter.GenericFilterBean;
 import com.swiftbuy.user.service.TokenService;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -17,8 +16,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class jwtFilterAdmin extends GenericFilterBean {
-	
+public class jwtFilterUser extends GenericFilterBean {
+
 	@Autowired
 	private TokenService tokenService;
 
@@ -39,7 +38,11 @@ public class jwtFilterAdmin extends GenericFilterBean {
 		System.out.println(token);
 		try {
 			Claims claims = tokenService.verifyToken(token);
-			request.setAttribute("claims", claims);
+			// Assuming the userId is a claim in your JWT
+			String userIdString = claims.get("userId", String.class);
+			Long userId = Long.valueOf(userIdString);
+			request.setAttribute("userId", userId);
+
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

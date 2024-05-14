@@ -2,11 +2,10 @@
 package com.swiftbuy.product.service;
 
 import com.swiftbuy.admin.model.*;
+import com.swiftbuy.admin.repository.CouponCodeRepository;
 import com.swiftbuy.product.repository.ProductRepository;
 import com.swiftbuy.repository.CategoryRepository;
 import com.swiftbuy.subcrepository.SubCategoryRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -17,45 +16,22 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+     private CategoryRepository   categoryRepository;
     
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-    
     @Autowired
-    private CategoryRepository categoryRepository;
-   
+    private CouponCodeRepository couponRepository;   
     public ProductDetails createProduct(ProductDetails product) {
     	Long subCategoryId = product.getSubcategory().getId();
         SubCategory subCategory = subCategoryRepository.findById(subCategoryId)
                 .orElseThrow(() -> new RuntimeException("Sub Category not found with id " + subCategoryId ));
         
-        Long categoryId = product.getCategory().getCategory_id();
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found with id " + categoryId));
-
-        
         product.setSubcategory(subCategory);
-        product.setCategory(category);
-        return productRepository.save(product);
-    }
-   
-    public Iterable<ProductDetails> getAllProducts() {
-        return productRepository.findAll();
-    }
 
-//    public List<ProductDetails> getAllActiveProducts() {
-//        return productRepository.findByProductStatus(ProductStatus.ACTIVE);
-//    }
-    
-    public ProductDetails getProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + productId));
-    }
-    public ProductDetails saveProduct(ProductDetails product) {
         return productRepository.save(product);
     }
-    
-    
 
     public ProductDetails getProduct(Long productId) {
         return productRepository.findById(productId)
@@ -71,7 +47,7 @@ public class ProductService {
         existingProduct.setProductQuantity(product.getProductQuantity());
         existingProduct.setProductOffers(product.getProductOffers());
         existingProduct.setEstimatedDelivery(product.getEstimatedDelivery());
-        
+        existingProduct.setProductStock(product.getProductStock());
         return productRepository.save(existingProduct);
     }
 
@@ -87,17 +63,17 @@ public class ProductService {
     }
 
     // Product Description methods (no separate entity, part of ProductDetails)
-    public ProductDetails createProductDescription(ProductDetails productDetails) {
-        return productRepository.save(productDetails);
+    public ProductDetails createProductDescription(ProductDetails ProductDetails) {
+        return productRepository.save(ProductDetails);
     }
 
     public ProductDetails getProductDescription(Long productId) {
         return getProduct(productId);
     }
 
-    public ProductDetails updateProductDescription(Long productId, ProductDetails productDetails) {
+    public ProductDetails updateProductDescription(Long productId, ProductDetails ProductDetails) {
         ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setProductDescription(productDetails.getProductDescription());
+        existingProduct.setProductDescription(ProductDetails.getProductDescription());
         return productRepository.save(existingProduct);
     }
 
@@ -107,17 +83,17 @@ public class ProductService {
     }
 
     // Product Image methods (no separate entity, part of ProductDetails)
-    public ProductDetails createProductImage(ProductDetails productDetails) {
-        return productRepository.save(productDetails);
+    public ProductDetails createProductImage(ProductDetails ProductDetails) {
+        return productRepository.save(ProductDetails);
     }
 
     public ProductDetails getProductImage(Long productId) {
         return getProduct(productId);
     }
 
-    public ProductDetails updateProductImage(Long productId, ProductDetails productDetails) {
+    public ProductDetails updateProductImage(Long productId, ProductDetails ProductDetails) {
         ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setProductImage(productDetails.getProductImage());
+        existingProduct.setProductImage(ProductDetails.getProductImage());
         return productRepository.save(existingProduct);
     }
 
@@ -127,17 +103,17 @@ public class ProductService {
     }
 
     // Product Quantity methods (no separate entity, part of ProductDetails)
-    public ProductDetails createProductQuantity(ProductDetails productDetails) {
-        return productRepository.save(productDetails);
+    public ProductDetails createProductQuantity(ProductDetails ProductDetails) {
+        return productRepository.save(ProductDetails);
     }
 
     public ProductDetails getProductQuantity(Long productId) {
         return getProduct(productId);
     }
 
-    public ProductDetails updateProductQuantity(Long productId, ProductDetails productDetails) {
+    public ProductDetails updateProductQuantity(Long productId, ProductDetails ProductDetails) {
         ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setProductQuantity(productDetails.getProductQuantity());
+        existingProduct.setProductQuantity(ProductDetails.getProductQuantity());
         return productRepository.save(existingProduct);
     }
 
@@ -147,17 +123,17 @@ public class ProductService {
     }
 
     // Estimated Delivery methods (no separate entity, part of ProductDetails)
-    public ProductDetails createEstimatedDelivery(ProductDetails productDetails) {
-        return productRepository.save(productDetails);
+    public ProductDetails createEstimatedDelivery(ProductDetails ProductDetails) {
+        return productRepository.save(ProductDetails);
     }
 
     public ProductDetails getEstimatedDelivery(Long productId) {
         return getProduct(productId);
     }
 
-    public ProductDetails updateEstimatedDelivery(Long productId, ProductDetails productDetails) {
+    public ProductDetails updateEstimatedDelivery(Long productId, ProductDetails ProductDetails) {
         ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setEstimatedDelivery(productDetails.getEstimatedDelivery());
+        existingProduct.setEstimatedDelivery(ProductDetails.getEstimatedDelivery());
         return productRepository.save(existingProduct);
     }
 
@@ -167,17 +143,17 @@ public class ProductService {
     }
 
     // Product Offer methods (no separate entity, part of ProductDetails)
-    public ProductDetails createProductOffer(ProductDetails productDetails) {
-        return productRepository.save(productDetails);
+    public ProductDetails createProductOffer(ProductDetails ProductDetails) {
+        return productRepository.save(ProductDetails);
     }
 
     public ProductDetails getProductOffer(Long productId) {
         return getProduct(productId);
     }
 
-    public ProductDetails updateProductOffer(Long productId, ProductDetails productDetails) {
+    public ProductDetails updateProductOffer(Long productId, ProductDetails ProductDetails) {
         ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setProductOffers(productDetails.getProductOffers());
+        existingProduct.setProductOffers(ProductDetails.getProductOffers());
         return productRepository.save(existingProduct);
     }
 

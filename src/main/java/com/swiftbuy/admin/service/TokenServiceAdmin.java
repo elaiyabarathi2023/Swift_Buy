@@ -7,6 +7,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swiftbuy.admin.model.AdminDetails;
+import com.swiftbuy.admin.repository.AdminRepository;
 import com.swiftbuy.user.model.UserDetails;
 import com.swiftbuy.user.repository.UserRepository;
 
@@ -18,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class TokenServiceAdmin {
 	@Autowired
-	UserRepository userRepository;
+	AdminRepository adminRepository;
 	private SecretKey getSigningKey() throws Exception {
 		byte[] keyBytes = Decoders.BASE64.decode("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437");
 		return Keys.hmacShaKeyFor(keyBytes);
@@ -38,9 +40,9 @@ public class TokenServiceAdmin {
 //	        throw new Exception("Error parsing token: " + e.getMessage());
 //	    }
 
-	    String email = claims.get("email").toString();
+	    String username = claims.get("username").toString();
 	    String phoneNumber=claims.get("phoneNumber").toString();
-	    UserDetails user = userRepository.findByEmailOrPhoneNumber( email, phoneNumber);
+	    AdminDetails user = adminRepository.findByUsername(username);
 	    if (user == null || isTokenExpired(claims)) { // Check user existence and expiration
 	        return null;
 	    }
