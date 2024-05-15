@@ -8,12 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.UserDetails;
 
-public interface OrderRepository  extends CrudRepository<Order, Long>{
-
-	List<Order> findByUser(UserDetails user);
-
-	Optional<UserDetails> findByIdAndUser(Long orderId, UserDetails user);
-
-	
-
+public interface OrderRepository extends CrudRepository<Order, Long> {
+    List<Order> findByUserUserId(Long userId);
 }
+

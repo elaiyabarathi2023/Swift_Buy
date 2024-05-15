@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swiftbuy.CustomValidations.PasswordValidations;
 import com.swiftbuy.CustomValidations.ValidEmail;
 import com.swiftbuy.CustomValidations.ValidUsername;
+import com.swiftbuy.user.CustomValidations.ValidPhone;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -45,7 +46,8 @@ private ShoppingCart shoppingCart;
 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 @JsonIgnore
 private List<Order> orders;
-	
+@ValidPhone
+private String phoneNumber;
 	public List<Order> getOrders() {
 	return orders;
 }

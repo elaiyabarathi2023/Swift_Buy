@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.service.OrderService;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +29,12 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<String> placeOrder(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-
+    	 // Get claims from request
+        Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+		Long userId = Long.valueOf(userIdString);
+		
+         
         try {
             Order order = orderService.createOrder(userId);
             return new ResponseEntity<>("Order created successfully: " + order.getOrderId(), HttpStatus.CREATED);
@@ -39,12 +44,15 @@ public class OrderController {
         }
     }
     
-    // Get all orders for a user
-//    @GetMapping("/{userId}/orders")
-//    public ResponseEntity<List<Order>> getAllOrdersByUser(@PathVariable(value = "userId") Long userId) {
-//        List<Order> orders = userService.getAllOrdersByUser(userId);
-//        return new ResponseEntity<>(orders, HttpStatus.OK);
-//    }
+    
+    @GetMapping("/orders/get")
+    public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request){
+    	Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+		Long userId = Long.valueOf(userIdString);
+        List<Order> orders = orderService.getAllOrdersByUser(userId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
 
 
 }

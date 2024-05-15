@@ -38,11 +38,7 @@ public class jwtFilterUser extends GenericFilterBean {
 		System.out.println(token);
 		try {
 			Claims claims = tokenService.verifyToken(token);
-			// Assuming the userId is a claim in your JWT
-			String userIdString = claims.get("userId", String.class);
-			Long userId = Long.valueOf(userIdString);
-			request.setAttribute("userId", userId);
-
+			request.setAttribute("claims", claims);
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -18,6 +18,7 @@ import com.swiftbuy.admin.model.ShoppingCartRequest;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.service.ShoppingCartService;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,7 +55,9 @@ public class ShoppingCartController {
  
     @GetMapping("/cart")
     public ResponseEntity<Map<String, Object>> getCartByUserId(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
+    	Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+		Long userId = Long.valueOf(userIdString);
         List<ShoppingCart> cartItems = cartService.getCartUserId(userId);
         Map<String, Double> priceAndDiscount = cartService.calculateTotalPrice(cartItems);
         //ShoppingCart address=cartService.

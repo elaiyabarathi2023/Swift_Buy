@@ -1,6 +1,11 @@
 package com.swiftbuy.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.swiftbuy.admin.model.ProductDetails;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,14 +18,21 @@ import jakarta.persistence.Table;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long orderItemId;
 
-    private Long productId;
+    
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
+    private ProductDetails product;
     private int quantity;
     private double price;
+  
     private Long discountId;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -32,12 +44,18 @@ public class OrderItem {
 		this.orderItemId = orderItemId;
 	}
 
-	public Long getProductId() {
-		return productId;
+	
+
+	public ProductDetails getProduct() {
+		return product;
 	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
+	public void setProduct(ProductDetails product) {
+		this.product = product;
+	}
+
+	public Order getOrder() {
+		return order;
 	}
 
 	public int getQuantity() {
@@ -64,10 +82,10 @@ public class OrderItem {
 		this.discountId = discountId;
 	}
 
-	public Order getOrder() {
-		return order;
-	}
-
+//	public Order getOrder() {
+//		return order;
+//	}
+//
 	public void setOrder(Order order) {
 		this.order = order;
 	}

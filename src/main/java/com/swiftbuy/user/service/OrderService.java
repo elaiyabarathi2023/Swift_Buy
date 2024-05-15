@@ -53,7 +53,7 @@ public class OrderService {
         // Add each cart item to the order
         for (ShoppingCart cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setProductId(cartItem.getProduct().getProductId());
+            orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPrice(cartItem.getProduct().getProductPrice() * cartItem.getQuantity());
             orderItem.setDiscountId(cartItem.getSelectedCouponId());
@@ -69,11 +69,11 @@ public class OrderService {
 
         return savedOrder;
     }
-//    public List<Order> getAllOrdersByUser(Long userId) {
-//        UserDetails user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//        return orderRepository.findByUser(user);
-//    }
+    public List<Order> getAllOrdersByUser(Long userId) {
+        UserDetails user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return orderRepository.findByUserUserId(userId);
+    }
     
 
 }

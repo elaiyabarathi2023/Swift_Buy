@@ -27,6 +27,7 @@ public class Order {
     private Long orderId;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private UserDetails user;
 
