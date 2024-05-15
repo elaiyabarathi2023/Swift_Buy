@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.OrderItem;
 import com.swiftbuy.user.model.ShoppingCart;
@@ -52,10 +53,25 @@ public class OrderService {
 
         // Add each cart item to the order
         for (ShoppingCart cartItem : cartItems) {
+            ProductDetails product = cartItem.getProduct();
+
+            // Check if product is out of stock
+            if (product.getProductQuantity() == 0) {
+                throw new Exception("Product " + product.getProductId() + " is out of stock");
+            }
+
+            // Check if product quantity is less than the quantity in cart
+            if (product.getProductQuantity() < cartItem.getQuantity()) {
+                throw new Exception("Product " + product.getProductId() + " quantity is less than the quantity you provided");
+            }
+
+            // Subtract product quantity based on the quantity in order
+            product.setProductQuantity(product.getProductQuantity() - cartItem.getQuantity());
+
             OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setProduct(product);
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getProduct().getProductPrice() * cartItem.getQuantity());
+            orderItem.setPrice(product.getProductPrice() * cartItem.getQuantity());
             orderItem.setDiscountId(cartItem.getSelectedCouponId());
             orderItem.setOrder(order); // Set the order for the order item
             order.getOrderItems().add(orderItem);
@@ -69,6 +85,7 @@ public class OrderService {
 
         return savedOrder;
     }
+
     public List<Order> getAllOrdersByUser(Long userId) {
         UserDetails user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
