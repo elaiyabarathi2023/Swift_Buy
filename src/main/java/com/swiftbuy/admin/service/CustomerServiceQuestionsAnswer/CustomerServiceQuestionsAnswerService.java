@@ -1,47 +1,55 @@
+
+
+ 
+
 package com.swiftbuy.admin.service.CustomerServiceQuestionsAnswer;
-
+ 
 //public class CustomerServiceQuestionsAnswerService {
-//
-//}
 
+//
+
+//}
+ 
 
 import com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswer;
 import com.swiftbuy.admin.repository.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswerRepo;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerServiceQuestionsAnswerService {
 
     @Autowired
-    private CustomerServiceQuestionsAnswerRepo customerServiceQuestionsAnswerRepository;
+    private CustomerServiceQuestionsAnswerRepo customerServiceQuestionsAnswerRepo;
 
-    public List<CustomerServiceQuestionsAnswer> getAllCustomerServiceQuestionsAnswers() {
-        return customerServiceQuestionsAnswerRepository.findAll();
+    public List<CustomerServiceQuestionsAnswer> getAllQuestionsAnswers() {
+        return (List<CustomerServiceQuestionsAnswer>) customerServiceQuestionsAnswerRepo.findAll();
     }
 
-    public CustomerServiceQuestionsAnswer getCustomerServiceQuestionsAnswerById(Long id) {
-        return customerServiceQuestionsAnswerRepository.findById(id)
-                .orElseThrow();
+    public Optional<CustomerServiceQuestionsAnswer> getQuestionsAnswerById(Long id) {
+        return customerServiceQuestionsAnswerRepo.findById(id);
     }
 
-    public CustomerServiceQuestionsAnswer createCustomerServiceQuestionsAnswer(CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer) {
-        return customerServiceQuestionsAnswerRepository.save(customerServiceQuestionsAnswer);
+    public CustomerServiceQuestionsAnswer saveQuestionsAnswer(CustomerServiceQuestionsAnswer questionsAnswer) {
+        return customerServiceQuestionsAnswerRepo.save(questionsAnswer);
     }
 
-    public CustomerServiceQuestionsAnswer updateCustomerServiceQuestionsAnswer(Long id, CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer) {
-        CustomerServiceQuestionsAnswer existingCustomerServiceQuestionsAnswer = getCustomerServiceQuestionsAnswerById(id);
-        existingCustomerServiceQuestionsAnswer.setQuestion(customerServiceQuestionsAnswer.getQuestion());
-        existingCustomerServiceQuestionsAnswer.setAnswer(customerServiceQuestionsAnswer.getAnswer());
-        existingCustomerServiceQuestionsAnswer.setSubCategory(customerServiceQuestionsAnswer.getSubCategory());
-        return customerServiceQuestionsAnswerRepository.save(existingCustomerServiceQuestionsAnswer);
+    public void deleteQuestionsAnswer(Long id) {
+        customerServiceQuestionsAnswerRepo.deleteById(id);
     }
 
-    public void deleteCustomerServiceQuestionsAnswer(Long id) {
-        CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer = getCustomerServiceQuestionsAnswerById(id);
-        customerServiceQuestionsAnswerRepository.delete(customerServiceQuestionsAnswer);
+    public CustomerServiceQuestionsAnswer updateQuestionsAnswer(Long id, CustomerServiceQuestionsAnswer updatedQuestionsAnswer) {
+        Optional<CustomerServiceQuestionsAnswer> existingQuestionsAnswer = customerServiceQuestionsAnswerRepo.findById(id);
+        if (existingQuestionsAnswer.isPresent()) {
+            CustomerServiceQuestionsAnswer questionsAnswer = existingQuestionsAnswer.get();
+            questionsAnswer.setQuestion(updatedQuestionsAnswer.getQuestion());
+            questionsAnswer.setAnswer(updatedQuestionsAnswer.getAnswer());
+            return customerServiceQuestionsAnswerRepo.save(questionsAnswer);
+        } else {
+            return null;
+        }
     }
 }

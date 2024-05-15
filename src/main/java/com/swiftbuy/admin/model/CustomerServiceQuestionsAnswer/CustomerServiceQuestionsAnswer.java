@@ -1,69 +1,65 @@
 package com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer;
 
+ 
 import com.swiftbuy.admin.model.CustomerServiceSubCategory.CustomerServiceSubCategory;
-
+ 
 import jakarta.persistence.*;
+ 
 
+//Postman Query:
+//	
+//{
+//    "question": "How can I trsjkkxkjacksjkjksjksuiijksdkjkjx my ksiurrwnbnmxkjxj skkd?",
+//    "answer": "You can track your xkn,xm,mx osm,jxhjhjxmx rder xklkjxjknxnxm,by logging into your account and visiting the order trackidjkskjdjkwxkkxng section."
+//}
 @Entity
-@Table(name = "customer_service_questions_answers")
+
+@Table(name = "customer_service_questions_answers_finalise")
+
 public class CustomerServiceQuestionsAnswer {
-
+ 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long questionsanswersid;
+ 
+    
+
+	@Column(nullable = false)
+
     private String question;
-
+ 
     @Column(nullable = false)
+
     private String answer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sub_category_id", nullable = false)
-    private CustomerServiceSubCategory subCategory;
+	public Long getQuestionsanswersid() {
+		return questionsanswersid;
+	}
 
-    // Constructors
+	public void setQuestionsanswersid(Long questionsanswersid) {
+		this.questionsanswersid = questionsanswersid;
+	}
 
-    public CustomerServiceQuestionsAnswer() {
-    }
+	public String getQuestion() {
+		return question;
+	}
 
-    public CustomerServiceQuestionsAnswer(String question, String answer, CustomerServiceSubCategory subCategory) {
-        this.question = question;
-        this.answer = answer;
-        this.subCategory = subCategory;
-    }
+	public void setQuestion(String question) {
+		this.question = question;
+	}
 
-    // Getters and Setters
+	public String getAnswer() {
+		return answer;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+ 
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    
+ 
 
-    public String getQuestion() {
-        return question;
-    }
 
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public CustomerServiceSubCategory getSubCategory() {
-        return subCategory;
-    }
-
-    public void setSubCategory(CustomerServiceSubCategory subCategory) {
-        this.subCategory = subCategory;
-    }
 }

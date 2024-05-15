@@ -16,39 +16,36 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CustomerServiceCategoryController {
 
-    private final CustomerServiceCategoryService categoryService;
-
     @Autowired
-    public CustomerServiceCategoryController(CustomerServiceCategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+    private CustomerServiceCategoryService customerServiceCategoryService;
 
     @GetMapping
-    public List<CustomerServiceCategory> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ResponseEntity<List<CustomerServiceCategory>> getAllCategories() {
+        List<CustomerServiceCategory> categories = customerServiceCategoryService.getAllCustomerServiceCategories();
+        return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerServiceCategory> getCategoryById(@PathVariable Long id) {
-        CustomerServiceCategory category = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(category);
+        CustomerServiceCategory category = customerServiceCategoryService.getCustomerServiceCategoryById(id);
+        return category != null ? ResponseEntity.ok(category) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<CustomerServiceCategory> createCategory(@RequestBody CustomerServiceCategory category) {
-        CustomerServiceCategory createdCategory = categoryService.createCategory(category);
+        CustomerServiceCategory createdCategory = customerServiceCategoryService.createCustomerServiceCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerServiceCategory> updateCategory(@PathVariable Long id, @RequestBody CustomerServiceCategory updatedCategory) {
-        CustomerServiceCategory updatedCat = categoryService.updateCategory(id, updatedCategory);
-        return ResponseEntity.ok(updatedCat);
+        CustomerServiceCategory updatedCategoryEntity = customerServiceCategoryService.updateCustomerServiceCategory(id, updatedCategory);
+        return updatedCategoryEntity != null ? ResponseEntity.ok(updatedCategoryEntity) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
+        customerServiceCategoryService.deleteCustomerServiceCategory(id);
         return ResponseEntity.noContent().build();
     }
 }

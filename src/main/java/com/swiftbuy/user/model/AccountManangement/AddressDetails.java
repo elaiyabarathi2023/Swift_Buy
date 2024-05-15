@@ -8,6 +8,24 @@ import com.swiftbuy.user.model.UserDetails;
 
 import jakarta.persistence.*;
 
+
+//
+//Postman Query:
+//	
+//{
+//"addressType": "work",
+//"permanentAddress": "123 Main St",
+//"currentAddress": "456 Oak St",
+//"streetAddress": "789 Elm St",
+//"city": "AnyCity",
+//"state": "AnyState",
+//"zipCode": "12345",
+//"country": "AnyCountry",
+//"user": {
+//"userId": 1
+//}
+//}
+
 @Entity
 @Table(name = "addresses")
 public class AddressDetails {

@@ -1,19 +1,18 @@
+
 package com.swiftbuy.admin.controller.CustomerServiceQuestionsAnswer;
 
-//public class CustomerServiceQuestionsAnswerController {
-//
-//}
+//@RequestMapping("/api/customer-service-questions-answers")
 
 
 import com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswer;
 import com.swiftbuy.admin.service.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswerService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customer-service-questions-answers")
@@ -23,32 +22,32 @@ public class CustomerServiceQuestionsAnswerController {
     private CustomerServiceQuestionsAnswerService customerServiceQuestionsAnswerService;
 
     @GetMapping
-    public ResponseEntity<List<CustomerServiceQuestionsAnswer>> getAllCustomerServiceQuestionsAnswers() {
-        List<CustomerServiceQuestionsAnswer> customerServiceQuestionsAnswers = customerServiceQuestionsAnswerService.getAllCustomerServiceQuestionsAnswers();
-        return ResponseEntity.ok(customerServiceQuestionsAnswers);
+    public ResponseEntity<List<CustomerServiceQuestionsAnswer>> getAllQuestionsAnswers() {
+        List<CustomerServiceQuestionsAnswer> questionsAnswers = customerServiceQuestionsAnswerService.getAllQuestionsAnswers();
+        return ResponseEntity.ok(questionsAnswers);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerServiceQuestionsAnswer> getCustomerServiceQuestionsAnswerById(@PathVariable Long id) {
-        CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer = customerServiceQuestionsAnswerService.getCustomerServiceQuestionsAnswerById(id);
-        return ResponseEntity.ok(customerServiceQuestionsAnswer);
+    public ResponseEntity<CustomerServiceQuestionsAnswer> getQuestionsAnswerById(@PathVariable Long id) {
+        Optional<CustomerServiceQuestionsAnswer> questionsAnswer = customerServiceQuestionsAnswerService.getQuestionsAnswerById(id);
+        return questionsAnswer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<CustomerServiceQuestionsAnswer> createCustomerServiceQuestionsAnswer(@RequestBody CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer) {
-        CustomerServiceQuestionsAnswer createdCustomerServiceQuestionsAnswer = customerServiceQuestionsAnswerService.createCustomerServiceQuestionsAnswer(customerServiceQuestionsAnswer);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomerServiceQuestionsAnswer);
+    public ResponseEntity<CustomerServiceQuestionsAnswer> createQuestionsAnswer(@RequestBody CustomerServiceQuestionsAnswer questionsAnswer) {
+        CustomerServiceQuestionsAnswer createdQuestionsAnswer = customerServiceQuestionsAnswerService.saveQuestionsAnswer(questionsAnswer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestionsAnswer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerServiceQuestionsAnswer> updateCustomerServiceQuestionsAnswer(@PathVariable Long id, @RequestBody CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer) {
-        CustomerServiceQuestionsAnswer updatedCustomerServiceQuestionsAnswer = customerServiceQuestionsAnswerService.updateCustomerServiceQuestionsAnswer(id, customerServiceQuestionsAnswer);
-        return ResponseEntity.ok(updatedCustomerServiceQuestionsAnswer);
+    public ResponseEntity<CustomerServiceQuestionsAnswer> updateQuestionsAnswer(@PathVariable Long id, @RequestBody CustomerServiceQuestionsAnswer updatedQuestionsAnswer) {
+        CustomerServiceQuestionsAnswer updatedAnswer = customerServiceQuestionsAnswerService.updateQuestionsAnswer(id, updatedQuestionsAnswer);
+        return updatedAnswer != null ? ResponseEntity.ok(updatedAnswer) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomerServiceQuestionsAnswer(@PathVariable Long id) {
-        customerServiceQuestionsAnswerService.deleteCustomerServiceQuestionsAnswer(id);
+    public ResponseEntity<Void> deleteQuestionsAnswer(@PathVariable Long id) {
+        customerServiceQuestionsAnswerService.deleteQuestionsAnswer(id);
         return ResponseEntity.noContent().build();
     }
 }

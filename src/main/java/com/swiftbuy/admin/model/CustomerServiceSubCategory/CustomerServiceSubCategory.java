@@ -1,11 +1,27 @@
 package com.swiftbuy.admin.model.CustomerServiceSubCategory;
 
 import com.swiftbuy.admin.model.CustomerServiceCategory.CustomerServiceCategory;
+import com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswer;
 
 import jakarta.persistence.*;
 
+
+import com.swiftbuy.admin.model.CustomerServiceCategory.CustomerServiceCategory;
+import com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswer;
+import jakarta.persistence.*;
+
+
+//Postman Query:
+//	
+//{
+//    "name": "New SubCategorymnd,md,mksal Name",
+//    "description": "Descriptionkdjkkdd of the new SubCategory",
+//    "questionanswer": {
+//        "questionsanswersid": 2
+//    }
+//}
 @Entity
-@Table(name = "customer_service_sub_categories")
+@Table(name = "customer_service_sub_categories_final")
 public class CustomerServiceSubCategory {
 
     @Id
@@ -18,52 +34,41 @@ public class CustomerServiceSubCategory {
     @Column(nullable = false)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private CustomerServiceCategory category;
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinColumn(name = "questions_answers_id", nullable = true)
+    private CustomerServiceQuestionsAnswer questionanswer;
 
-    // Constructors
+	public Long getId() {
+		return id;
+	}
 
-    public CustomerServiceSubCategory() {
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public CustomerServiceSubCategory(String name, String description, CustomerServiceCategory category) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
-    }
+	public String getName() {
+		return name;
+	}
 
-    // Getters and Setters
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public CustomerServiceQuestionsAnswer getQuestionanswer() {
+		return questionanswer;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setQuestionanswer(CustomerServiceQuestionsAnswer questionanswer) {
+		this.questionanswer = questionanswer;
+	}
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public CustomerServiceCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(CustomerServiceCategory category) {
-        this.category = category;
-    }
+    
 }

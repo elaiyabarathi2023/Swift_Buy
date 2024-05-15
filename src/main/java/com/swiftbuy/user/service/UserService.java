@@ -21,13 +21,17 @@ public class UserService {
 
     @Autowired
     private JwtGenerator jwtGenerator;
+    
+//    public UserDetails getUserById(Long userId) {
+//        return userRepository.findById(userId)
+//                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+//    }
 
     public Map<String, String> signupUser(UserDetails userdata) {
         Map<String, String> response = new HashMap<>();
 
        
-
-        // Save the user
+         // Save the user
         UserDetails savedUser = userRepository.save(userdata);
 
         // Generate a token for the user

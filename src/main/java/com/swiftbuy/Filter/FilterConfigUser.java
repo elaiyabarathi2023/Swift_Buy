@@ -12,10 +12,10 @@ public class FilterConfigUser {
     @Bean
     public FilterRegistrationBean jwtFilterUser() {
         FilterRegistrationBean filter= new FilterRegistrationBean();
+
         filter.setFilter(new jwtFilterUser());
-      filter.addUrlPatterns("/api/shoppingcart/add","/api/shoppingcart/cart","/order","/order/get");
-     
-     
+      filter.addUrlPatterns("/api/shoppingcart/add","/api/shoppingcart/cart","/order","/order/get","/api/wishlist/add");
+    
 
     return filter;
     }

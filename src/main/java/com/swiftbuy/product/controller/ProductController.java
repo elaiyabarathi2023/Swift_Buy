@@ -3,6 +3,8 @@ package com.swiftbuy.product.controller;
 import com.swiftbuy.admin.model.*;
 import com.swiftbuy.product.service.ProductService;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,12 @@ public class ProductController {
     private ProductService productService;
 
     // Product API calls
+    
+//    @GetMapping("/allproducts")
+//    public ResponseEntity<Iterable<ProductDetails>> getAllProductsForAdmin() {
+//        Iterable<ProductDetails> products = productService.getAllProducts();
+//        return ResponseEntity.ok(products);
+//    }
     @PostMapping("/products")
     public ResponseEntity<ProductDetails> createProduct(@RequestBody ProductDetails product) {
         ProductDetails createdProduct = productService.createProduct(product);
@@ -146,52 +154,5 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    // Product Offer API calls
-//    @PostMapping("/product-offers")
-//    public ResponseEntity<ProductDetails> createProductOffer(@RequestBody ProductDetails productOffer) {
-//    	ProductDetails createdOffer = productService.createProductOffer(productOffer);
-//        return new ResponseEntity<>(createdOffer, HttpStatus.CREATED);
-//    }
-//
-//    @GetMapping("/product-offers/{offerId}")
-//    public ResponseEntity<ProductDetails> getProductOffer(@PathVariable Long offerId) {
-//    	ProductDetails productOffer = productService.getProductOffer(offerId);
-//        return ResponseEntity.ok(productOffer);
-//    }
-//
-//    @PutMapping("/product-offers/{offerId}")
-//    public ResponseEntity<ProductDetails> updateProductOffer(@PathVariable Long offerId, @RequestBody ProductDetails productOffer) {
-//    	ProductDetails updatedOffer = productService.updateProductOffer(offerId, productOffer);
-//        return ResponseEntity.ok(updatedOffer);
-//    }
-//
-//    @DeleteMapping("/product-offers/{offerId}")
-//    public ResponseEntity<Void> deleteProductOffer(@PathVariable Long offerId) {
-//        productService.deleteProductOffer(offerId);
-//        return ResponseEntity.noContent().build();
-//    }
-// // Cancelled Product API calls
-//    @PostMapping("/cancelled-products")
-//    public ResponseEntity<ProductDetails> createCancelledProduct(@RequestBody ProductDetails cancelledProduct) {
-//    	ProductDetails createdProduct = productService.createCancelledProduct(cancelledProduct);
-//        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-//    }
-//
-//    @GetMapping("/cancelled-products/{productId}")
-//    public ResponseEntity<ProductDetails> getCancelledProduct(@PathVariable Long productId) {
-//    	ProductDetails cancelledProduct = productService.getCancelledProduct(productId);
-//        return ResponseEntity.ok(cancelledProduct);
-//    }
-//
-//    @PutMapping("/cancelled-products/{productId}")
-//    public ResponseEntity<ProductDetails> updateCancelledProduct(@PathVariable Long productId, @RequestBody ProductDetails cancelledProduct) {
-//    	ProductDetails updatedProduct = productService.updateCancelledProduct(productId, cancelledProduct);
-//        return ResponseEntity.ok(updatedProduct);
-//    }
-//
-//    @DeleteMapping("/cancelled-products/{productId}")
-//    public ResponseEntity<Void> deleteCancelledProduct(@PathVariable Long productId) {
-//        productService.deleteCancelledProduct(productId);
-//        return ResponseEntity.noContent().build();
-//    }
+  
 }
