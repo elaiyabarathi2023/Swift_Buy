@@ -42,8 +42,9 @@ public class AdminController {
 
 	@PostMapping("/login")
 	public ResponseEntity<Map<String, String>> loginUser(@RequestBody Map<String, String> body) {
-	    String username = body.get("username");
-	    Map<String, String> response = adminService.loginUser(username);
+		 String username = body.get("username");
+		    String password = body.get("password");
+	    Map<String, String> response = adminService.loginUser(username,password);
 	    return ResponseEntity.ok(response);
 	}
 

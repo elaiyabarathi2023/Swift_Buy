@@ -107,11 +107,11 @@ public class UserController {
 	    return ResponseEntity.ok(estimatedDelivery);
 	}
 
-	@GetMapping("/product-offers/{offerId}")
-	public ResponseEntity<ProductDetails> getUserProductOffer(@PathVariable Long offerId) {
-	    ProductDetails productOffer = productService.getProductOffer(offerId);
-	    return ResponseEntity.ok(productOffer);
-	}
+//	@GetMapping("/product-offers/{offerId}")
+//	public ResponseEntity<ProductDetails> getUserProductOffer(@PathVariable Long offerId) {
+//	    ProductDetails productOffer = productService.getProductOffer(offerId);
+//	    return ResponseEntity.ok(productOffer);
+//	}
 
 
 	

@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/productpart")
 public class ProductController {
 
     @Autowired
@@ -154,29 +154,29 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    // Product Offer API calls
-    @PostMapping("/product-offers")
-    public ResponseEntity<ProductDetails> createProductOffer(@RequestBody ProductDetails productOffer) {
-    	ProductDetails createdOffer = productService.createProductOffer(productOffer);
-        return new ResponseEntity<>(createdOffer, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/product-offers/{offerId}")
-    public ResponseEntity<ProductDetails> getProductOffer(@PathVariable Long offerId) {
-    	ProductDetails productOffer = productService.getProductOffer(offerId);
-        return ResponseEntity.ok(productOffer);
-    }
-
-    @PutMapping("/product-offers/{offerId}")
-    public ResponseEntity<ProductDetails> updateProductOffer(@PathVariable Long offerId, @RequestBody ProductDetails productOffer) {
-    	ProductDetails updatedOffer = productService.updateProductOffer(offerId, productOffer);
-        return ResponseEntity.ok(updatedOffer);
-    }
-
-    @DeleteMapping("/product-offers/{offerId}")
-    public ResponseEntity<Void> deleteProductOffer(@PathVariable Long offerId) {
-        productService.deleteProductOffer(offerId);
-        return ResponseEntity.noContent().build();
-    }
+//    // Product Offer API calls
+//    @PostMapping("/product-offers")
+//    public ResponseEntity<ProductDetails> createProductOffer(@RequestBody ProductDetails productOffer) {
+//    	ProductDetails createdOffer = productService.createProductOffer(productOffer);
+//        return new ResponseEntity<>(createdOffer, HttpStatus.CREATED);
+//    }
+//
+//    @GetMapping("/product-offers/{offerId}")
+//    public ResponseEntity<ProductDetails> getProductOffer(@PathVariable Long offerId) {
+//    	ProductDetails productOffer = productService.getProductOffer(offerId);
+//        return ResponseEntity.ok(productOffer);
+//    }
+//
+//    @PutMapping("/product-offers/{offerId}")
+//    public ResponseEntity<ProductDetails> updateProductOffer(@PathVariable Long offerId, @RequestBody ProductDetails productOffer) {
+//    	ProductDetails updatedOffer = productService.updateProductOffer(offerId, productOffer);
+//        return ResponseEntity.ok(updatedOffer);
+//    }
+//
+//    @DeleteMapping("/product-offers/{offerId}")
+//    public ResponseEntity<Void> deleteProductOffer(@PathVariable Long offerId) {
+//        productService.deleteProductOffer(offerId);
+//        return ResponseEntity.noContent().build();
+//    }
  
 }

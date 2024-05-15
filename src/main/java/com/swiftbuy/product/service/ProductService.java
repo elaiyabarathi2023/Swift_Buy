@@ -16,19 +16,28 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-     private CategoryRepository   categoryRepository;
-    
+   
     @Autowired
     private SubCategoryRepository subCategoryRepository;
+    
     @Autowired
-    private CouponCodeRepository couponRepository;   
+    private CategoryRepository categoryRepository;
+    
+    
+      
     public ProductDetails createProduct(ProductDetails product) {
+    	
+    	Long categoryId = product.getCategory().getCategory_id();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Sub Category not found with id " + categoryId ));
+        
+        
     	Long subCategoryId = product.getSubcategory().getId();
         SubCategory subCategory = subCategoryRepository.findById(subCategoryId)
                 .orElseThrow(() -> new RuntimeException("Sub Category not found with id " + subCategoryId ));
         
         product.setSubcategory(subCategory);
+        product.setCategory(category);
 
         return productRepository.save(product);
     }
@@ -45,9 +54,7 @@ public class ProductService {
         existingProduct.setProductImage(product.getProductImage());
         existingProduct.setProductPrice(product.getProductPrice());
         existingProduct.setProductQuantity(product.getProductQuantity());
-        existingProduct.setProductOffers(product.getProductOffers());
         existingProduct.setEstimatedDelivery(product.getEstimatedDelivery());
-        existingProduct.setProductStock(product.getProductStock());
         return productRepository.save(existingProduct);
     }
 
@@ -143,24 +150,24 @@ public class ProductService {
     }
 
     // Product Offer methods (no separate entity, part of ProductDetails)
-    public ProductDetails createProductOffer(ProductDetails ProductDetails) {
-        return productRepository.save(ProductDetails);
-    }
-
-    public ProductDetails getProductOffer(Long productId) {
-        return getProduct(productId);
-    }
-
-    public ProductDetails updateProductOffer(Long productId, ProductDetails ProductDetails) {
-        ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setProductOffers(ProductDetails.getProductOffers());
-        return productRepository.save(existingProduct);
-    }
-
-    public void deleteProductOffer(Long productId) {
-        ProductDetails product = getProduct(productId);
-        productRepository.delete(product);
-    }
+//    public ProductDetails createProductOffer(ProductDetails ProductDetails) {
+//        return productRepository.save(ProductDetails);
+//    }
+//
+//    public ProductDetails getProductOffer(Long productId) {
+//        return getProduct(productId);
+//    }
+//
+//    public ProductDetails updateProductOffer(Long productId, ProductDetails ProductDetails) {
+//        ProductDetails existingProduct = getProduct(productId);
+//        existingProduct.setProductOffers(ProductDetails.getProductOffers());
+//        return productRepository.save(existingProduct);
+//    }
+//
+//    public void deleteProductOffer(Long productId) {
+//        ProductDetails product = getProduct(productId);
+//        productRepository.delete(product);
+//    }
 
    
 }

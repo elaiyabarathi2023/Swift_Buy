@@ -21,38 +21,38 @@ import io.jsonwebtoken.security.Keys;
 public class TokenServiceAdmin {
 	@Autowired
 	AdminRepository adminRepository;
+
 	private SecretKey getSigningKey() throws Exception {
 		byte[] keyBytes = Decoders.BASE64.decode("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437");
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
-	
+
 	public Claims verifyToken(String token) throws Exception {
 //	    if (token == null || token.isEmpty()) {
 //	        return null; 
 //	    }
 
-	    Claims claims;
+		Claims claims;
 //	    try {
-	    claims = Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
+		claims = Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
 //	    } catch (InvalidKeyException e) {
 //	        throw new InvalidKeyException("Invalid signing key for token verification");
 //	    } catch (Exception e) {
 //	        throw new Exception("Error parsing token: " + e.getMessage());
 //	    }
 
-	    String username = claims.get("username").toString();
-	    String phoneNumber=claims.get("phoneNumber").toString();
-	    AdminDetails user = adminRepository.findByUsername(username);
-	    if (user == null || isTokenExpired(claims)) { // Check user existence and expiration
-	        return null;
-	    }
-	    return claims; // Return claims only if valid
+		String username = claims.get("username").toString();
+
+		AdminDetails user = adminRepository.findByUsername(username);
+		if (user == null || isTokenExpired(claims)) { // Check user existence and expiration
+			return null;
+		}
+		return claims; // Return claims only if valid
 	}
 
 	private boolean isTokenExpired(Claims claims) {
-	    Date expiration = claims.getExpiration();
-	    return expiration.before(new Date());
+		Date expiration = claims.getExpiration();
+		return expiration.before(new Date());
 	}
-
 
 }
