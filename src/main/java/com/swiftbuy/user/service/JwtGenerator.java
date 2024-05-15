@@ -36,9 +36,7 @@ public class JwtGenerator implements TokenGeneratorAdmin {
 		 if (userdata.getEmail() != null && !userdata.getEmail().isEmpty()) {
 		        claims.put("email", userdata.getEmail());
 		    }
-		    if (userdata.getPhoneNumber() != null && !userdata.getPhoneNumber().isEmpty()) {
-		        claims.put("phoneNumber", userdata.getPhoneNumber());
-		    }
+		
 		claims.put("userId", userdata.getUserId().toString());
 		userdata.setCreatedAt(new Date());
        UserDetails savedUser = userRepository.save(userdata);

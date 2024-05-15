@@ -22,7 +22,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "checkout")
 public class Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long orderId;
@@ -31,52 +30,42 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private UserDetails user;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
-   
+
     private double totalPrice;
-   
-    public List<OrderItem> getOrderItems() {
+    private double totalDiscount;
+	public Long getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+	public UserDetails getUser() {
+		return user;
+	}
+	public void setUser(UserDetails user) {
+		this.user = user;
+	}
+	public List<OrderItem> getOrderItems() {
 		return orderItems;
 	}
-
 	public void setOrderItems(List<OrderItem> orderItems) {
 		this.orderItems = orderItems;
 	}
-
-	private double totalDiscount; // Add this field
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public UserDetails getUser() {
-        return user;
-    }
-
-    public void setUser(UserDetails user) {
-        this.user = user;
-    }
-    public double getTotalPrice() {
+	public double getTotalPrice() {
 		return totalPrice;
 	}
-
 	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
 	}
-
 	public double getTotalDiscount() {
-        return totalDiscount;
-    }
+		return totalDiscount;
+	}
+	public void setTotalDiscount(double totalDiscount) {
+		this.totalDiscount = totalDiscount;
+	}
 
-    public void setTotalDiscount(double totalDiscount) {
-        this.totalDiscount = totalDiscount;
-    }
 }
 
 

@@ -27,19 +27,22 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> placeOrder(HttpServletRequest request) {
-    	  Long userId = (Long) request.getAttribute("userId");
-    	  try {
-              Order order = orderService.createOrder(userId);
-              return new ResponseEntity<>(order, HttpStatus.CREATED);
-          } catch (Exception e) {
-              return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-          }
+    public ResponseEntity<String> placeOrder(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+
+        try {
+            Order order = orderService.createOrder(userId);
+            return new ResponseEntity<>("Order created successfully: " + order.getOrderId(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            String errorMessage = "Internal Server Error: " + e.getMessage();
+            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
-//    @GetMapping("/get")
-//    public ResponseEntity<Iterable<Order>> getAllOrders() {
-//        Iterable<Order> orders = orderService.getAllOrders();
+    // Get all orders for a user
+//    @GetMapping("/{userId}/orders")
+//    public ResponseEntity<List<Order>> getAllOrdersByUser(@PathVariable(value = "userId") Long userId) {
+//        List<Order> orders = userService.getAllOrdersByUser(userId);
 //        return new ResponseEntity<>(orders, HttpStatus.OK);
 //    }
 

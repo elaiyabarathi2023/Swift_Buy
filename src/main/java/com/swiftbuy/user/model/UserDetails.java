@@ -6,7 +6,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swiftbuy.CustomValidations.PasswordValidations;
 import com.swiftbuy.CustomValidations.ValidEmail;
-import com.swiftbuy.CustomValidations.ValidPhone;
 import com.swiftbuy.CustomValidations.ValidUsername;
 
 import jakarta.persistence.CascadeType;
@@ -39,8 +38,6 @@ public class UserDetails {
  
     private String email;
  
-@ValidPhone
-    private String phoneNumber;
 @OneToOne(cascade=CascadeType.REFRESH)
 @JsonIgnore
 private ShoppingCart shoppingCart;
@@ -86,12 +83,6 @@ public void setShoppingCart(ShoppingCart shoppingCart) {
 		this.email = email;
 	}
 	
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
 	
 	public void setCreatedAt(Date date) {
 		// TODO Auto-generated method stub

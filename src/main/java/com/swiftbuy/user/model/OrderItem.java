@@ -4,49 +4,73 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "orderItem")
 public class OrderItem {
-	@Id
-	 @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long orderItemId;
+
     private Long productId;
     private int quantity;
     private double price;
     private Long discountId;
 
-    public Long getProductId() {
-        return productId;
-    }
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
+	public Long getOrderItemId() {
+		return orderItemId;
+	}
 
-    public int getQuantity() {
-        return quantity;
-    }
+	public void setOrderItemId(Long orderItemId) {
+		this.orderItemId = orderItemId;
+	}
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+	public Long getProductId() {
+		return productId;
+	}
 
-    public double getPrice() {
-        return price;
-    }
+	public void setProductId(Long productId) {
+		this.productId = productId;
+	}
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+	public int getQuantity() {
+		return quantity;
+	}
 
-    public Long getDiscountId() {
-        return discountId;
-    }
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 
-    public void setDiscountId(Long discountId) {
-        this.discountId = discountId;
-    }
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public Long getDiscountId() {
+		return discountId;
+	}
+
+	public void setDiscountId(Long discountId) {
+		this.discountId = discountId;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
 }
 

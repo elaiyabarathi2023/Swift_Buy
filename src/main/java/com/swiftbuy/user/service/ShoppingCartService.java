@@ -40,6 +40,7 @@ public class ShoppingCartService {
     private UserRepository userRepository;
     @Autowired
     private AddressDetailsRepo addressDetailsRepository;
+   
 
     public Map<String, Double> calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
@@ -117,8 +118,7 @@ public class ShoppingCartService {
     }
 
 
-   
- 
+  
     
     public List<ShoppingCart> getCartUserId(Long userId) {
         Optional<UserDetails> user = userRepository.findById(userId);
@@ -128,6 +128,15 @@ public class ShoppingCartService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
- 
+    public void clearCart(Long userId) {
+        // Fetch the cart items for the user
+        List<ShoppingCart> cartItems = getCartUserId(userId);
+
+        // Remove each item from the cart
+        for (ShoppingCart cartItem : cartItems) {
+        	shoppingCartRepository.delete(cartItem);
+        }
+    }
+
  
 }
