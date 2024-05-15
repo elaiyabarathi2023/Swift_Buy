@@ -1,5 +1,6 @@
 package com.swiftbuy.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
@@ -36,10 +37,11 @@ public class ShoppingCart {
 	public void setAddress(AddressDetails address) {
 		this.address = address;
 	}
-
+	
+	
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties(value = {"shoppingCarts"})
+    @JsonIgnore
     private UserDetails user;
 
     private Long selectedCouponId;

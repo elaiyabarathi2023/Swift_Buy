@@ -1,6 +1,7 @@
 package com.swiftbuy.user.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swiftbuy.CustomValidations.PasswordValidations;
@@ -13,13 +14,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "UserDetails")
-//@JsonIgnoreProperties({"shoppingCart"})
+
 public class UserDetails {
 
     @Id
@@ -42,8 +44,17 @@ public class UserDetails {
 @OneToOne(cascade=CascadeType.REFRESH)
 @JsonIgnore
 private ShoppingCart shoppingCart;
+
+@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonIgnore
+private List<Order> orders;
 	
-	
+	public List<Order> getOrders() {
+	return orders;
+}
+public void setOrders(List<Order> orders) {
+	this.orders = orders;
+}
 	public ShoppingCart getShoppingCart() {
 	return shoppingCart;
 }

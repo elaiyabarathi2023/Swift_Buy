@@ -67,14 +67,13 @@ public class ProductDetails {
     @NotNull(message = "Product quantity is mandatory")
     private Integer productQuantity;
 
-    private String productOffers;
+//    private String productOffers;
     private String cancellationReason;
 
     @NotBlank(message = "Estimated delivery is mandatory")
     private String estimatedDelivery;
 
-    @NotNull(message = "Product stock is mandatory")
-    private Integer productStock;
+ 
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name = "subcategory_id", nullable = false)
@@ -170,13 +169,13 @@ public class ProductDetails {
         this.productQuantity = productQuantity;
     }
 
-    public String getProductOffers() {
-        return productOffers;
-    }
-
-    public void setProductOffers(String productOffers) {
-        this.productOffers = productOffers;
-    }
+//    public String getProductOffers() {
+//        return productOffers;
+//    }
+//
+//    public void setProductOffers(String productOffers) {
+//        this.productOffers = productOffers;
+//    }
 
     public String getCancellationReason() {
         return cancellationReason;
@@ -197,16 +196,7 @@ public class ProductDetails {
         this.estimatedDelivery = estimatedDelivery;
     }
 
-    public Integer getProductStock() {
-        return productStock;
-    }
 
-    public void setProductStock(Integer productStock) {
-        if (productStock == null) {
-            throw new IllegalArgumentException("Product stock cannot be null");
-        }
-        this.productStock = productStock;
-    }
 
     public SubCategory getSubcategory() {
         return subcategory;

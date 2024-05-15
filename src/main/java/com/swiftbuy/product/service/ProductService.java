@@ -20,8 +20,7 @@ public class ProductService {
     
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private CouponCodeRepository couponRepository;   
+  
     public ProductDetails createProduct(ProductDetails product) {
     	Long subCategoryId = product.getSubcategory().getId();
         SubCategory subCategory = subCategoryRepository.findById(subCategoryId)
@@ -44,9 +43,8 @@ public class ProductService {
         existingProduct.setProductImage(product.getProductImage());
         existingProduct.setProductPrice(product.getProductPrice());
         existingProduct.setProductQuantity(product.getProductQuantity());
-        existingProduct.setProductOffers(product.getProductOffers());
+       // existingProduct.setProductOffers(product.getProductOffers());
         existingProduct.setEstimatedDelivery(product.getEstimatedDelivery());
-        existingProduct.setProductStock(product.getProductStock());
         return productRepository.save(existingProduct);
     }
 
@@ -142,42 +140,42 @@ public class ProductService {
     }
 
     // Product Offer methods (no separate entity, part of ProductDetails)
-    public ProductDetails createProductOffer(ProductDetails ProductDetails) {
-        return productRepository.save(ProductDetails);
-    }
-
-    public ProductDetails getProductOffer(Long productId) {
-        return getProduct(productId);
-    }
-
-    public ProductDetails updateProductOffer(Long productId, ProductDetails ProductDetails) {
-        ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setProductOffers(ProductDetails.getProductOffers());
-        return productRepository.save(existingProduct);
-    }
-
-    public void deleteProductOffer(Long productId) {
-        ProductDetails product = getProduct(productId);
-        productRepository.delete(product);
-    }
+//    public ProductDetails createProductOffer(ProductDetails ProductDetails) {
+//        return productRepository.save(ProductDetails);
+//    }
+//
+//    public ProductDetails getProductOffer(Long productId) {
+//        return getProduct(productId);
+//    }
+//
+//    public ProductDetails updateProductOffer(Long productId, ProductDetails ProductDetails) {
+//        ProductDetails existingProduct = getProduct(productId);
+//        existingProduct.setProductOffers(ProductDetails.getProductOffers());
+//        return productRepository.save(existingProduct);
+//    }
+//
+//    public void deleteProductOffer(Long productId) {
+//        ProductDetails product = getProduct(productId);
+//        productRepository.delete(product);
+//    }
 
     // Cancelled Product methods (no separate entity, part of ProductDetails)
-    public ProductDetails createCancelledProduct(ProductDetails ProductDetails) {
-        return productRepository.save(ProductDetails);
-    }
-
-    public ProductDetails getCancelledProduct(Long productId) {
-        return getProduct(productId);
-    }
-
-    public ProductDetails updateCancelledProduct(Long productId, ProductDetails ProductDetails) {
-        ProductDetails existingProduct = getProduct(productId);
-        existingProduct.setCancellationReason(ProductDetails.getCancellationReason());
-        return productRepository.save(existingProduct);
-    }
-
-    public void deleteCancelledProduct(Long productId) {
-        ProductDetails product = getProduct(productId);
-        productRepository.delete(product);
-    }
+//    public ProductDetails createCancelledProduct(ProductDetails ProductDetails) {
+//        return productRepository.save(ProductDetails);
+//    }
+//
+//    public ProductDetails getCancelledProduct(Long productId) {
+//        return getProduct(productId);
+//    }
+//
+//    public ProductDetails updateCancelledProduct(Long productId, ProductDetails ProductDetails) {
+//        ProductDetails existingProduct = getProduct(productId);
+//        existingProduct.setCancellationReason(ProductDetails.getCancellationReason());
+//        return productRepository.save(existingProduct);
+//    }
+//
+//    public void deleteCancelledProduct(Long productId) {
+//        ProductDetails product = getProduct(productId);
+//        productRepository.delete(product);
+//    }
 }

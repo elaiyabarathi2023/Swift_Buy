@@ -52,17 +52,20 @@ public class ShoppingCartController {
 
 
  
-        @GetMapping("/cart")
-        public ResponseEntity<Map<String, Object>> getCartByUserId(HttpServletRequest request) {
-        	   Long userId = (Long) request.getAttribute("userId");	   
-            List<ShoppingCart> cartItems = cartService.getCartUserId(userId); 
-            double totalPrice = cartService.calculateTotalPrice(cartItems); 
-            Map<String, Object> response = new HashMap<>();
-            response.put("cartItems", cartItems);
-            response.put("totalPrice", totalPrice);
-          
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
+    @GetMapping("/cart")
+    public ResponseEntity<Map<String, Object>> getCartByUserId(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        List<ShoppingCart> cartItems = cartService.getCartUserId(userId);
+        Map<String, Double> priceAndDiscount = cartService.calculateTotalPrice(cartItems);
+        //ShoppingCart address=cartService.
+        Map<String, Object> response = new HashMap<>();
+        response.put("cartItems", cartItems);
+
+        response.put("totalPrice", priceAndDiscount.get("totalPrice"));
+        response.put("totalDiscount", priceAndDiscount.get("totalDiscount"));
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
  
