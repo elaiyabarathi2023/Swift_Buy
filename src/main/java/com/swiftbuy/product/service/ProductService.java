@@ -8,6 +8,8 @@ import com.swiftbuy.repository.CategoryRepository;
 import com.swiftbuy.subcrepository.SubCategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +63,10 @@ public class ProductService {
     public void deleteProduct(Long productId) {
         ProductDetails product = getProduct(productId);
         productRepository.delete(product);
+    }
+    
+    public Page<ProductDetails> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public ProductDetails updateProductStatus(Long productId, ProductDetails product) {

@@ -19,6 +19,7 @@ import com.swiftbuy.admin.model.ShoppingCartRequest;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.service.ShoppingCartService;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,11 +42,19 @@ public class ShoppingCartController {
     @PostMapping("/add")
     public ResponseEntity<ShoppingCart> addToCart(@RequestBody ShoppingCartRequest cartrequest,
                                                   HttpServletRequest request) {
-    	  Long userId = (Long) request.getAttribute("userId");
-        // Check if userId is null
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
+    	Claims claims = (Claims) request.getAttribute("claims");
+        if (claims == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+  
+        // Extract the userId from the Claims object
+        String userIdString = claims.get("userId", String.class);
+        long userId = Long.parseLong(userIdString);
+        
+        // Check if userId is null
+//        if (userId == null) {
+//            throw new IllegalArgumentException("User ID cannot be null");
+//        }
         
         ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
         return ResponseEntity.ok(cartItem);
