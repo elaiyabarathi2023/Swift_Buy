@@ -17,6 +17,7 @@ import com.swiftbuy.user.model.WishList;
  
 import com.swiftbuy.user.service.WishListService;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -34,7 +35,9 @@ public class WishListController {
     public ResponseEntity<WishList> addToWishlist(@RequestBody WishList wishlist,HttpServletRequest request) {
 
         try {
-        	 Long userId = (Long) request.getAttribute("userId");
+        	Claims claims = (Claims) request.getAttribute("claims");
+            String userIdString = claims.get("userId", String.class);
+    		Long userId = Long.valueOf(userIdString);
              // Check if userId is null
              if (userId == null) {
                  throw new IllegalArgumentException("User ID cannot be null");

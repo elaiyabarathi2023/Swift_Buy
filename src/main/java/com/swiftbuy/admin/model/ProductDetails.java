@@ -2,6 +2,8 @@ package com.swiftbuy.admin.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //import com.swiftbuy.user.model.ShoppingCart;
 
 import jakarta.persistence.CascadeType;
@@ -16,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,7 +47,20 @@ public class ProductDetails {
 //
 //    public void setShoppingCart(ShoppingCart shoppingCart) {
 //        this.shoppingCart = shoppingCart;
-	// }
+  //  }
+ 
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Offer offer;
+
+    public Offer getOffer() {
+        return offer;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+    }
+
 
 	@Enumerated(EnumType.STRING)
 	@NotNull(message = "Product status is mandatory")
@@ -65,13 +82,11 @@ public class ProductDetails {
 	@NotNull(message = "Product quantity is mandatory")
 	private Integer productQuantity;
 
-//	private String productOffers;
 
 	@NotBlank(message = "Estimated delivery is mandatory")
 	private String estimatedDelivery;
 
-	@NotBlank(message = "stock is mandatory")
-	private String availablestocks;
+ 
 
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "subcategory_id", nullable = false)
@@ -160,47 +175,21 @@ public class ProductDetails {
 		return productQuantity;
 	}
 
-	public void setProductQuantity(Integer productQuantity) {
-		if (productQuantity == null) {
-			throw new IllegalArgumentException("Product quantity cannot be null");
-		}
-		this.productQuantity = productQuantity;
-	}
-
-//	public String getProductOffers() {
-//		return productOffers;
-//	}
+//    public String getProductOffers() {
+//        return productOffers;
+//    }
 //
-//	public void setProductOffers(String productOffers) {
-//		this.productOffers = productOffers;
-//	}
+//    public void setProductOffers(String productOffers) {
+//        this.productOffers = productOffers;
+//    }
 
-	public String getEstimatedDelivery() {
-		return estimatedDelivery;
-	}
 
-	public void setEstimatedDelivery(String estimatedDelivery) {
-		if (estimatedDelivery == null || estimatedDelivery.isBlank()) {
-			throw new IllegalArgumentException("Estimated delivery cannot be null or blank");
-		}
-		this.estimatedDelivery = estimatedDelivery;
-	}
 
 
 	public SubCategory getSubcategory() {
 		return subcategory;
 	}
 
-	public void setSubcategory(SubCategory subcategory) {
-		if (subcategory == null) {
-			throw new IllegalArgumentException("Subcategory cannot be null");
-		}
-		this.subcategory = subcategory;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
 
 	public void setCategory(Category category) {
 		this.category = category;

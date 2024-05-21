@@ -77,41 +77,7 @@ public class UserController {
 	    return userRepository.findAll();
 	}
 	
-    @GetMapping("/product-images/{imageId}")
-	public ResponseEntity<ProductDetails> getUserProductImage(@PathVariable Long imageId) {
-	    ProductDetails productImage = productService.getProductImage(imageId);
-	    return ResponseEntity.ok(productImage);
-	}
-
-	@PostMapping("/product-quantities")
-	public ResponseEntity<ProductDetails> createUserProductQuantity(@RequestBody ProductDetails productQuantity) {
-	    ProductDetails createdQuantity = productService.createProductQuantity(productQuantity);
-	    return new ResponseEntity<>(createdQuantity, HttpStatus.CREATED);
-	}
-
-	@GetMapping("/product-quantities/{quantityId}")
-	public ResponseEntity<ProductDetails> getUserProductQuantity(@PathVariable Long quantityId) {
-	    ProductDetails productQuantity = productService.getProductQuantity(quantityId);
-	    return ResponseEntity.ok(productQuantity);
-	}
-
-	@PutMapping("/product-quantities/{quantityId}")
-	public ResponseEntity<ProductDetails> updateUserProductQuantity(@PathVariable Long quantityId, @RequestBody ProductDetails productQuantity) {
-	    ProductDetails updatedQuantity = productService.updateProductQuantity(quantityId, productQuantity);
-	    return ResponseEntity.ok(updatedQuantity);
-	}
-
-	@GetMapping("/estimated-deliveries/{deliveryId}")
-	public ResponseEntity<ProductDetails> getUserEstimatedDelivery(@PathVariable Long deliveryId) {
-	    ProductDetails estimatedDelivery = productService.getEstimatedDelivery(deliveryId);
-	    return ResponseEntity.ok(estimatedDelivery);
-	}
-
-//	@GetMapping("/product-offers/{offerId}")
-//	public ResponseEntity<ProductDetails> getUserProductOffer(@PathVariable Long offerId) {
-//	    ProductDetails productOffer = productService.getProductOffer(offerId);
-//	    return ResponseEntity.ok(productOffer);
-//	}
+  
 
 
 	

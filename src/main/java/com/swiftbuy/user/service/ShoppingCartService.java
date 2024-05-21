@@ -2,11 +2,12 @@ package com.swiftbuy.user.service;
 
 
 import com.swiftbuy.admin.model.CouponCodes;
+import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.admin.model.ShoppingCartRequest;
 import com.swiftbuy.admin.repository.CouponCodeRepository;
 import com.swiftbuy.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
+import com.swiftbuy.user.model.ShoppingCartRequest;
 import com.swiftbuy.user.model.UserDetails;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.ShoppingCartRepository;
@@ -19,8 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ShoppingCartService {
@@ -38,36 +42,54 @@ public class ShoppingCartService {
     private UserRepository userRepository;
     @Autowired
     private AddressDetailsRepo addressDetailsRepository;
+   
 
-    public double calculateTotalPrice(List<ShoppingCart> cartItems) {
+    public Map<String, Double> calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
+        double totalCouponDiscount = 0.0;
+        double totalOfferDiscount = 0.0;
 
         for (ShoppingCart item : cartItems) {
             double itemPrice = item.getProduct().getProductPrice() * item.getQuantity();
+            double discountPercentage = 0.0;
+
+            // Check if the product has an active offer
+            Offer productOffer = item.getProduct().getOffer();
+            if (productOffer != null ) {
+                discountPercentage = productOffer.getDiscountPercentage();
+                double offerDiscount = discountPercentage / 100;
+                totalOfferDiscount += offerDiscount ;
+                itemPrice *= (1 - offerDiscount);
+            }
+
+            // Apply coupon discount if applicable
             if (item.getSelectedCouponId() != null) {
                 CouponCodes itemCoupon = item.getProduct().getCoupons().stream()
                         .filter(coupon -> coupon.getCouponId().equals(item.getSelectedCouponId()))
                         .findFirst()
                         .orElse(null);
-                if (itemCoupon != null) {
-                	
-                    double discount = item.getProduct().getProductPrice() * itemCoupon.getDiscountPercentage() / 100;
-                    itemPrice -= discount;
-                }
-            }
-            totalPrice += itemPrice;
-           
-        }
-        return totalPrice;
-    }
 
+                if (itemCoupon != null) {
+                    double couponDiscountPercentage = itemCoupon.getDiscountPercentage();
+                    double couponDiscount = couponDiscountPercentage/ 100;
+                    totalCouponDiscount += couponDiscount;
+                    itemPrice -= couponDiscount;
+                }
+
+            }
+
+            totalPrice += itemPrice;
+        }
+
+        Map<String, Double> result = new HashMap<>();
+        result.put("totalPrice", totalPrice);
+        result.put("totalCouponDiscount", totalCouponDiscount);
+        result.put("totalOfferDiscount", totalOfferDiscount);
+        return result;
+    }
     public ShoppingCart addToCart(ShoppingCartRequest cartrequest, Long userId) {
-    	
-        // Retrieve the product from the database
         ProductDetails product = productRepository.findById(cartrequest.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-        // Check if the selected coupon ID is valid for the product
         CouponCodes selectedCoupon = null;
         if (cartrequest.getSelectedCouponId() != null) {
             selectedCoupon = product.getCoupons().stream()
@@ -75,16 +97,9 @@ public class ShoppingCartService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Selected coupon is not valid for this product"));
         }
-
-        // Retrieve the user from the database
         UserDetails user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        // Retrieve the address from the database
-        AddressDetails address = addressDetailsRepository.findById(cartrequest.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
-
-        // Retrieve the existing cart item
+      
         Optional<ShoppingCart> cartItemOptional = shoppingCartRepository.findByUserUserIdAndProductProductId(userId, cartrequest.getProductId());
         ShoppingCart cartItem;
         if (cartItemOptional.isPresent()) {
@@ -92,42 +107,36 @@ public class ShoppingCartService {
         } else {
             cartItem = new ShoppingCart();
             cartItem.setProduct(product);
-            cartItem.setUser(user);
+         
         }
-
-        // If the updated quantity is 0, remove the product from the cart
         if (cartrequest.getQuantity() == 0) {
             shoppingCartRepository.delete(cartItem);
-            return null; // or return a suitable response indicating the product was removed
+            return null; 
         }
-
-        // Check if the updated quantity is more than the available product quantity
         if (cartrequest.getQuantity() > product.getProductQuantity()) {
             throw new IllegalArgumentException("{\"message\": \"Can't add anymore products\"}");
         }
-
-        // Update the cart item
-        cartItem.setAddress(address);
+        cartItem.setUser(user);
         cartItem.setProduct(product);
         cartItem.setQuantity(cartrequest.getQuantity());
-        cartItem.setUser(user);
         cartItem.setSelectedCouponId(cartrequest.getSelectedCouponId());
 
-     // Save the cart item
+    
+
+        AddressDetails address = addressDetailsRepository.findByIdAndUserUserId(cartrequest.getAddressId(), userId);
+        	    //.orElseThrow(() -> new IllegalArgumentException("The selected address does not belong to the user"));
+            // Set the address in the ShoppingCart object
+            cartItem.setAddress(address);
+        // Set the address in the ShoppingCart object
+        cartItem.setAddress(address);
+
         ShoppingCart savedCartItem = shoppingCartRepository.save(cartItem);
-
-        // Calculate the total price for all cart items of the user
         List<ShoppingCart> cartItems = shoppingCartRepository.findByUserUserId(userId);
-        double totalPrice = calculateTotalPrice(cartItems);
-        System.out.println(totalPrice);
-
+        Map<String, Double> priceAndDiscount = calculateTotalPrice(cartItems);
         return savedCartItem;
     }
-
-
-
-   
- 
+  
+  
     
     public List<ShoppingCart> getCartUserId(Long userId) {
         Optional<UserDetails> user = userRepository.findById(userId);
@@ -136,7 +145,17 @@ public class ShoppingCartService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
+        
     }
- 
+    public void clearCart(Long userId) {
+        // Fetch the cart items for the user
+        List<ShoppingCart> cartItems = getCartUserId(userId);
+
+        // Remove each item from the cart
+        for (ShoppingCart cartItem : cartItems) {
+        	shoppingCartRepository.delete(cartItem);
+        }
+    }
+
  
 }

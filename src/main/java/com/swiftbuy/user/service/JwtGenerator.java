@@ -33,20 +33,21 @@ public class JwtGenerator implements TokenGeneratorAdmin {
 		   Map<String, String> jwtTokenGen = new HashMap<>();
 		Map<String, String> claims = new HashMap<>();
 		claims.put("firstname", userdata.getFirstname());
+		claims.put("userId", userdata.getUserId().toString());
+		userdata.setCreatedAt(new Date());
 		 if (userdata.getEmail() != null && !userdata.getEmail().isEmpty()) {
 		        claims.put("email", userdata.getEmail());
 		    }
-		    if (userdata.getPhoneNumber() != null && !userdata.getPhoneNumber().isEmpty()) {
+		 if (userdata.getPhoneNumber() != null && !userdata.getPhoneNumber().isEmpty()) {
 		        claims.put("phoneNumber", userdata.getPhoneNumber());
 		    }
-		claims.put("userId", userdata.getUserId().toString());
-		userdata.setCreatedAt(new Date());
+		
        UserDetails savedUser = userRepository.save(userdata);
         
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
-  		 String token = null;
+  		 //String token = null;
   		//try {
-				token = Jwts.builder().claims(claims).subject(userdata.getUserId().toString()) // Use user ID instead of password
+			String	token = Jwts.builder().claims(claims).subject(userdata.getUserId().toString()) // Use user ID instead of password
  
 						.issuer("theertha")
 						.signWith(getSigningKey())

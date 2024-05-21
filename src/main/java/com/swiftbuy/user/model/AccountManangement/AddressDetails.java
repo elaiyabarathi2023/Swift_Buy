@@ -33,18 +33,7 @@ public class AddressDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade=CascadeType.REFRESH)
-    @JsonIgnore
-    private ShoppingCart shoppingCart;
-
-    public ShoppingCart getShoppingCart() {
-		return shoppingCart;
-	}
-
-	public void setShoppingCart(ShoppingCart shoppingCart) {
-		this.shoppingCart = shoppingCart;
-	}
-
+   
 	@Column(nullable = false)
     private String addressType;
     
@@ -71,6 +60,7 @@ public class AddressDetails {
     private String country;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    
     @JoinColumn(name = "user_id", nullable = false)
     private UserDetails user;
 

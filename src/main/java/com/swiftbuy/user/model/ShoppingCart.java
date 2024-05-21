@@ -1,5 +1,6 @@
 package com.swiftbuy.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,27 +23,39 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cartItemId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductDetails product;
+    public UserDetails getUser() {
+		return user;
+	}
 
-    private int quantity;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private AddressDetails address;
+	public void setUser(UserDetails user) {
+		this.user = user;
+	}
 
-    public AddressDetails getAddress() {
+
+
+	public AddressDetails getAddress() {
 		return address;
 	}
+
+
+
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductDetails product;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserDetails user; // Add this field
+    private int quantity;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id", nullable = false)
+    private AddressDetails address;
 
 	public void setAddress(AddressDetails address) {
 		this.address = address;
 	}
-
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties(value = {"shoppingCarts"})
-    private UserDetails user;
-
+	
+	
+	
     private Long selectedCouponId;
 
     // Getters and setters
@@ -78,13 +92,7 @@ public class ShoppingCart {
 		this.quantity = quantity;
 	}
 
-	public UserDetails getUser() {
-		return user;
-	}
-
-	public void setUser(UserDetails user) {
-		this.user = user;
-	}
+	
 
     // Other getters and setters
 }

@@ -19,12 +19,7 @@ public class ProductService {
    
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-    
-    @Autowired
-    private CategoryRepository categoryRepository;
-    
-    
-      
+  
     public ProductDetails createProduct(ProductDetails product) {
     	
     	Long categoryId = product.getCategory().getCategory_id();
@@ -54,6 +49,7 @@ public class ProductService {
         existingProduct.setProductImage(product.getProductImage());
         existingProduct.setProductPrice(product.getProductPrice());
         existingProduct.setProductQuantity(product.getProductQuantity());
+       // existingProduct.setProductOffers(product.getProductOffers());
         existingProduct.setEstimatedDelivery(product.getEstimatedDelivery());
         return productRepository.save(existingProduct);
     }
@@ -149,25 +145,4 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    // Product Offer methods (no separate entity, part of ProductDetails)
-//    public ProductDetails createProductOffer(ProductDetails ProductDetails) {
-//        return productRepository.save(ProductDetails);
-//    }
-//
-//    public ProductDetails getProductOffer(Long productId) {
-//        return getProduct(productId);
-//    }
-//
-//    public ProductDetails updateProductOffer(Long productId, ProductDetails ProductDetails) {
-//        ProductDetails existingProduct = getProduct(productId);
-//        existingProduct.setProductOffers(ProductDetails.getProductOffers());
-//        return productRepository.save(existingProduct);
-//    }
-//
-//    public void deleteProductOffer(Long productId) {
-//        ProductDetails product = getProduct(productId);
-//        productRepository.delete(product);
-//    }
-
-   
 }
