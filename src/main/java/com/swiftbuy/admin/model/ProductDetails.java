@@ -2,6 +2,8 @@ package com.swiftbuy.admin.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //import com.swiftbuy.user.model.ShoppingCart;
 
 import jakarta.persistence.CascadeType;
@@ -16,6 +18,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -46,6 +50,19 @@ public class ProductDetails {
 //    public void setShoppingCart(ShoppingCart shoppingCart) {
 //        this.shoppingCart = shoppingCart;
   //  }
+ 
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Offer offer;
+
+    public Offer getOffer() {
+        return offer;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+    }
+
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Product status is mandatory")
@@ -67,8 +84,6 @@ public class ProductDetails {
     @NotNull(message = "Product quantity is mandatory")
     private Integer productQuantity;
 
-//    private String productOffers;
-    private String cancellationReason;
 
     @NotBlank(message = "Estimated delivery is mandatory")
     private String estimatedDelivery;
@@ -177,13 +192,7 @@ public class ProductDetails {
 //        this.productOffers = productOffers;
 //    }
 
-    public String getCancellationReason() {
-        return cancellationReason;
-    }
 
-    public void setCancellationReason(String cancellationReason) {
-        this.cancellationReason = cancellationReason;
-    }
 
     public String getEstimatedDelivery() {
         return estimatedDelivery;

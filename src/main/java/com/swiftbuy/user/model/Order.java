@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -35,7 +36,32 @@ public class Order {
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private double totalPrice;
-    private double totalDiscount;
+    private double totalCouponDiscount;
+    private double totalOfferDiscount;
+    public enum OrderStatus {
+        PLACED, SHIPPED, DELIVERED, CANCELLED
+    }
+
+    private OrderStatus orderStatus = OrderStatus.PLACED;
+	public OrderStatus getOrderStatus() {
+		return orderStatus;
+	}
+	public void setOrderStatus(OrderStatus orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+	public double getTotalOfferDiscount() {
+		return totalOfferDiscount;
+	}
+	public void setTotalOfferDiscount(double totalOfferDiscount) {
+		this.totalOfferDiscount = totalOfferDiscount;
+	}
+	
+	public double getTotalCouponDiscount() {
+		return totalCouponDiscount;
+	}
+	public void setTotalCouponDiscount(double totalCouponDiscount) {
+		this.totalCouponDiscount = totalCouponDiscount;
+	}
 	public Long getOrderId() {
 		return orderId;
 	}
@@ -59,12 +85,6 @@ public class Order {
 	}
 	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
-	}
-	public double getTotalDiscount() {
-		return totalDiscount;
-	}
-	public void setTotalDiscount(double totalDiscount) {
-		this.totalDiscount = totalDiscount;
 	}
 
 }

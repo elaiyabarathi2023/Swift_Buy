@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,6 +56,63 @@ public class OrderController {
         List<Order> orders = orderService.getAllOrdersByUser(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+    @DeleteMapping("/{orderId}/cancel")
+    public ResponseEntity<String> cancelOrder(@PathVariable Long orderId,HttpServletRequest request) {
+    	
+ 		
+        try {
+        	 Claims claims = (Claims) request.getAttribute("claims");
+             String userIdString = claims.get("userId", String.class);
+     		Long userId = Long.valueOf(userIdString);
+            orderService.cancelOrder(orderId,userId);
+            return ResponseEntity.ok("Order cancelled successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error cancelling order: " + e.getMessage());
+        }
+    }
+    @PutMapping("/{orderId}/shipped")
+    public ResponseEntity<Order> markOrderAsShipped(@PathVariable Long orderId,HttpServletRequest request) {
+    	 Claims claims = (Claims) request.getAttribute("claims");
+         String userIdString = claims.get("userId", String.class);
+ 		Long userId = Long.valueOf(userIdString);
+ 		
+        try {
+            Order order = orderService.markOrderAsShipped(orderId,userId);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 
+    @PutMapping("/{orderId}/delivered")
+    public ResponseEntity<Order> markOrderAsDelivered(@PathVariable Long orderId,HttpServletRequest request) {
+    	 Claims claims = (Claims) request.getAttribute("claims");
+         String userIdString = claims.get("userId", String.class);
+ 		Long userId = Long.valueOf(userIdString);
+ 		
+        try {
+            Order order = orderService.markOrderAsDelivered(orderId,userId);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId,HttpServletRequest request) {
+    	
 
+   	 Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+		Long userId = Long.valueOf(userIdString);
+        try {
+            Order order = orderService.getOrderById(orderId,userId);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 }

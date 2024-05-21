@@ -3,6 +3,7 @@ package com.swiftbuy.user.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swiftbuy.admin.model.ShoppingCartRequest;
 import com.swiftbuy.user.model.ShoppingCart;
+import com.swiftbuy.user.model.ShoppingCartRequest;
+import com.swiftbuy.user.model.AccountManangement.AddressDetails;
+import com.swiftbuy.user.repository.AccountManangement.AddressDetailsRepo;
 import com.swiftbuy.user.service.ShoppingCartService;
 
 import io.jsonwebtoken.Claims;
@@ -23,53 +26,62 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletRequest;
  
-
- 
 @RestController
- 
-@RequestMapping("/api/shoppingcart")
 @Configuration
 @SecurityScheme(   name = "Bearer Authentication",   type = SecuritySchemeType.HTTP,   bearerFormat = "JWT",   scheme = "bearer" )
+@RequestMapping("/api/shoppingcart")
 public class ShoppingCartController {
  
     @Autowired
  
     private ShoppingCartService cartService;
  
-   
+   @Autowired
+   private AddressDetailsRepo addressDetailsRepository;
 
-    @PostMapping("/add")
-    public ResponseEntity<ShoppingCart> addToCart(@RequestBody ShoppingCartRequest cartrequest,
-                                                  HttpServletRequest request) {
-    	  Long userId = (Long) request.getAttribute("userId");
-        // Check if userId is null
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
-        }
-        
-        ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
-        return ResponseEntity.ok(cartItem);
-    }
+   @PostMapping("/add")
+   public ResponseEntity<ShoppingCart> addToCart(@RequestBody ShoppingCartRequest cartrequest, HttpServletRequest request) {
+    
+       Claims claims = (Claims) request.getAttribute("claims");
+       if (claims == null) {
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+       }
+
+       String userIdString = claims.get("userId", String.class);
+       if (userIdString == null) {
+           throw new IllegalArgumentException("UserId cannot be null");
+       }
+       long userId = Long.parseLong(userIdString);
+
+      
+       // Call the service method with the userId
+       ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
+       
+       return ResponseEntity.ok(cartItem);
+   }
 
 
  
     @GetMapping("/cart")
     public ResponseEntity<Map<String, Object>> getCartByUserId(HttpServletRequest request) {
-    	Claims claims = (Claims) request.getAttribute("claims");
+        Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
-		Long userId = Long.valueOf(userIdString);
+        Long userId = Long.valueOf(userIdString);
+
         List<ShoppingCart> cartItems = cartService.getCartUserId(userId);
         Map<String, Double> priceAndDiscount = cartService.calculateTotalPrice(cartItems);
-        //ShoppingCart address=cartService.
-        Map<String, Object> response = new HashMap<>();
-        response.put("cartItems", cartItems);
 
-        response.put("totalPrice", priceAndDiscount.get("totalPrice"));
-        response.put("totalDiscount", priceAndDiscount.get("totalDiscount"));
-        
+        AddressDetails address = addressDetailsRepository.findByUserUserId(userId);
+                
+        Map<String, Object> response = new TreeMap<>();
+        response.put("cartItems:", cartItems);
+        response.put("totalPrice:", priceAndDiscount.get("totalPrice"));
+        response.put("totalCouponDiscount:", priceAndDiscount.get("totalCouponDiscount"));
+        response.put("totalOfferDiscount:", priceAndDiscount.get("totalOfferDiscount"));
+        response.put("address:", address); // Add the addresses to the response
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
  
 }

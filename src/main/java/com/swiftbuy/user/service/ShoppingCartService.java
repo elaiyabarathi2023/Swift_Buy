@@ -2,11 +2,12 @@ package com.swiftbuy.user.service;
 
 
 import com.swiftbuy.admin.model.CouponCodes;
+import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.admin.model.ShoppingCartRequest;
 import com.swiftbuy.admin.repository.CouponCodeRepository;
 import com.swiftbuy.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
+import com.swiftbuy.user.model.ShoppingCartRequest;
 import com.swiftbuy.user.model.UserDetails;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.ShoppingCartRepository;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ShoppingCartService {
@@ -44,11 +46,23 @@ public class ShoppingCartService {
 
     public Map<String, Double> calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
-        double totalDiscount = 0.0;
+        double totalCouponDiscount = 0.0;
+        double totalOfferDiscount = 0.0;
 
         for (ShoppingCart item : cartItems) {
             double itemPrice = item.getProduct().getProductPrice() * item.getQuantity();
+            double discountPercentage = 0.0;
 
+            // Check if the product has an active offer
+            Offer productOffer = item.getProduct().getOffer();
+            if (productOffer != null ) {
+                discountPercentage = productOffer.getDiscountPercentage();
+                double offerDiscount = discountPercentage / 100;
+                totalOfferDiscount += offerDiscount ;
+                itemPrice *= (1 - offerDiscount);
+            }
+
+            // Apply coupon discount if applicable
             if (item.getSelectedCouponId() != null) {
                 CouponCodes itemCoupon = item.getProduct().getCoupons().stream()
                         .filter(coupon -> coupon.getCouponId().equals(item.getSelectedCouponId()))
@@ -56,11 +70,12 @@ public class ShoppingCartService {
                         .orElse(null);
 
                 if (itemCoupon != null) {
-                    double discountPercentage = itemCoupon.getDiscountPercentage();
-                    double discount = discountPercentage/100;
-                    totalDiscount += discount;
-                    itemPrice *= discount;
+                    double couponDiscountPercentage = itemCoupon.getDiscountPercentage();
+                    double couponDiscount = couponDiscountPercentage/ 100;
+                    totalCouponDiscount += couponDiscount;
+                    itemPrice -= couponDiscount;
                 }
+
             }
 
             totalPrice += itemPrice;
@@ -68,7 +83,8 @@ public class ShoppingCartService {
 
         Map<String, Double> result = new HashMap<>();
         result.put("totalPrice", totalPrice);
-        result.put("totalDiscount", totalDiscount);
+        result.put("totalCouponDiscount", totalCouponDiscount);
+        result.put("totalOfferDiscount", totalOfferDiscount);
         return result;
     }
     public ShoppingCart addToCart(ShoppingCartRequest cartrequest, Long userId) {
@@ -83,6 +99,7 @@ public class ShoppingCartService {
         }
         UserDetails user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+      
         Optional<ShoppingCart> cartItemOptional = shoppingCartRepository.findByUserUserIdAndProductProductId(userId, cartrequest.getProductId());
         ShoppingCart cartItem;
         if (cartItemOptional.isPresent()) {
@@ -90,7 +107,7 @@ public class ShoppingCartService {
         } else {
             cartItem = new ShoppingCart();
             cartItem.setProduct(product);
-            cartItem.setUser(user);
+         
         }
         if (cartrequest.getQuantity() == 0) {
             shoppingCartRepository.delete(cartItem);
@@ -99,25 +116,26 @@ public class ShoppingCartService {
         if (cartrequest.getQuantity() > product.getProductQuantity()) {
             throw new IllegalArgumentException("{\"message\": \"Can't add anymore products\"}");
         }
+        cartItem.setUser(user);
         cartItem.setProduct(product);
         cartItem.setQuantity(cartrequest.getQuantity());
-        cartItem.setUser(user);
         cartItem.setSelectedCouponId(cartrequest.getSelectedCouponId());
 
-        // New code to handle address
-        AddressDetails address = addressDetailsRepository.findById(cartrequest.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
+    
+
+        AddressDetails address = addressDetailsRepository.findByIdAndUserUserId(cartrequest.getAddressId(), userId);
+        	    //.orElseThrow(() -> new IllegalArgumentException("The selected address does not belong to the user"));
+            // Set the address in the ShoppingCart object
+            cartItem.setAddress(address);
+        // Set the address in the ShoppingCart object
         cartItem.setAddress(address);
-        if (!address.getUser().getUserId().equals(userId)) {
-            throw new IllegalArgumentException("The selected address does not belong to the user");
-        }
+
         ShoppingCart savedCartItem = shoppingCartRepository.save(cartItem);
         List<ShoppingCart> cartItems = shoppingCartRepository.findByUserUserId(userId);
         Map<String, Double> priceAndDiscount = calculateTotalPrice(cartItems);
         return savedCartItem;
     }
-
-
+  
   
     
     public List<ShoppingCart> getCartUserId(Long userId) {
@@ -127,6 +145,7 @@ public class ShoppingCartService {
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
+        
     }
     public void clearCart(Long userId) {
         // Fetch the cart items for the user

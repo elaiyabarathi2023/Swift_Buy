@@ -1,4 +1,4 @@
-package com.swiftbuy.admin.model;
+package com.swiftbuy.user.model;
 
 public class ShoppingCartRequest {
     private Long productId;

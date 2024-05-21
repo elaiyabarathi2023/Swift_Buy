@@ -3,6 +3,7 @@ package com.swiftbuy.user.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swiftbuy.admin.model.ProductDetails;
+import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,12 +30,23 @@ public class OrderItem {
     private int quantity;
     private double price;
   
-    private Long discountId;
+    private Long coupondiscountId;
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "order_id")
     private Order order;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
+    private AddressDetails address;
+
+	public AddressDetails getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressDetails address) {
+		this.address = address;
+	}
 
 	public Long getOrderItemId() {
 		return orderItemId;
@@ -74,15 +86,17 @@ public class OrderItem {
 		this.price = price;
 	}
 
-	public Long getDiscountId() {
-		return discountId;
+
+
+public Long getCoupondiscountId() {
+		return coupondiscountId;
 	}
 
-	public void setDiscountId(Long discountId) {
-		this.discountId = discountId;
+	public void setCoupondiscountId(Long coupondiscountId) {
+		this.coupondiscountId = coupondiscountId;
 	}
 
-//	public Order getOrder() {
+	//	public Order getOrder() {
 //		return order;
 //	}
 //

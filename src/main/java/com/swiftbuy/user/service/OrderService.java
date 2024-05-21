@@ -49,7 +49,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user); // Set the user in the Order object
         order.setTotalPrice(priceAndDiscount.get("totalPrice"));
-        order.setTotalDiscount(priceAndDiscount.get("totalDiscount"));
+        order.setTotalCouponDiscount(priceAndDiscount.get("totalCouponDiscount"));
 
         // Add each cart item to the order
         for (ShoppingCart cartItem : cartItems) {
@@ -72,9 +72,15 @@ public class OrderService {
             orderItem.setProduct(product);
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPrice(product.getProductPrice() * cartItem.getQuantity());
-            orderItem.setDiscountId(cartItem.getSelectedCouponId());
-            orderItem.setOrder(order); // Set the order for the order item
+            orderItem.setCoupondiscountId(cartItem.getSelectedCouponId());
+            // Fetch the address from the first item in the cart
+            if (!cartItems.isEmpty()) {
+                orderItem.setAddress(cartItems.get(0).getAddress());
+            }
+            order.setTotalOfferDiscount(priceAndDiscount.get("totalOfferDiscount"));
+            orderItem.setOrder(order);
             order.getOrderItems().add(orderItem);
+            
         }
 
         // Save the order
@@ -91,6 +97,76 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return orderRepository.findByUserUserId(userId);
     }
-    
+    public Order getOrderById(Long orderId, Long userId) {
+        UserDetails user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        if (!order.getUser().getUserId().equals(userId)) {
+            throw new ResourceNotFoundException("Order does not belong to the user");
+        }
+        return order;
+    }
 
+
+    public void cancelOrder(Long orderId,Long userId) {
+    	 UserDetails user = userRepository.findById(userId)
+                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        if (order.getOrderStatus() != Order.OrderStatus.PLACED) {
+            throw new IllegalStateException("Cannot cancel an order that is not in PLACED status");
+        }
+
+        // Update the order status to CANCELLED
+        order.setOrderStatus(Order.OrderStatus.CANCELLED);
+
+        // Restore the product quantities
+        for (OrderItem orderItem : order.getOrderItems()) {
+            ProductDetails product = orderItem.getProduct();
+            product.setProductQuantity(product.getProductQuantity() + orderItem.getQuantity());
+        }
+
+        // Save the updated order and product quantities
+        orderRepository.save(order);
+    }
+    public Order markOrderAsShipped(Long orderId,Long userId) {
+    	  UserDetails user = userRepository.findById(userId)
+                  .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        if (order.getOrderStatus() == Order.OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot mark a cancelled order as shipped");
+        }
+
+        if (order.getOrderStatus() != Order.OrderStatus.PLACED) {
+            throw new IllegalStateException("Cannot mark an order as shipped that is not in PLACED status");
+        }
+
+        order.setOrderStatus(Order.OrderStatus.SHIPPED);
+        return orderRepository.save(order);
+    }
+
+    public Order markOrderAsDelivered(Long orderId,Long userId) {
+    	  UserDetails user = userRepository.findById(userId)
+                  .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        if (order.getOrderStatus() == Order.OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot mark a cancelled order as delivered");
+        }
+
+        if (order.getOrderStatus() != Order.OrderStatus.SHIPPED) {
+            throw new IllegalStateException("Cannot mark an order as delivered that is not in SHIPPED status");
+        }
+
+        order.setOrderStatus(Order.OrderStatus.DELIVERED);
+        return orderRepository.save(order);
+    }
 }
+
+
+
