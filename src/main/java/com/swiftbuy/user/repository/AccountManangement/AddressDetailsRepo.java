@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 
 @Repository
@@ -18,3 +17,4 @@ public interface AddressDetailsRepo extends CrudRepository<AddressDetails, Long>
 	
 	
 }
+ 

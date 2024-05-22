@@ -3,8 +3,7 @@ package com.swiftbuy.user.model;
 public class ShoppingCartRequest {
     private Long productId;
     private int quantity;
-    private Long selectedCouponId; // Change to selectedCouponId
-    private Long addressId; // Add this field
+    private Long selectedCouponId;
 
     // Getters and setters
 
@@ -30,13 +29,5 @@ public class ShoppingCartRequest {
 
     public void setSelectedCouponId(Long selectedCouponId) {
         this.selectedCouponId = selectedCouponId;
-    }
-
-    public Long getAddressId() { // Getter for addressId
-        return addressId;
-    }
-
-    public void setAddressId(Long addressId) { // Setter for addressId
-        this.addressId = addressId;
     }
 }

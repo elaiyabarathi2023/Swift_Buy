@@ -56,6 +56,7 @@
 
 package com.swiftbuy.user.controller.AccountManangement;
 
+import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.service.AccountManangement.AddressDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,10 +66,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/addresses")
@@ -80,16 +84,15 @@ public class AddressDetailsController {
     private AddressDetailsService addressDetailsService;
 
     @PostMapping
-    public ResponseEntity<AddressDetails> createAddressDetails(@RequestBody AddressDetails addressDetails) {
-        AddressDetails createdAddressDetails;
-        try {
-            createdAddressDetails = addressDetailsService.createAddressDetails(addressDetails);
-            return new ResponseEntity<>(createdAddressDetails, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    public ResponseEntity<AddressDetails> createAddressDetails(@RequestBody AddressDetails addressDetails,HttpServletRequest request) {
+    	Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+        Long userId = Long.valueOf(userIdString);
 
+        AddressDetails createdAddressDetails = addressDetailsService.createAddress(addressDetails,userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdAddressDetails);
+    }
+    
     @GetMapping("/list")
     public @ResponseBody Iterable<AddressDetails> getAllAddressDetails() {
         return addressDetailsService.getAllAddressDetails();

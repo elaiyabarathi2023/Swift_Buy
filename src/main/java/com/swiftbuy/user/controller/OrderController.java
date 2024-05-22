@@ -100,19 +100,13 @@ public class OrderController {
                     .body(null);
         }
     }
-    @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId,HttpServletRequest request) {
-    	
-
-   	 Claims claims = (Claims) request.getAttribute("claims");
+    @GetMapping("/getOrder/{orderId}")
+    public ResponseEntity<Order> getOrderById(@PathVariable(value = "orderId") Long orderId,
+           HttpServletRequest request) {
+    	Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
 		Long userId = Long.valueOf(userIdString);
-        try {
-            Order order = orderService.getOrderById(orderId,userId);
-            return ResponseEntity.ok(order);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-    }
+        Order order = orderService.getOrderById(orderId, userId);
+        return ResponseEntity.ok().body(order);
+}
 }

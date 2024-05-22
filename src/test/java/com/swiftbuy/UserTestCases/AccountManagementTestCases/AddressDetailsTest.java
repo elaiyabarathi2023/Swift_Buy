@@ -5,8 +5,8 @@ package com.swiftbuy.UserTestCases.AccountManagementTestCases;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftbuy.user.controller.AccountManangement.AddressDetailsController;
-import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.model.UserDetails;
+import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.AccountManangement.AddressDetailsRepo;
 import com.swiftbuy.user.repository.UserRepository;
 import com.swiftbuy.user.service.AccountManangement.AddressDetailsService;
@@ -76,7 +76,7 @@ public class AddressDetailsTest {
   @Test
   public void testCreateAddressDetails() throws Exception {
       AddressDetails addressDetails = new AddressDetails();
-      addressDetails.setAddressType("Home");
+      addressDetails.setAddressType(null);
       addressDetails.setPermanentAddress("123 Main St");
       addressDetails.setCurrentAddress("456 Oak St");
       addressDetails.setStreetAddress("789 Elm St");
@@ -113,7 +113,7 @@ public class AddressDetailsTest {
       Long addressDetailsId = 1L;
       AddressDetails addressDetails = new AddressDetails();
       addressDetails.setId(addressDetailsId);
-      addressDetails.setAddressType("Home");
+      addressDetails.setAddressType(null);
       addressDetails.setPermanentAddress("123 Main St");
       addressDetails.setCurrentAddress("456 Oak St");
       addressDetails.setStreetAddress("789 Elm St");
