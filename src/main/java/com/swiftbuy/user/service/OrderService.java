@@ -12,6 +12,7 @@ import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.OrderItem;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.UserDetails;
+import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.OrderItemRepository;
 import com.swiftbuy.user.repository.OrderRepository;
 import com.swiftbuy.user.repository.ShoppingCartRepository;
@@ -67,17 +68,14 @@ public class OrderService {
 
             // Subtract product quantity based on the quantity in order
             product.setProductQuantity(product.getProductQuantity() - cartItem.getQuantity());
-
+            AddressDetails addressDetails = cartService.getAddressById(userId);
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPrice(product.getProductPrice() * cartItem.getQuantity());
             orderItem.setCoupondiscountId(cartItem.getSelectedCouponId());
-            // Fetch the address from the first item in the cart
-            if (!cartItems.isEmpty()) {
-                orderItem.setAddress(cartItems.get(0).getAddress());
-            }
             order.setTotalOfferDiscount(priceAndDiscount.get("totalOfferDiscount"));
+            orderItem.setAddress(addressDetails);
             orderItem.setOrder(order);
             order.getOrderItems().add(orderItem);
             
@@ -97,17 +95,12 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return orderRepository.findByUserUserId(userId);
     }
-    public Order getOrderById(Long orderId, Long userId) {
-        UserDetails user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Order order = orderRepository.findById(orderId)
+    public Order getOrderById(Long orderId,Long userId) {
+    	  UserDetails user = userRepository.findById(userId)
+                  .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-        if (!order.getUser().getUserId().equals(userId)) {
-            throw new ResourceNotFoundException("Order does not belong to the user");
-        }
-        return order;
     }
-
 
     public void cancelOrder(Long orderId,Long userId) {
     	 UserDetails user = userRepository.findById(userId)

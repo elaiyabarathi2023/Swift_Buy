@@ -31,14 +31,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @SecurityScheme(   name = "Bearer Authentication",   type = SecuritySchemeType.HTTP,   bearerFormat = "JWT",   scheme = "bearer" )
 @RequestMapping("/api/shoppingcart")
 public class ShoppingCartController {
- 
+	 
     @Autowired
  
     private ShoppingCartService cartService;
  
    @Autowired
    private AddressDetailsRepo addressDetailsRepository;
-
+ 
    @PostMapping("/add")
    public ResponseEntity<ShoppingCart> addToCart(@RequestBody ShoppingCartRequest cartrequest, HttpServletRequest request) {
     
@@ -46,42 +46,50 @@ public class ShoppingCartController {
        if (claims == null) {
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
        }
-
+ 
        String userIdString = claims.get("userId", String.class);
        if (userIdString == null) {
            throw new IllegalArgumentException("UserId cannot be null");
        }
        long userId = Long.parseLong(userIdString);
-
+ 
       
        // Call the service method with the userId
        ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
        
        return ResponseEntity.ok(cartItem);
    }
-
-
+   @PostMapping("/address")
+   public ResponseEntity<?> addAddress(@RequestBody Map<String, Long> addressRequest, HttpServletRequest request) {
+	   Claims claims = (Claims) request.getAttribute("claims");
+       String userIdString = claims.get("userId", String.class);
+       Long userId = Long.valueOf(userIdString);
+	   Long addressId = addressRequest.get("addressId");
+       return ResponseEntity.ok(cartService.addAddress(addressId, userId));
+   }
  
-    @GetMapping("/cart")
+ 
+    @GetMapping
     public ResponseEntity<Map<String, Object>> getCartByUserId(HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
-
+ 
         List<ShoppingCart> cartItems = cartService.getCartUserId(userId);
         Map<String, Double> priceAndDiscount = cartService.calculateTotalPrice(cartItems);
-
-        AddressDetails address = addressDetailsRepository.findByUserUserId(userId);
+        // Fetch address details for the user
+        AddressDetails addressDetails = cartService.getAddressById(userId);
+       
                 
         Map<String, Object> response = new TreeMap<>();
         response.put("cartItems:", cartItems);
         response.put("totalPrice:", priceAndDiscount.get("totalPrice"));
         response.put("totalCouponDiscount:", priceAndDiscount.get("totalCouponDiscount"));
         response.put("totalOfferDiscount:", priceAndDiscount.get("totalOfferDiscount"));
-        response.put("address:", address); // Add the addresses to the response
-
+        response.put("addressDetails:", addressDetails);
+ 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+ 
  
 }

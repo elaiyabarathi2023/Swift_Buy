@@ -10,5 +10,11 @@ import com.swiftbuy.user.model.UserDetails;
 
 public interface OrderRepository extends CrudRepository<Order, Long> {
     List<Order> findByUserUserId(Long userId);
+  
+	
+
+
+
+	//Optional<Order> findByUserUserIdAndId(Long userId, Long orderId);
 }
 

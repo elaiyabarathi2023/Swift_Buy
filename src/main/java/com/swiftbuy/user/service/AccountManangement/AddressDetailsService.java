@@ -6,6 +6,7 @@ import com.swiftbuy.user.repository.UserRepository;
 import com.swiftbuy.user.repository.AccountManangement.AddressDetailsRepo;
 import com.swiftbuy.user.model.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,10 +29,13 @@ public class AddressDetailsService {
                 .orElseThrow();
     }
 
-    public AddressDetails createAddressDetails(AddressDetails addressDetails) {
-        UserDetails user = userDetailsRepository.findById(addressDetails.getUser().getUserId())
-                .orElseThrow();
+ 
+
+    public AddressDetails createAddress(AddressDetails addressDetails,Long userId) {
+    	 UserDetails user = userDetailsRepository.findById(userId)
+                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         addressDetails.setUser(user);
+       
         return addressDetailsRepository.save(addressDetails);
     }
 

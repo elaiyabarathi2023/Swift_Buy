@@ -13,7 +13,7 @@ public class FilterConfigUser {
     public FilterRegistrationBean jwtFilterUser() {
         FilterRegistrationBean filter= new FilterRegistrationBean();
         filter.setFilter(new jwtFilterUser( ));
-       filter.addUrlPatterns("/api/shoppingcart/add","/api/shoppingcart/cart","/order","/order/orders/get","/order/{orderId}/cancel","/order/{orderId}/shipped","/order/{orderId}/delivered","/order/{orderId}");
+       filter.addUrlPatterns("/api/shoppingcart/*","/api/shoppingcart","/order","/order/*","/api/addresses");
      
      
 
