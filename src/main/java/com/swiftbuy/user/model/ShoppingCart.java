@@ -2,6 +2,7 @@ package com.swiftbuy.user.model;
 
 import com.swiftbuy.admin.model.ProductDetails;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,12 +24,10 @@ public class ShoppingCart {
     @JoinColumn(name = "product_id", nullable = false)
     private ProductDetails product;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserDetails user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     private int quantity;
-
     private Long selectedCouponId;
 
     // Getters and setters
@@ -65,11 +64,11 @@ public class ShoppingCart {
         this.quantity = quantity;
     }
 
-    public UserDetails getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDetails user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

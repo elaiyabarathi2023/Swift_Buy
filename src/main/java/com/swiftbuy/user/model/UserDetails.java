@@ -38,17 +38,17 @@ return phoneNumber;
 public void setPhoneNumber(String phoneNumber) {
 this.phoneNumber = phoneNumber;
 }
-@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-@JsonIgnore
-private List<Order> orders;
+//@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//@JsonIgnore
+//private List<Order> orders;
 @ValidPhone
 private String phoneNumber;
-public List<Order> getOrders() {
-return orders;
-}
-public void setOrders(List<Order> orders) {
-this.orders = orders;
-}
+//public List<Order> getOrders() {
+//return orders;
+//}
+//public void setOrders(List<Order> orders) {
+//this.orders = orders;
+//}
 //public ShoppingCart getShoppingCart() {
 //return shoppingCart;
 //}

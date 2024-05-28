@@ -1,9 +1,12 @@
 package com.swiftbuy.user.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.swiftbuy.admin.model.DeliveredDTO;
+import com.swiftbuy.user.model.CancellationDTO;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.service.OrderService;
 
@@ -71,35 +76,7 @@ public class OrderController {
                     .body("Error cancelling order: " + e.getMessage());
         }
     }
-    @PutMapping("/{orderId}/shipped")
-    public ResponseEntity<Order> markOrderAsShipped(@PathVariable Long orderId,HttpServletRequest request) {
-    	 Claims claims = (Claims) request.getAttribute("claims");
-         String userIdString = claims.get("userId", String.class);
- 		Long userId = Long.valueOf(userIdString);
- 		
-        try {
-            Order order = orderService.markOrderAsShipped(orderId,userId);
-            return ResponseEntity.ok(order);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-    }
-
-    @PutMapping("/{orderId}/delivered")
-    public ResponseEntity<Order> markOrderAsDelivered(@PathVariable Long orderId,HttpServletRequest request) {
-    	 Claims claims = (Claims) request.getAttribute("claims");
-         String userIdString = claims.get("userId", String.class);
- 		Long userId = Long.valueOf(userIdString);
- 		
-        try {
-            Order order = orderService.markOrderAsDelivered(orderId,userId);
-            return ResponseEntity.ok(order);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
-        }
-    }
+    
     @GetMapping("/getOrder/{orderId}")
     public ResponseEntity<Order> getOrderById(@PathVariable(value = "orderId") Long orderId,
            HttpServletRequest request) {
@@ -109,4 +86,42 @@ public class OrderController {
         Order order = orderService.getOrderById(orderId, userId);
         return ResponseEntity.ok().body(order);
 }
+    @GetMapping("/cancelled/{orderId}")
+    public ResponseEntity<CancellationDTO> getCancelledOrderById(@PathVariable(value = "orderId") Long orderId,
+           HttpServletRequest request) {
+    	Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+		Long userId = Long.valueOf(userIdString);
+        CancellationDTO order = orderService.getCancelledOrder(orderId, userId);
+        return ResponseEntity.ok().body(order);
+}
+    @GetMapping("/delivered/{orderId}")
+    public ResponseEntity<DeliveredDTO> getDeliveredOrderById(@PathVariable(value = "orderId") Long orderId,
+           HttpServletRequest request) {
+    	Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+		Long userId = Long.valueOf(userIdString);
+		DeliveredDTO order = orderService.getDeliveredOrder(orderId, userId);
+        return ResponseEntity.ok().body(order);
+}
+    @GetMapping("/cancelled")
+    public ResponseEntity<List<CancellationDTO>> getCancelledOrders(HttpServletRequest request) {
+        Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+        Long userId = Long.valueOf(userIdString);
+        List<CancellationDTO> cancelledOrders = orderService.getAllCancelledOrders(userId);
+        return ResponseEntity.ok(cancelledOrders);
+    }
+
+
+   
+
+    @GetMapping("/delivered")
+    public ResponseEntity< List<DeliveredDTO>> getDeliveredOrders(HttpServletRequest request) {
+        Claims claims = (Claims) request.getAttribute("claims");
+        String userIdString = claims.get("userId", String.class);
+        Long userId = Long.valueOf(userIdString);
+        List<DeliveredDTO>deliveredOrders = orderService.getAllDeliveredOrders(userId);
+        return ResponseEntity.ok(deliveredOrders);
+    }
 }

@@ -1,7 +1,6 @@
 package com.swiftbuy.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 

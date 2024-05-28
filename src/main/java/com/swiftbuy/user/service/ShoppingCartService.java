@@ -1,9 +1,18 @@
 package com.swiftbuy.user.service;
 
-import com.swiftbuy.admin.model.CouponCodes;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.swiftbuy.admin.model.CouponCodes;	
 import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.admin.repository.CouponCodeRepository;
 import com.swiftbuy.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.ShoppingCartRequest;
@@ -13,16 +22,7 @@ import com.swiftbuy.user.repository.ShoppingCartRepository;
 import com.swiftbuy.user.repository.UserRepository;
 import com.swiftbuy.user.repository.AccountManangement.AddressDetailsRepo;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import io.swagger.v3.core.util.Json;
 
 @Service
 public class ShoppingCartService {
@@ -34,13 +34,10 @@ public class ShoppingCartService {
     private ProductRepository productRepository;
 
     @Autowired
-    private CouponCodeRepository couponCodeRepository;
+    private AddressDetailsRepo addressRepository;
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private AddressDetailsRepo addressRepository;
-    
 
     public Map<String, Double> calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
@@ -57,7 +54,7 @@ public class ShoppingCartService {
                 discountPercentage = productOffer.getDiscountPercentage();
                 double offerDiscount = discountPercentage / 100;
                 totalOfferDiscount += offerDiscount;
-                itemPrice *= (1 - offerDiscount);
+                itemPrice -= ( offerDiscount);
             }
 
             // Apply coupon discount if applicable
@@ -71,7 +68,7 @@ public class ShoppingCartService {
                     double couponDiscountPercentage = itemCoupon.getDiscountPercentage();
                     double couponDiscount = couponDiscountPercentage / 100;
                     totalCouponDiscount += couponDiscount;
-                    itemPrice -= couponDiscount;
+                    itemPrice -= (couponDiscount);
                 }
             }
 
@@ -88,6 +85,7 @@ public class ShoppingCartService {
     public ShoppingCart addToCart(ShoppingCartRequest cartRequest, Long userId) {
         ProductDetails product = productRepository.findById(cartRequest.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
         CouponCodes selectedCoupon = null;
         if (cartRequest.getSelectedCouponId() != null) {
             selectedCoupon = product.getCoupons().stream()
@@ -95,57 +93,69 @@ public class ShoppingCartService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Selected coupon is not valid for this product"));
         }
-        UserDetails user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Optional<ShoppingCart> cartItemOptional = shoppingCartRepository.findByUserUserIdAndProductProductId(userId, cartRequest.getProductId());
         ShoppingCart cartItem;
+        Optional<ShoppingCart> cartItemOptional = shoppingCartRepository.findByUserIdAndProductProductId(userId, cartRequest.getProductId());
         if (cartItemOptional.isPresent()) {
             cartItem = cartItemOptional.get();
         } else {
             cartItem = new ShoppingCart();
             cartItem.setProduct(product);
         }
+
         if (cartRequest.getQuantity() == 0) {
             shoppingCartRepository.delete(cartItem);
             return null;
+           
         }
+
         if (cartRequest.getQuantity() > product.getProductQuantity()) {
-            throw new IllegalArgumentException("{\"message\": \"Can't add anymore products\"}");
+            throw new IllegalArgumentException("Cannot add more products to the cart!!!!");
         }
-        cartItem.setUser(user);
+
+        cartItem.setUserId(userId);
         cartItem.setProduct(product);
         cartItem.setQuantity(cartRequest.getQuantity());
         cartItem.setSelectedCouponId(cartRequest.getSelectedCouponId());
 
         ShoppingCart savedCartItem = shoppingCartRepository.save(cartItem);
-        List<ShoppingCart> cartItems = shoppingCartRepository.findByUserUserId(userId);
+        List<ShoppingCart> cartItems = shoppingCartRepository.findByUserId(userId);
         Map<String, Double> priceAndDiscount = calculateTotalPrice(cartItems);
+
         return savedCartItem;
     }
-    public AddressDetails addAddress(Long addressId, Long userId) {
+
+    public AddressDetails selectAddress(Long addressId, Long userId) {
         UserDetails user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        AddressDetails addressDetails = addressRepository.findById(addressId)
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
-
-        // Set the user for the address
-        addressDetails.setUser(user);
-
-        return addressRepository.save(addressDetails);
-    }
-    public AddressDetails getAddressById(Long addressId) {
-        return addressRepository.findById(addressId)
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
-    }
-    public List<ShoppingCart> getCartUserId(Long userId) {
-        Optional<UserDetails> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return shoppingCartRepository.findByUser(user.get());
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        // Unselect any previously selected address for the user
+        List<AddressDetails> userAddresses = addressRepository.findByUserId(userId);
+        for (AddressDetails address : userAddresses) {
+            address.setSelected(false);
         }
+        addressRepository.saveAll(userAddresses);
+
+        AddressDetails selectedAddress = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
+
+        // Set the user and mark the address as selected
+        selectedAddress.setUserId(userId);
+        selectedAddress.setSelected(true);
+
+        return addressRepository.save(selectedAddress);
+    }
+
+    public AddressDetails getAddressForUserByUserId(Long userId) {
+        return addressRepository.findByUserIdAndIsSelectedTrue(userId);
+                
+    }
+
+             
+    
+
+    public List<ShoppingCart> getCartUserId(Long userId) {
+        return shoppingCartRepository.findByUserId(userId);
     }
 
     public void clearCart(Long userId) {
