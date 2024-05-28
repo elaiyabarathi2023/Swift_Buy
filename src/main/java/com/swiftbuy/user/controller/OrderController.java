@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,13 +57,16 @@ public class OrderController {
     
     
     @GetMapping("/orders/get")
-    public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request){
-    	Claims claims = (Claims) request.getAttribute("claims");
+    public ResponseEntity<Page<Order>> getAllOrdersByUser(
+            @PageableDefault(size = 10) Pageable pageable,
+            HttpServletRequest request) {
+        Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
-		Long userId = Long.valueOf(userIdString);
-        List<Order> orders = orderService.getAllOrdersByUser(userId);
+        Long userId = Long.valueOf(userIdString);
+        Page<Order> orders = orderService.getAllOrdersByUser(userId, pageable);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
     @DeleteMapping("/{orderId}/cancel")
     public ResponseEntity<String> cancelOrder(@PathVariable Long orderId,HttpServletRequest request) {
     	
@@ -105,11 +111,13 @@ public class OrderController {
         return ResponseEntity.ok().body(order);
 }
     @GetMapping("/cancelled")
-    public ResponseEntity<List<CancellationDTO>> getCancelledOrders(HttpServletRequest request) {
+    public ResponseEntity<Page<CancellationDTO>> getCancelledOrders(
+            @PageableDefault(size = 10) Pageable pageable,
+            HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
-        List<CancellationDTO> cancelledOrders = orderService.getAllCancelledOrders(userId);
+        Page<CancellationDTO> cancelledOrders = orderService.getAllCancelledOrders(userId, pageable);
         return ResponseEntity.ok(cancelledOrders);
     }
 
@@ -117,11 +125,13 @@ public class OrderController {
    
 
     @GetMapping("/delivered")
-    public ResponseEntity< List<DeliveredDTO>> getDeliveredOrders(HttpServletRequest request) {
+    public ResponseEntity<Page<DeliveredDTO>> getDeliveredOrders(
+            @PageableDefault(size = 10) Pageable pageable,
+            HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
-        List<DeliveredDTO>deliveredOrders = orderService.getAllDeliveredOrders(userId);
+        Page<DeliveredDTO> deliveredOrders = orderService.getAllDeliveredOrders(userId, pageable);
         return ResponseEntity.ok(deliveredOrders);
     }
 }

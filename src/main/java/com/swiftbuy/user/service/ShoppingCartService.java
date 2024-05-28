@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.swiftbuy.admin.model.CouponCodes;	
+import com.swiftbuy.admin.model.CouponCodes;
 import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.product.repository.ProductRepository;
@@ -21,8 +20,6 @@ import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.ShoppingCartRepository;
 import com.swiftbuy.user.repository.UserRepository;
 import com.swiftbuy.user.repository.AccountManangement.AddressDetailsRepo;
-
-import io.swagger.v3.core.util.Json;
 
 @Service
 public class ShoppingCartService {

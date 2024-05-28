@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -59,46 +61,30 @@ public class AdminOrderService {
 		return orderRepository.save(order);
 	}
 
-	public List<ShippingDTO> getAllShippedOrders() {
-		LocalDateTime startDate = LocalDateTime.now().minusDays(30); // For example, last 7 days
-		LocalDateTime endDate = LocalDateTime.now();
+	public Page<ShippingDTO> getAllShippedOrders(Pageable pageable) {
+	    LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+	    LocalDateTime endDate = LocalDateTime.now();
 
-		List<Order> shippedOrders = orderRepository.findByOrderStatusAndShippedDateBetween(Order.OrderStatus.SHIPPED,
-				startDate, endDate);
+	    Page<Order> shippedOrders = orderRepository.findByOrderStatusAndShippedDateBetween(
+	        Order.OrderStatus.SHIPPED, startDate, endDate, pageable);
 
-		List<ShippingDTO> shippingDTOs = new ArrayList<>();
-
-		for (Order order : shippedOrders) {
-			shippingDTOs.add(orderUtil.convertOrderToShippingDTO(order));
-		}
-
-		return shippingDTOs;
+	    return shippedOrders.map(orderUtil::convertOrderToShippingDTO);
 	}
 
-	public List<CancellationDTO> getAllCancelledOrders() {
+	public Page<CancellationDTO> getAllCancelledOrders(Pageable pageable) {
+	    Page<Order> cancelledOrders = orderRepository.findByOrderStatusEquals(Order.OrderStatus.CANCELLED, pageable);
 
-		List<Order> cancelledOrders = orderRepository.findByOrderStatusEquals(Order.OrderStatus.CANCELLED);
-		List<CancellationDTO> cancellationDTOs = new ArrayList<>();
-		for (Order order : cancelledOrders) {
-			cancellationDTOs.add(orderUtil.convertOrderToCancellationDTO(order));
-		}
-		return cancellationDTOs;
+	    return cancelledOrders.map(orderUtil::convertOrderToCancellationDTO);
 	}
 
-	public List<DeliveredDTO> getAllDeliveredOrders() {
-		LocalDateTime startDate = LocalDateTime.now().minusDays(30);
-		LocalDateTime endDate = LocalDateTime.now();
+	public Page<DeliveredDTO> getAllDeliveredOrders(Pageable pageable) {
+	    LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+	    LocalDateTime endDate = LocalDateTime.now();
 
-		List<Order> deliveredOrders = orderRepository
-				.findByOrderStatusAndDeliveredDateBetween(Order.OrderStatus.DELIVERED, startDate, endDate);
+	    Page<Order> deliveredOrders = orderRepository.findByOrderStatusAndDeliveredDateBetween(
+	        Order.OrderStatus.DELIVERED, startDate, endDate, pageable);
 
-		List<DeliveredDTO> DeliveredDTOs = new ArrayList<>();
-
-		for (Order order : deliveredOrders) {
-			DeliveredDTOs.add(orderUtil.convertOrderToDeliveredDTO(order));
-		}
-
-		return DeliveredDTOs;
+	    return deliveredOrders.map(orderUtil::convertOrderToDeliveredDTO);
 	}
 
 }

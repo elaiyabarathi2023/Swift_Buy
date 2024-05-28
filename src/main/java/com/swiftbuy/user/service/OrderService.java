@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -88,11 +90,11 @@ public class OrderService {
         return savedOrder;
     }
 
-    public List<Order> getAllOrdersByUser(Long userId) {
+    public Page<Order> getAllOrdersByUser(Long userId, Pageable pageable) {
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return orderRepository.findByUserId(userId);
+        return orderRepository.findByUserId(userId, pageable);
     }
-
+   
     public Order getOrderById(Long orderId, Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
@@ -116,18 +118,16 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    public List<CancellationDTO> getAllCancelledOrders(Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public Page<CancellationDTO> getAllCancelledOrders(Long userId, Pageable pageable) {
+    	   // Check if the user exists
+    	   userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<Order> cancelledOrders = orderRepository.findByUserIdAndOrderStatusEquals(userId,
-                Order.OrderStatus.CANCELLED);
-        List<CancellationDTO> cancellationDTOs = new ArrayList<>();
-        for (Order order : cancelledOrders) {
-            cancellationDTOs.add(orderutil.convertOrderToCancellationDTO(order));
-        }
-        return cancellationDTOs;
-    }
+    	   // Get a Page of cancelled Orders for the given userId and pageable
+    	   Page<Order> cancelledOrders = orderRepository.findByUserIdAndOrderStatusEquals(userId, Order.OrderStatus.CANCELLED, pageable);
 
+    	   // Convert each Order object to a CancellationDTO object using the orderutil.convertOrderToCancellationDTO method
+    	   return cancelledOrders.map(order -> orderutil.convertOrderToCancellationDTO(order));
+    	}
     public CancellationDTO getCancelledOrder(Long orderId, Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -135,16 +135,15 @@ public class OrderService {
         return orderutil.convertOrderToCancellationDTO(order);
     }
 
-    public List<DeliveredDTO> getAllDeliveredOrders(Long userId) {
+    public Page<DeliveredDTO> getAllDeliveredOrders(Long userId, Pageable pageable) {
+        // Check if the user exists
         userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<Order> deliveredOrders = orderRepository.findByUserIdAndOrderStatus(userId,
-                Order.OrderStatus.DELIVERED);
-        List<DeliveredDTO> deliveredDTOs = new ArrayList<>();
-        for (Order order : deliveredOrders) {
-            deliveredDTOs.add(orderutil.convertOrderToDeliveredDTO(order));
-        }
-        return deliveredDTOs;
+        // Get a Page of delivered Orders for the given userId and pageable
+        Page<Order> deliveredOrders = orderRepository.findByUserIdAndOrderStatus(userId, Order.OrderStatus.DELIVERED, pageable);
+
+        // Convert each Order object to a DeliveredDTO object using the orderutil.convertOrderToDeliveredDTO method
+        return deliveredOrders.map(order -> orderutil.convertOrderToDeliveredDTO(order));
     }
 
     public DeliveredDTO getDeliveredOrder(Long orderId, Long userId) {

@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,18 +60,20 @@ public class AdminOrderController {
 	        }
 	    }
 	    @GetMapping("/shipped")
-	    public ResponseEntity<List<ShippingDTO>> getAllShippedOrders() {
-	        List<ShippingDTO> shippedOrders = adminorderService.getAllShippedOrders();
+	    public ResponseEntity<Page<ShippingDTO>> getAllShippedOrders(@PageableDefault(size = 10) Pageable pageable) {
+	        Page<ShippingDTO> shippedOrders = adminorderService.getAllShippedOrders(pageable);
 	        return ResponseEntity.ok(shippedOrders);
 	    }
+
 	    @GetMapping("/delivered")
-	    public ResponseEntity<List<DeliveredDTO>> getAllDeliveredOrders() {
-	        List<DeliveredDTO> deliveredOrders = adminorderService.getAllDeliveredOrders();
+	    public ResponseEntity<Page<DeliveredDTO>> getAllDeliveredOrders(@PageableDefault(size = 10) Pageable pageable) {
+	        Page<DeliveredDTO> deliveredOrders = adminorderService.getAllDeliveredOrders(pageable);
 	        return ResponseEntity.ok(deliveredOrders);
 	    }
-	        @GetMapping("/cancelled")
-		    public ResponseEntity<List<CancellationDTO>> getAllCancelledOrders() {
-		        List<CancellationDTO> cancelledOrders = adminorderService.getAllCancelledOrders();
-		        return ResponseEntity.ok(cancelledOrders);
+
+	    @GetMapping("/cancelled")
+	    public ResponseEntity<Page<CancellationDTO>> getAllCancelledOrders(@PageableDefault(size = 10) Pageable pageable) {
+	        Page<CancellationDTO> cancelledOrders = adminorderService.getAllCancelledOrders(pageable);
+	        return ResponseEntity.ok(cancelledOrders);
 	    }
 }
