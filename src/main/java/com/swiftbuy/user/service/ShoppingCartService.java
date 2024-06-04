@@ -24,18 +24,18 @@ import com.swiftbuy.user.repository.AccountManangement.AddressDetailsRepo;
 @Service
 public class ShoppingCartService {
 
-    @Autowired
     private ShoppingCartRepository shoppingCartRepository;
-
-    @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
     private AddressDetailsRepo addressRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    public ShoppingCartService(ShoppingCartRepository shoppingCartRepository, ProductRepository productRepository, AddressDetailsRepo addressRepository, UserRepository userRepository) {
+        this.shoppingCartRepository = shoppingCartRepository;
+        this.productRepository = productRepository;
+        this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
+    }
     public Map<String, Double> calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
         double totalCouponDiscount = 0.0;

@@ -2,6 +2,7 @@ package com.swiftbuy.user.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +32,7 @@ public class JwtGenerator implements TokenGeneratorAdmin {
 	@Override
 	public Map<String, String> generateToken(UserDetails userdata)throws InvalidKeyException {
 		   Map<String, String> jwtTokenGen = new HashMap<>();
-		Map<String, String> claims = new HashMap<>();
+		Map<String, String> claims = new LinkedHashMap<>();
 		claims.put("firstname", userdata.getFirstname());
 		claims.put("userId", userdata.getUserId().toString());
 		userdata.setCreatedAt(new Date());
@@ -58,8 +59,9 @@ public class JwtGenerator implements TokenGeneratorAdmin {
 		//	} catch (Exception e) {
 			//	e.printStackTrace();
 		//	}
-  		jwtTokenGen.put("token", token);
+		jwtTokenGen.put("status", "true");
   		jwtTokenGen.put("message","Token generated successfully");
+  		jwtTokenGen.put("token", token);
 	    return jwtTokenGen;
 	  
 	  }

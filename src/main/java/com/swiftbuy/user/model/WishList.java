@@ -1,35 +1,8 @@
+
 package com.swiftbuy.user.model;
-
-
-
  
- 
-// postman Query:
-// {    "user": {
-//     "userId": 1
-//     // Add other user details if necessary
-// },
-// "product": {
-//     "productId": 1
-// }
-// 
-//}
-
-
-
-
- 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swiftbuy.admin.model.ProductDetails;
- 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
  
 @Entity
 @Table(name = "wishlistpart")
@@ -39,16 +12,15 @@ public class WishList {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long wishlistId;
  
-    @ManyToOne
-    @JsonIgnoreProperties(value = {"wishList"})  
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserDetails user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
  
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private  ProductDetails product;
+    private ProductDetails product;
  
     // Constructors, getters, and setters
+    public WishList() {}
  
     public Long getWishlistId() {
         return wishlistId;
@@ -58,12 +30,12 @@ public class WishList {
         this.wishlistId = wishlistId;
     }
  
-    public UserDetails getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
  
-    public void setUser(UserDetails user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
  
     public ProductDetails getProduct() {

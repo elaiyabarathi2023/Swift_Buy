@@ -49,7 +49,17 @@ public class ProductDetails {
 //    public void setShoppingCart(ShoppingCart shoppingCart) {
 //        this.shoppingCart = shoppingCart;
 	// }
- 
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "category_id", nullable = false)
+	private Category category;
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
 	@OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JsonIgnore
 	private Offer offer;

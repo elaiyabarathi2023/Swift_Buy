@@ -4,12 +4,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.swiftbuy.admin.model.DeliveredDTO;
 import com.swiftbuy.admin.model.ProductDetails;
@@ -17,32 +20,32 @@ import com.swiftbuy.user.model.CancellationDTO;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.OrderItem;
 import com.swiftbuy.user.model.ShoppingCart;
+import com.swiftbuy.user.model.UserDetails;
 import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.OrderRepository;
 import com.swiftbuy.user.repository.UserRepository;
 
 @Service
 public class OrderService {
-    @Autowired
     private ShoppingCartService cartService;
-
-    @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
     private UserRepository userRepository;
+    private OrderUtil orderUtil;
 
     @Autowired
-    OrderUtil orderutil;
+    public OrderService(ShoppingCartService cartService, OrderRepository orderRepository, UserRepository userRepository, OrderUtil orderUtil) {
+        this.cartService = cartService;
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.orderUtil = orderUtil;
+    }
 
-    public Order createOrder(Long userId) throws Exception {
-        // Fetch the cart details
-        List<ShoppingCart> cartItems = cartService.getCartUserId(userId);
-
+    public Order createOrder(Long userId, List<ShoppingCart> cartItems) throws Exception {
         if (cartItems == null || cartItems.isEmpty()) {
-            throw new Exception("Cart is empty");
+            throw new ResourceNotFoundException("Cart is empty");
         }
-
+      userRepository.findById(userId);
+      
         Map<String, Double> priceAndDiscount = cartService.calculateTotalPrice(cartItems);
 
         // Create a new Order object
@@ -58,12 +61,12 @@ public class OrderService {
 
             // Check if product is out of stock
             if (product.getProductQuantity() == 0) {
-                throw new Exception("Product " + product.getProductId() + " is out of stock");
+                throw new ResourceNotFoundException("Product " + product.getProductId() + " is out of stock");
             }
 
             // Check if product quantity is less than the quantity in cart
             if (product.getProductQuantity() < cartItem.getQuantity()) {
-                throw new Exception(
+                throw new ResourceNotFoundException(
                         "Product " + product.getProductId() + " quantity is less than the quantity you provided");
             }
 
@@ -90,18 +93,19 @@ public class OrderService {
         return savedOrder;
     }
 
+
     public Page<Order> getAllOrdersByUser(Long userId, Pageable pageable) {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
         return orderRepository.findByUserId(userId, pageable);
     }
    
     public Order getOrderById(Long orderId, Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
         return orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     public void cancelOrder(Long orderId, Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
@@ -120,36 +124,37 @@ public class OrderService {
 
     public Page<CancellationDTO> getAllCancelledOrders(Long userId, Pageable pageable) {
     	   // Check if the user exists
-    	   userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
 
     	   // Get a Page of cancelled Orders for the given userId and pageable
     	   Page<Order> cancelledOrders = orderRepository.findByUserIdAndOrderStatusEquals(userId, Order.OrderStatus.CANCELLED, pageable);
 
     	   // Convert each Order object to a CancellationDTO object using the orderutil.convertOrderToCancellationDTO method
-    	   return cancelledOrders.map(order -> orderutil.convertOrderToCancellationDTO(order));
+    	   return cancelledOrders.map(order -> orderUtil.convertOrderToCancellationDTO(order));
     	}
     public CancellationDTO getCancelledOrder(Long orderId, Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
 
         Order order = orderRepository.findByOrderIdAndUserIdAndOrderStatusEquals(orderId, userId, Order.OrderStatus.CANCELLED);
-        return orderutil.convertOrderToCancellationDTO(order);
+        return orderUtil.convertOrderToCancellationDTO(order);
     }
 
     public Page<DeliveredDTO> getAllDeliveredOrders(Long userId, Pageable pageable) {
         // Check if the user exists
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
 
         // Get a Page of delivered Orders for the given userId and pageable
         Page<Order> deliveredOrders = orderRepository.findByUserIdAndOrderStatus(userId, Order.OrderStatus.DELIVERED, pageable);
 
         // Convert each Order object to a DeliveredDTO object using the orderutil.convertOrderToDeliveredDTO method
-        return deliveredOrders.map(order -> orderutil.convertOrderToDeliveredDTO(order));
+        return deliveredOrders.map(order -> orderUtil.convertOrderToDeliveredDTO(order));
     }
 
     public DeliveredDTO getDeliveredOrder(Long orderId, Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
 
         Order order = orderRepository.findByOrderIdAndUserIdAndOrderStatus(orderId, userId, Order.OrderStatus.DELIVERED);
-        return orderutil.convertOrderToDeliveredDTO(order);
+        return orderUtil.convertOrderToDeliveredDTO(order);
     }
+    
 }

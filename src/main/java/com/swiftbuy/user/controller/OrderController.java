@@ -1,5 +1,6 @@
 package com.swiftbuy.user.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swiftbuy.admin.model.DeliveredDTO;
 import com.swiftbuy.user.model.CancellationDTO;
 import com.swiftbuy.user.model.Order;
+import com.swiftbuy.user.model.ShoppingCart;
+import com.swiftbuy.user.repository.OrderRepository;
 import com.swiftbuy.user.service.OrderService;
+import com.swiftbuy.user.service.ShoppingCartService;
 
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -35,40 +39,61 @@ import jakarta.servlet.http.HttpServletRequest;
 @SecurityScheme(   name = "Bearer Authentication",   type = SecuritySchemeType.HTTP,   bearerFormat = "JWT",   scheme = "bearer" )
 @RequestMapping("/order")
 public class OrderController {
+	private OrderService orderService;
+	private ShoppingCartService cartService;
+    private OrderRepository orderRepository;
+
     @Autowired
-    private OrderService orderService;
+    public OrderController(OrderService orderService, OrderRepository orderRepository,ShoppingCartService cartService ) {
+        this.orderService = orderService;
+        this.orderRepository = orderRepository;
+        this.cartService = cartService;
+    }
+    
 
     @PostMapping
-    public ResponseEntity<String> placeOrder(HttpServletRequest request) {
-    	 // Get claims from request
+    public ResponseEntity<Map<String, Object>> placeOrder(HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
-		Long userId = Long.valueOf(userIdString);
-		
-         
+        Long userId = Long.valueOf(userIdString);
+
         try {
-            Order order = orderService.createOrder(userId);
-            return new ResponseEntity<>("Order created successfully: " + order.getOrderId(), HttpStatus.CREATED);
+            List<ShoppingCart> cartItems = cartService.getCartUserId(userId);
+            Order order = orderService.createOrder(userId, cartItems);
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", true);
+            response.put("message", "Order created successfully: " + order.getOrderId());
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
-            String errorMessage = "Internal Server Error: " + e.getMessage();
-            return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", false);
+            errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
     
     
     @GetMapping("/orders/get")
-    public ResponseEntity<Page<Order>> getAllOrdersByUser(
+    public ResponseEntity<Map<String, Object>> getAllOrdersByUser(
             @PageableDefault(size = 10) Pageable pageable,
             HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
+       
         Page<Order> orders = orderService.getAllOrdersByUser(userId, pageable);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", true);
+        response.put("orders:", orders);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+        
     }
+    
 
     @DeleteMapping("/{orderId}/cancel")
-    public ResponseEntity<String> cancelOrder(@PathVariable Long orderId,HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> cancelOrder(@PathVariable Long orderId,HttpServletRequest request) {
     	
  		
         try {
@@ -76,62 +101,119 @@ public class OrderController {
              String userIdString = claims.get("userId", String.class);
      		Long userId = Long.valueOf(userIdString);
             orderService.cancelOrder(orderId,userId);
-            return ResponseEntity.ok("Order cancelled successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error cancelling order: " + e.getMessage());
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", true);
+            response.put("message", "Order cancelled successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", false);
+            errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
     @GetMapping("/getOrder/{orderId}")
-    public ResponseEntity<Order> getOrderById(@PathVariable(value = "orderId") Long orderId,
+    public ResponseEntity<Map<String, Object>> getOrderById(@PathVariable(value = "orderId") Long orderId,
            HttpServletRequest request) {
     	Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
 		Long userId = Long.valueOf(userIdString);
+		try {
         Order order = orderService.getOrderById(orderId, userId);
-        return ResponseEntity.ok().body(order);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", true);
+        response.put("order:",order);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }catch (Exception e) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", false);
+        errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
     @GetMapping("/cancelled/{orderId}")
-    public ResponseEntity<CancellationDTO> getCancelledOrderById(@PathVariable(value = "orderId") Long orderId,
+    public ResponseEntity<Map<String, Object>> getCancelledOrderById(@PathVariable(value = "orderId") Long orderId,
            HttpServletRequest request) {
     	Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
 		Long userId = Long.valueOf(userIdString);
+		try {
         CancellationDTO order = orderService.getCancelledOrder(orderId, userId);
-        return ResponseEntity.ok().body(order);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", true);
+        response.put("cancelled order:",order);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }catch (Exception e) {
+        Map<String, Object> errorResponse = 	new HashMap<>();
+        errorResponse.put("status", false);
+        errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
     @GetMapping("/delivered/{orderId}")
-    public ResponseEntity<DeliveredDTO> getDeliveredOrderById(@PathVariable(value = "orderId") Long orderId,
+    public ResponseEntity<Map<String, Object>> getDeliveredOrderById(@PathVariable(value = "orderId") Long orderId,
            HttpServletRequest request) {
     	Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
 		Long userId = Long.valueOf(userIdString);
+		try {
 		DeliveredDTO order = orderService.getDeliveredOrder(orderId, userId);
-        return ResponseEntity.ok().body(order);
+		 Map<String, Object> response = new HashMap<>();
+	        response.put("status", true);
+	        response.put("delivered order:",order);
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    }catch (Exception e) {
+	        Map<String, Object> errorResponse = new HashMap<>();
+	        errorResponse.put("status", false);
+	        errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+	        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 }
     @GetMapping("/cancelled")
-    public ResponseEntity<Page<CancellationDTO>> getCancelledOrders(
+    public ResponseEntity<Map<String, Object>> getCancelledOrders(
             @PageableDefault(size = 10) Pageable pageable,
             HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
+        try {
         Page<CancellationDTO> cancelledOrders = orderService.getAllCancelledOrders(userId, pageable);
-        return ResponseEntity.ok(cancelledOrders);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", true);
+        response.put("cancelled orders", cancelledOrders);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }catch (Exception e) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", false);
+        errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     }
 
 
    
 
     @GetMapping("/delivered")
-    public ResponseEntity<Page<DeliveredDTO>> getDeliveredOrders(
+    public ResponseEntity<Map<String, Object>>getDeliveredOrders(
             @PageableDefault(size = 10) Pageable pageable,
             HttpServletRequest request) {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
+        try {
         Page<DeliveredDTO> deliveredOrders = orderService.getAllDeliveredOrders(userId, pageable);
-        return ResponseEntity.ok(deliveredOrders);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", true);
+        response.put("delivered orders", deliveredOrders);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }catch (Exception e) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", false);
+        errorResponse.put("error", "Internal Server Error: " + e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+        
+    }
+    
 }

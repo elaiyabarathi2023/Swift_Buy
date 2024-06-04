@@ -48,16 +48,14 @@ public class ShoppingCartController {
        }
  
        String userIdString = claims.get("userId", String.class);
-       if (userIdString == null) {
-           throw new IllegalArgumentException("UserId cannot be null");
-       }
+  
        long userId = Long.parseLong(userIdString);
  
       
        // Call the service method with the userId
        ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
        
-       return ResponseEntity.ok(cartItem);
+       return new ResponseEntity<>(cartItem, HttpStatus.CREATED);
    }
    @PostMapping("/address")
    public ResponseEntity<?> addAddress(@RequestBody Map<String, Long> addressRequest, HttpServletRequest request) {

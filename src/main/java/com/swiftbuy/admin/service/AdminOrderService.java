@@ -27,16 +27,16 @@ public class AdminOrderService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public Order markOrderAsShipped(Long orderId) {
+	public Order markOrderAsShipped(Long orderId) throws Exception {
 		Order order = orderRepository.findById(orderId)
-				.orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+				.orElseThrow(() -> new Exception("Order not found"));
 
 		if (order.getOrderStatus() == Order.OrderStatus.CANCELLED) {
-			throw new IllegalStateException("Cannot mark a cancelled order as shipped");
+			throw new Exception("Cannot mark a cancelled order as shipped");
 		}
 
 		if (order.getOrderStatus() != Order.OrderStatus.PLACED) {
-			throw new IllegalStateException("Cannot mark an order as shipped that is not in PLACED status");
+			throw new Exception("Cannot mark an order as shipped that is not in PLACED status");
 		}
 
 		order.setOrderStatus(Order.OrderStatus.SHIPPED);
@@ -44,16 +44,16 @@ public class AdminOrderService {
 		return orderRepository.save(order);
 	}
 
-	public Order markOrderAsDelivered(Long orderId) {
+	public Order markOrderAsDelivered(Long orderId) throws Exception {
 		Order order = orderRepository.findById(orderId)
-				.orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+				.orElseThrow(() -> new Exception("Order not found"));
 
 		if (order.getOrderStatus() == Order.OrderStatus.CANCELLED) {
-			throw new IllegalStateException("Cannot mark a cancelled order as delivered");
+			throw new Exception("Cannot mark a cancelled order as delivered");
 		}
 
 		if (order.getOrderStatus() != Order.OrderStatus.SHIPPED) {
-			throw new IllegalStateException("Cannot mark an order as delivered that is not in SHIPPED status");
+			throw new Exception("Cannot mark an order as delivered that is not in SHIPPED status");
 		}
 
 		order.setOrderStatus(Order.OrderStatus.DELIVERED);

@@ -6,7 +6,9 @@ import com.swiftbuy.admin.repository.CouponCodeRepository;
 import com.swiftbuy.product.repository.ProductRepository;
 import com.swiftbuy.repository.CategoryRepository;
 import com.swiftbuy.subcrepository.SubCategoryRepository;
- 
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +26,14 @@ public class ProductService {
     private SubCategoryRepository subCategoryRepository;
     public ProductDetails createProduct(ProductDetails product) {
     	Long subCategoryId = product.getSubcategory().getId();
+    	Long categoryId=product.getCategory().getCategory_id();
+    	 Category category = categoryRepository.findById(categoryId)
+                 .orElseThrow(() -> new RuntimeException("Category not found with id " + subCategoryId ));
+    	
         SubCategory subCategory = subCategoryRepository.findById(subCategoryId)
                 .orElseThrow(() -> new RuntimeException("Sub Category not found with id " + subCategoryId ));
         product.setSubcategory(subCategory);
+        product.setCategory(category);
  
         return productRepository.save(product);
     }

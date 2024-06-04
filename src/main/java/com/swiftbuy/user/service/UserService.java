@@ -16,88 +16,94 @@ import com.swiftbuy.user.repository.UserRepository;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private JwtGenerator jwtGenerator;
-    
+	@Autowired
+	private JwtGenerator jwtGenerator;
+
 //    public UserDetails getUserById(Long userId) {
 //        return userRepository.findById(userId)
 //                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 //    }
 
-    public Map<String, String> signupUser(UserDetails userdata) {
-        Map<String, String> response = new HashMap<>();
+	public Map<String, String> signupUser(UserDetails userdata) {
+		Map<String, String> response = new HashMap<>();
 
-       
-         // Save the user
-        UserDetails savedUser = userRepository.save(userdata);
+		// Save the user
+		UserDetails savedUser = userRepository.save(userdata);
 
-        // Generate a token for the user
-        Map<String, String> tokenResponse = jwtGenerator.generateToken(savedUser);
-        response.putAll(tokenResponse);
+		// Generate a token for the user
+		Map<String, String> tokenResponse = jwtGenerator.generateToken(savedUser);
+		response.putAll(tokenResponse);
 
-        return response;
-    }
+		return response;
+	}
 
-    public Map<String, String> loginUser(String email, String phoneNumber, String password) {
-        Map<String, String> response = new HashMap<>();
+	public Map<String, String> loginUser(String email, String phoneNumber, String password) {
+		Map<String, String> response = new HashMap<>();
 
-        // Initialize user as null
-        UserDetails user = null;
+		// Check if both email and phone number are provided
+		if ((email != null && !email.isEmpty()) && (phoneNumber != null && !phoneNumber.isEmpty())) {
+			response.put("message", "Please provide either email or phone number, not both.");
+			return response;
+		}
 
-        // Try to find the user by email or phone number
-        if (email != null && email.contains("@")) {
-            user = userRepository.findByEmail(email);
-        } else if (phoneNumber != null) {
-            user = userRepository.findByPhoneNumber(phoneNumber);
-        }
+		// Initialize user as null
+		UserDetails user = null;
 
-        // Check if the user exists and the password matches
-        if (user != null && user.getPassword().equals(password)) {
-            // Generate a token for the user
-            Map<String, String> tokenResponse = jwtGenerator.generateToken(user);
-            response.putAll(tokenResponse);
-        } else {
-            response.put("message", "Invalid email or phone number, or password");
-        }
+		// Try to find the user by email or phone number
+		if (email != null && email.contains("@")) {
+			user = userRepository.findByEmail(email);
+		} else if (phoneNumber != null) {
+			user = userRepository.findByPhoneNumber(phoneNumber);
+		}
 
-        return response;
-    }
-    public Map<String, String> forgotPassword(Map<String, String> requestData) {
-        Map<String, String> response = new HashMap<>();
-        String email = requestData.get("email");
-        String newPassword = requestData.get("newPassword");
+		// Check if the user exists and the password matches
+		if (user != null && user.getPassword().equals(password)) {
+			// Generate a token for the user
+			Map<String, String> tokenResponse = jwtGenerator.generateToken(user);
+			response.putAll(tokenResponse);
+		} else {
+			response.put("message", "Invalid email or phone number, or password");
+		}
 
-        // Check if the email is null or empty
-        if (email == null || email.isEmpty()) {
-            response.put("message", "Please enter a valid email address.");
-            return response;
-        }
+		return response;
+	}
 
-        // Try to find the user by email
-        UserDetails user = userRepository.findByEmail(email);
+	public Map<String, String> forgotPassword(Map<String, String> requestData) {
+		Map<String, String> response = new HashMap<>();
+		String email = requestData.get("email");
+		String newPassword = requestData.get("newPassword");
 
-        // Check if the user exists
-        if (user != null) {
-            // Update the user's password
-            user.setPassword(newPassword);
-            UserDetails updatedUser = userRepository.save(user);
+		// Check if the email is null or empty
+		if (email == null || email.isEmpty()) {
+			response.put("message", "Please enter a valid email address.");
+			return response;
+		}
 
-            // Generate a new token for the user
-            Map<String, String> tokenResponse = jwtGenerator.generateToken(updatedUser);
+		// Try to find the user by email
+		UserDetails user = userRepository.findByEmail(email);
 
-            // Add the token to the response
-            response.putAll(tokenResponse);
+		// Check if the user exists
+		if (user != null) {
+			// Update the user's password
+			user.setPassword(newPassword);
+			UserDetails updatedUser = userRepository.save(user);
 
-            // Add a success message to the response
-            response.put("message", "Your password has been updated successfully.");
-        } else {
-            // If the user is not found, return a message asking for a valid email
-            response.put("message", "Please enter a valid email address.");
-        }
+			// Generate a new token for the user
+			Map<String, String> tokenResponse = jwtGenerator.generateToken(updatedUser);
 
-        return response;
-    }
+			// Add the token to the response
+			response.putAll(tokenResponse);
+
+			// Add a success message to the response
+			response.put("message", "Your password has been updated successfully.");
+		} else {
+			// If the user is not found, return a message asking for a valid email
+			response.put("message", "Please enter a valid email address.");
+		}
+
+		return response;
+	}
 }

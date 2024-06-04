@@ -35,7 +35,7 @@ public class jwtFilterUser extends GenericFilterBean {
 			String[] part = authHeader.split(" ");
 			token = part[1];
 		}
-		System.out.println(token);
+		//System.out.println(token);
 		try {
 			Claims claims = tokenService.verifyToken(token);
 			request.setAttribute("claims", claims);
