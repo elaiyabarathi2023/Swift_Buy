@@ -3,6 +3,7 @@ package com.swiftbuy.admin.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,8 +51,12 @@ public class CouponCodeController {
     }
 
     @DeleteMapping("/{couponId}")
-    public ResponseEntity<Void> deleteCouponCode(@PathVariable Long couponId) {
-        couponCodesService.deleteCouponCode(couponId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteCouponCode(@PathVariable Long couponId) {
+        try {
+        	couponCodesService.deleteCouponCode(couponId);
+            return ResponseEntity.ok("Coupon deleted successfully");
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

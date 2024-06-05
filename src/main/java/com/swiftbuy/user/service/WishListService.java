@@ -32,9 +32,7 @@ public class WishListService {
         Long productId = wishlist.getProduct().getProductId();
  
         Optional<UserDetails> userFromDB = userRepository.findById(userId);
-        if (userFromDB.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
+     
  
         Optional<ProductDetails> productFromDB = productRepository.findById(productId);
         if (productFromDB.isEmpty()) {

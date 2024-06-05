@@ -42,16 +42,16 @@ public class ShoppingCartService {
         double totalOfferDiscount = 0.0;
 
         for (ShoppingCart item : cartItems) {
-            double itemPrice = item.getProduct().getProductPrice() * item.getQuantity();
-            double discountPercentage = 0.0;
+            double basePrice = item.getProduct().getProductPrice() * item.getQuantity();
+            double itemPrice = basePrice;
 
-            // Check if the product has an active offer
+            // Apply offer discount if available
             Offer productOffer = item.getProduct().getOffer();
             if (productOffer != null) {
-                discountPercentage = productOffer.getDiscountPercentage();
-                double offerDiscount = discountPercentage / 100;
-                totalOfferDiscount += offerDiscount;
-                itemPrice -= ( offerDiscount);
+                double offerDiscountPercentage = productOffer.getDiscountPercentage();
+                double offerDiscountAmount = basePrice * (offerDiscountPercentage / 100);
+                totalOfferDiscount += offerDiscountAmount;
+                itemPrice -= offerDiscountAmount; // Subtract the discount amount
             }
 
             // Apply coupon discount if applicable
@@ -63,9 +63,9 @@ public class ShoppingCartService {
 
                 if (itemCoupon != null) {
                     double couponDiscountPercentage = itemCoupon.getDiscountPercentage();
-                    double couponDiscount = couponDiscountPercentage / 100;
-                    totalCouponDiscount += couponDiscount;
-                    itemPrice -= (couponDiscount);
+                    double couponDiscountAmount = itemPrice * (couponDiscountPercentage / 100);
+                    totalCouponDiscount += couponDiscountPercentage / 100; // Add the discount percentage
+                    itemPrice -= couponDiscountAmount; // Subtract the discount amount
                 }
             }
 
@@ -75,7 +75,7 @@ public class ShoppingCartService {
         Map<String, Double> result = new HashMap<>();
         result.put("totalPrice", totalPrice);
         result.put("totalCouponDiscount", totalCouponDiscount);
-        result.put("totalOfferDiscount", totalOfferDiscount);
+        result.put("totalOfferDiscount", totalOfferDiscount / 100); // Convert to decimal for consistency
         return result;
     }
 
@@ -88,17 +88,15 @@ public class ShoppingCartService {
             selectedCoupon = product.getCoupons().stream()
                     .filter(coupon -> coupon.getCouponId().equals(cartRequest.getSelectedCouponId()))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Selected coupon is not valid for this product"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Selected coupon is not valid for this product"));
         }
 
         ShoppingCart cartItem;
         Optional<ShoppingCart> cartItemOptional = shoppingCartRepository.findByUserIdAndProductProductId(userId, cartRequest.getProductId());
-        if (cartItemOptional.isPresent()) {
-            cartItem = cartItemOptional.get();
-        } else {
+       
             cartItem = new ShoppingCart();
             cartItem.setProduct(product);
-        }
+        
 
         if (cartRequest.getQuantity() == 0) {
             shoppingCartRepository.delete(cartItem);
@@ -123,8 +121,8 @@ public class ShoppingCartService {
     }
 
     public AddressDetails selectAddress(Long addressId, Long userId) {
-        UserDetails user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Optional<UserDetails> user = userRepository.findById(userId);
+              
 
         // Unselect any previously selected address for the user
         List<AddressDetails> userAddresses = addressRepository.findByUserId(userId);

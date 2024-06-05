@@ -2,6 +2,7 @@ package com.swiftbuy.admin.service;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.swiftbuy.admin.model.CouponCodes;
@@ -33,6 +34,13 @@ public class CouponCodeService {
     }
 
     public void deleteCouponCode(Long couponId) {
-        couponCodesRepository.deleteById(couponId);
+        CouponCodes couponCode = couponCodesRepository.findById(couponId)
+            .orElseThrow(() -> new ResourceNotFoundException("Coupon code not found"));
+        
+        // Set the isDeleted flag or deletedAt timestamp
+        couponCode.setDeleted(true);
+        
+        
+        couponCodesRepository.save(couponCode);
     }
 }

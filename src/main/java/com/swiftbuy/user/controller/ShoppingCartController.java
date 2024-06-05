@@ -7,6 +7,7 @@ import java.util.TreeMap;
  
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,28 +44,39 @@ public class ShoppingCartController {
    public ResponseEntity<ShoppingCart> addToCart(@RequestBody ShoppingCartRequest cartrequest, HttpServletRequest request) {
     
        Claims claims = (Claims) request.getAttribute("claims");
-       if (claims == null) {
-           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-       }
+     
  
        String userIdString = claims.get("userId", String.class);
   
        long userId = Long.parseLong(userIdString);
- 
+ try {
       
        // Call the service method with the userId
        ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
        
        return new ResponseEntity<>(cartItem, HttpStatus.CREATED);
+ }
+ 
+ catch(ResourceNotFoundException e)
+ {
+	 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+ }
    }
    @PostMapping("/address")
    public ResponseEntity<?> addAddress(@RequestBody Map<String, Long> addressRequest, HttpServletRequest request) {
-	   Claims claims = (Claims) request.getAttribute("claims");
+       Claims claims = (Claims) request.getAttribute("claims");
        String userIdString = claims.get("userId", String.class);
        Long userId = Long.valueOf(userIdString);
-	   Long addressId = addressRequest.get("addressId");
-       return ResponseEntity.ok(cartService.selectAddress(addressId, userId));
+       try {
+           Long addressId = addressRequest.get("addressId");
+           // Assuming cartService.selectAddress returns the appropriate response
+           return ResponseEntity.ok(cartService.selectAddress(addressId, userId));
+       } catch (ResourceNotFoundException e) {
+           // Provide an error message or appropriate response body
+           return ResponseEntity.badRequest().body("Address not found.");
+       }
    }
+
  
  
    @GetMapping

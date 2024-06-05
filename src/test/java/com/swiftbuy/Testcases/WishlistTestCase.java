@@ -126,6 +126,35 @@ private WishlistRepository wishlistRepo;
                 .andReturn();
     }
 
+    @Test
+    public void testAddToWishlist_ProductNotFound() throws Exception {
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
 
-  
+        // Add an item to the wishlist
+        JSONObject wishlistJson = new JSONObject();
+        JSONObject productJson = new JSONObject();
+        productJson.put("productId", 10000L);
+        wishlistJson.put("product", productJson);
+
+        mockMvc.perform(post("/api/wishlists")
+                        .content(wishlistJson.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+    @Test
+    public void testRemoveFromWishlist_IdNotPresent() throws Exception {
+        
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
+
+        Long wishlistId = 699L; // Ensure this ID exists in the setup
+
+        // Perform the HTTP request to remove the item from the wishlist
+        mockMvc.perform(delete("/api/wishlists/{wishlistId}", wishlistId)
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token))
+                
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
 }

@@ -9,7 +9,11 @@ public class ShoppingCartRequest {
 
     // Getters and setters
 
-    public Long getUserId() {
+    public ShoppingCartRequest(long l, int i, Object object) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Long getUserId() {
         return userId;
     }
 

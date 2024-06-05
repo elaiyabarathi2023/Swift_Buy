@@ -2,6 +2,7 @@ package com.swiftbuy.user.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.Order.OrderStatus;
+import com.swiftbuy.user.model.UserDetails;
 
 public interface OrderRepository extends CrudRepository<Order, Long>,
 		PagingAndSortingRepository<Order, Long> {
@@ -32,5 +34,11 @@ public interface OrderRepository extends CrudRepository<Order, Long>,
 	
 
 	Order findByOrderIdAndUserIdAndOrderStatus(Long orderId, Long userId, OrderStatus delivered);
+
+	Order findByOrderIdAndUserId(Long orderId, Long userId);
+
+
+
+
 
 }

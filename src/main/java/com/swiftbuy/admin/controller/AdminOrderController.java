@@ -55,16 +55,9 @@ public class AdminOrderController {
                 errorResponse.put("error", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
             } 
-            else if(e.getMessage().equals("Cannot mark an order as shipped that is not in PLACED status"))
-            {
-            	  Map<String, Object> errorResponse = new HashMap<>();
-                  errorResponse.put("status", false);
-                  errorResponse.put("error", e.getMessage());
-                  return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-            }
+            
             else {
             
-                // Handle other exceptions
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
         }
