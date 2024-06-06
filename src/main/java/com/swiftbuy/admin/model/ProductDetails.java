@@ -102,116 +102,85 @@ public class ProductDetails {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "product_coupons", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "coupon_id", nullable = true))
 	private Set<CouponCodes> coupons;
- 
+	public Long getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Long productId) {
+		this.productId = productId;
+	}
+
+	public ProductStatus getProductStatus() {
+		return productStatus;
+	}
+
+	public void setProductStatus(ProductStatus productStatus) {
+		this.productStatus = productStatus;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getProductDescription() {
+		return productDescription;
+	}
+
+	public void setProductDescription(String productDescription) {
+		this.productDescription = productDescription;
+	}
+
+	public String getProductImage() {
+		return productImage;
+	}
+
+	public void setProductImage(String productImage) {
+		this.productImage = productImage;
+	}
+
+	public Double getProductPrice() {
+		return productPrice;
+	}
+
+	public void setProductPrice(Double productPrice) {
+		this.productPrice = productPrice;
+	}
+
+	public Integer getProductQuantity() {
+		return productQuantity;
+	}
+
+	public void setProductQuantity(Integer productQuantity) {
+		this.productQuantity = productQuantity;
+	}
+
+	public String getEstimatedDelivery() {
+		return estimatedDelivery;
+	}
+
+	public void setEstimatedDelivery(String estimatedDelivery) {
+		this.estimatedDelivery = estimatedDelivery;
+	}
+
+	public SubCategory getSubcategory() {
+		return subcategory;
+	}
+
+	public void setSubcategory(SubCategory subcategory) {
+		this.subcategory = subcategory;
+	}
+
 	public Set<CouponCodes> getCoupons() {
 		return coupons;
 	}
- 
+
 	public void setCoupons(Set<CouponCodes> coupons) {
 		this.coupons = coupons;
 	}
  
-	public Long getProductId() {
-		return productId;
-	}
- 
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
- 
-	public ProductStatus getProductStatus() {
-		return productStatus;
-	}
- 
-	public void setProductStatus(ProductStatus productStatus) {
-		if (productStatus == null) {
-			throw new IllegalArgumentException("Product status cannot be null");
-		}
-		this.productStatus = productStatus;
-	}
- 
-	public String getProductName() {
-		return productName;
-	}
- 
-	public void setProductName(String productName) {
-		if (productName == null || productName.isBlank()) {
-			throw new IllegalArgumentException("Product name cannot be null or blank");
-		}
-		this.productName = productName;
-	}
- 
-	public String getProductDescription() {
-		return productDescription;
-	}
- 
-	public void setProductDescription(String productDescription) {
-		if (productDescription == null || productDescription.isBlank()) {
-			throw new IllegalArgumentException("Product description cannot be null or blank");
-		}
-		this.productDescription = productDescription;
-	}
- 
-	public String getProductImage() {
-		return productImage;
-	}
- 
-	public void setProductImage(String productImage) {
-		if (productImage == null || productImage.isBlank()) {
-			throw new IllegalArgumentException("Product image URL cannot be null or blank");
-		}
-		this.productImage = productImage;
-	}
- 
-	public Double getProductPrice() {
-		return productPrice;
-	}
- 
-	public void setProductPrice(Double productPrice) {
-		if (productPrice == null) {
-			throw new IllegalArgumentException("Product price cannot be null");
-		}
-		this.productPrice = productPrice;
-	}
- 
-	public Integer getProductQuantity() {
-		return productQuantity;
-	}
- 
-	public void setProductQuantity(Integer productQuantity) {
-		if (productQuantity == null) {
-			throw new IllegalArgumentException("Product quantity cannot be null");
-		}
-		this.productQuantity = productQuantity;
-	}
- 
-//    public String getProductOffers() {
-//        return productOffers;
-//    }
-//
-//    public void setProductOffers(String productOffers) {
-//        this.productOffers = productOffers;
-//    }
- 
-	public String getEstimatedDelivery() {
-		return estimatedDelivery;
-	}
- 
-	public void setEstimatedDelivery(String estimatedDelivery) {
-		if (estimatedDelivery == null || estimatedDelivery.isBlank()) {
-			throw new IllegalArgumentException("Estimated delivery cannot be null or blank");
-		}
-		this.estimatedDelivery = estimatedDelivery;
-	}
- 
-	public SubCategory getSubcategory() {
-		return subcategory;
-	}
- 
-	public void setSubcategory(SubCategory subcategory) {
-		if (subcategory == null) {
-			throw new IllegalArgumentException("Subcategory cannot be null");
-		}
-		this.subcategory = subcategory;
-	}
+
 }

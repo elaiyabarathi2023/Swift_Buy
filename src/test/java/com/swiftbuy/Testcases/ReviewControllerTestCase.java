@@ -70,18 +70,18 @@ public class ReviewControllerTestCase {
     @BeforeEach
     public void setUp() {
         mockOrder = new Order();
-        mockOrder.setOrderId(303L);
-        when(orderRepo.findById(303L)).thenReturn(Optional.of(mockOrder));
+        mockOrder.setOrderId(353L);
+        when(orderRepo.findById(353L)).thenReturn(Optional.of(mockOrder));
     }
 
     @Test
     public void testAddReview() throws Exception {
         String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long orderId = 303L;
+        Long orderId = 353L;
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();
-        reviewJson.put("productId", 1L);
+        reviewJson.put("productId", 702L);
         reviewJson.put("review", "product is bad");
         reviewJson.put("reviewImage", "http://example.com/image.jpg");
 
@@ -215,7 +215,7 @@ public class ReviewControllerTestCase {
     @Test
     public void testAddReview_ProductNotInOrder() throws Exception {
     	 String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long orderId = 303L;
+        Long orderId = 353L;
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();

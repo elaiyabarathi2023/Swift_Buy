@@ -23,6 +23,7 @@ import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +62,7 @@ public class CartControllerTest {
 	private ObjectMapper objectMapper;
 	private ProductDetails mockProduct;
 	private ShoppingCart existingCartItem;
-	@Autowired
+	@Mock
 	private ProductRepository productRepository;
 	
 
@@ -85,7 +86,7 @@ public class CartControllerTest {
 
 		// Add an item to the cart
 		JSONObject cartItemJson = new JSONObject();
-		cartItemJson.put("productId", 252L);
+		cartItemJson.put("productId", 702L);
 		cartItemJson.put("quantity", 1L);
 		cartItemJson.put("selectedCouponId", 2L);
 
@@ -115,7 +116,7 @@ public class CartControllerTest {
 
 		// Add an address
 		JSONObject addressRequest = new JSONObject();
-		addressRequest.put("addressId", 2L);
+		addressRequest.put("addressId", 1L);
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/address").content(addressRequest.toString())
 				.contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token))
@@ -158,96 +159,109 @@ public class CartControllerTest {
 
 	@Test
 	public void testCalculateTotalPrice() throws Exception {
-		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
-		loginJson.put("password", "mO8x@123");
-		String loginUser = loginJson.toString();
+	    // Prepare login request JSON
+	    JSONObject loginJson = new JSONObject();
+	    loginJson.put("email", "ssss567@gmail.com");
+	    loginJson.put("password", "mO8x@123");
+	    String loginUser = loginJson.toString();
 
-		MvcResult mvcResult = mockMvc
-				.perform(MockMvcRequestBuilders.post("/user/loginuser").content(loginUser)
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isCreated())
-				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn();
+	    // Perform login and retrieve token
+	    MvcResult mvcResult = mockMvc
+	            .perform(MockMvcRequestBuilders.post("/user/loginuser").content(loginUser)
+	                    .contentType(MediaType.APPLICATION_JSON))
+	            .andExpect(MockMvcResultMatchers.status().isCreated())
+	            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+	            .andReturn();
 
-		String responseString = mvcResult.getResponse().getContentAsString();
-		JSONObject responseJson = new JSONObject(responseString);
-		String token = responseJson.getString("token");
-		// Create mock products
-		ProductDetails product1 = new ProductDetails();
-		product1.setProductId(1L);
-		product1.setProductPrice(50.0);
+	    String responseString = mvcResult.getResponse().getContentAsString();
+	    JSONObject responseJson = new JSONObject(responseString);
+	    String token = responseJson.getString("token");
 
-		ProductDetails product2 = new ProductDetails();
-		product2.setProductId(2L);
-		product2.setProductPrice(100.0);
+	    // Create mock products
+	    ProductDetails product1 = new ProductDetails();
+	    product1.setProductId(702L);
+	    product1.setProductPrice(50.0);
 
-		// Create mock offers
-		Offer offer1 = new Offer();
-		offer1.setDiscountPercentage(10.0);
-		product1.setOffer(offer1);
+	    ProductDetails product2 = new ProductDetails();
+	    product2.setProductId(703L);
+	    product2.setProductPrice(100.0);
 
-		// Create mock coupons
-		CouponCodes coupon1 = new CouponCodes();
-		coupon1.setCouponId(1L);
-		coupon1.setDiscountPercentage(20.0);
+	    // Create mock offers
+	    Offer offer1 = new Offer();
+	    offer1.setDiscountPercentage(10.0);
+	    product1.setOffer(offer1);
 
-		CouponCodes coupon2 = new CouponCodes();
-		coupon2.setCouponId(2L);
-		coupon2.setDiscountPercentage(15.0);
+	    // Create mock coupons
+	    CouponCodes coupon1 = new CouponCodes();
+	    coupon1.setCouponId(2L);
+	    coupon1.setDiscountPercentage(20.0);
 
-		// Use HashSet instead of Arrays.asList
-		product1.setCoupons(new HashSet<>(Arrays.asList(coupon1)));
-		product2.setCoupons(new HashSet<>(Arrays.asList(coupon2)));
+	    CouponCodes coupon2 = new CouponCodes();
+	    coupon2.setCouponId(2L);
+	    coupon2.setDiscountPercentage(15.0);
 
-		// Create mock cart items
-		ShoppingCart item1 = new ShoppingCart();
-		item1.setProduct(product1);
-		item1.setQuantity(2);
-		item1.setSelectedCouponId(1L);
+	    // Set coupons for products
+	    product1.setCoupons(new HashSet<>(Arrays.asList(coupon1)));
+	    product2.setCoupons(new HashSet<>(Arrays.asList(coupon2)));
 
-		ShoppingCart item2 = new ShoppingCart();
-		item2.setProduct(product2);
-		item2.setQuantity(1);
-		item2.setSelectedCouponId(2L);
+	    // Create mock cart items
+	    ShoppingCart item1 = new ShoppingCart();
+	    item1.setProduct(product1);
+	    item1.setQuantity(2);
+	    item1.setSelectedCouponId(2L);
 
-		List<ShoppingCart> cartItems = Arrays.asList(item1, item2);
+	    ShoppingCart item2 = new ShoppingCart();
+	    item2.setProduct(product2);
+	    item2.setQuantity(1);
+	    item2.setSelectedCouponId(2L);
 
-		// Mock the repository to return our cart items
-		when(cartRepository.findByUserId(1L)).thenReturn(cartItems);
+	    List<ShoppingCart> cartItems = Arrays.asList(item1, item2);
 
-		// Get the cart
-		MvcResult cartResult = mockMvc
-				.perform(MockMvcRequestBuilders.get("/api/shoppingcart").header("Authorization", "Bearer " + token))
-				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+	    // Mock the repository to return our cart items
+	    when(cartRepository.findByUserId(1L)).thenReturn(cartItems);
 
-		String cartResponseString = cartResult.getResponse().getContentAsString();
-		JSONObject cartJson = new JSONObject(cartResponseString);
+	    // Get the cart
+	    MvcResult cartResult = mockMvc
+	            .perform(MockMvcRequestBuilders.get("/api/shoppingcart").header("Authorization", "Bearer " + token))
+	            .andExpect(MockMvcResultMatchers.status().isOk())
+	            .andReturn();
 
-		// Assertions
-		assertTrue(cartJson.has("cartItems"));
-		assertTrue(cartJson.has("totalPrice"));
-		assertTrue(cartJson.has("totalCouponDiscount"));
-		assertTrue(cartJson.has("totalOfferDiscount"));
-		assertTrue(cartJson.has("addressDetails"));
+	    String cartResponseString = cartResult.getResponse().getContentAsString();
+	    JSONObject cartJson = new JSONObject(cartResponseString);
 
-		// Verify the total price and discounts
-		Map<String, Double> result = cartService.calculateTotalPrice(cartItems);
+	    // Assertions
+	    assertTrue(cartJson.has("cartItems"));
+	    assertTrue(cartJson.has("totalPrice"));
+	    assertTrue(cartJson.has("totalCouponDiscount"));
+	    assertTrue(cartJson.has("totalOfferDiscount"));
+	    assertTrue(cartJson.has("addressDetails"));
 
-		// Calculate expected values
-		double expectedTotalPrice = (50.0 * 2 * 0.9 * 0.8) + (100.0 * 0.85);
-		double expectedTotalCouponDiscount = 0.2 + 0.15;
-		double expectedTotalOfferDiscount = 0.1 + 0;
+	    // Verify the total price and discounts
+	    Map<String, Double> result = cartService.calculateTotalPrice(cartItems);
 
-		assertEquals(expectedTotalPrice, result.get("totalPrice"), 0.001);
-		assertEquals(expectedTotalCouponDiscount, result.get("totalCouponDiscount"), 0.001);
-		assertEquals(expectedTotalOfferDiscount, result.get("totalOfferDiscount"), 0.001);
+	    // Calculate expected values
+	 // Calculate expected values
+	 // Calculate expected values
+	    double expectedTotalPrice = 157.0;
+	    double expectedTotalCouponDiscount = 33.0; // 20%
+	    double expectedTotalOfferDiscount = 10.0; // 10%
+
+	    // Assertions
+	    assertEquals(expectedTotalPrice, result.get("totalPrice"), 0.001);
+	    assertEquals(expectedTotalCouponDiscount, result.get("totalCouponDiscount"), 0.001);
+	    assertEquals(expectedTotalOfferDiscount, result.get("totalOfferDiscount"), 0.001);
+
+	    // Assertions
+	    assertEquals(expectedTotalPrice, result.get("totalPrice"), 0.001);
+	    assertEquals(expectedTotalCouponDiscount, result.get("totalCouponDiscount"), 0.001);
+	    assertEquals(expectedTotalOfferDiscount, result.get("totalOfferDiscount"), 0.001);
 	}
 
 	@Test
 	public void testClearCart() {
 		// Create mock cart items
 		ProductDetails product1 = new ProductDetails();
-		product1.setProductId(1L);
+		product1.setProductId(702L);
 		product1.setProductPrice(50.0);
 
 		ShoppingCart item1 = new ShoppingCart();
@@ -322,7 +336,7 @@ public class CartControllerTest {
 
 		// Add an item to the cart
 		JSONObject cartItemJson = new JSONObject();
-		cartItemJson.put("productId", 252L);
+		cartItemJson.put("productId", 702L);
 		cartItemJson.put("quantity", 1000L);
 		cartItemJson.put("selectedCouponId", 2L);
 
@@ -363,6 +377,10 @@ public class CartControllerTest {
 	}
 	@Test
 	public void testAddToCart_QuantityZero() throws Exception {
+	    // Mocking the behavior of the repository
+	    ShoppingCart shoppingCartMock = new ShoppingCart();
+	    when(cartRepository.findByUserIdAndProductProductId(1L, 702L)).thenReturn(Optional.of(shoppingCartMock));
+	    
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
 	    loginJson.put("email", "ssss567@gmail.com");
@@ -382,7 +400,7 @@ public class CartControllerTest {
 
 	    // Add an item with quantity 0 to the cart
 	    JSONObject cartItemJson = new JSONObject();
-	    cartItemJson.put("productId", 252L);
+	    cartItemJson.put("productId", 702L);
 	    cartItemJson.put("quantity", 0L);
 	    cartItemJson.put("selectedCouponId", 2L);
 
@@ -396,5 +414,93 @@ public class CartControllerTest {
 	    // Verify that the delete method was called on the repository
 	    verify(cartRepository, times(1)).delete(any(ShoppingCart.class));
 	}
-	
+
+	@Test
+	public void testAddCart_ValidCoupon() throws Exception {
+	    // Login and get the token
+	    JSONObject loginJson = new JSONObject();
+	    loginJson.put("email", "ssss567@gmail.com");
+	    loginJson.put("password", "mO8x@123");
+	    String loginUser = loginJson.toString();
+
+	    MvcResult mvcResult = mockMvc
+	            .perform(MockMvcRequestBuilders.post("/user/loginuser").content(loginUser)
+	                    .contentType(MediaType.APPLICATION_JSON))
+	            .andExpect(MockMvcResultMatchers.status().isCreated())
+	            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+	            .andReturn();
+
+	    String responseString = mvcResult.getResponse().getContentAsString();
+	    JSONObject responseJson = new JSONObject(responseString);
+	    String token = responseJson.getString("token");
+
+	    // Create mock product with coupons
+	    ProductDetails product = new ProductDetails();
+	    product.setProductId(702L);
+	    product.setProductPrice(100.0);
+
+	    CouponCodes coupon = new CouponCodes();
+	    coupon.setCouponId(2L);
+	    coupon.setDiscountPercentage(20.0);
+
+	    product.setCoupons(new HashSet<>(Arrays.asList(coupon)));
+
+	    // Mock the repository to return the product
+	    when(productRepository.findById(702L)).thenReturn(Optional.of(product));
+
+	    // Add an item to the cart with a valid coupon
+	    JSONObject cartItemJson = new JSONObject();
+	    cartItemJson.put("productId", 702L);
+	    cartItemJson.put("quantity", 1L);
+	    cartItemJson.put("selectedCouponId", 2L);
+
+	    mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add")
+	            .content(cartItemJson.toString())
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .header("Authorization", "Bearer " + token))
+	            .andExpect(MockMvcResultMatchers.status().isCreated())
+	            .andReturn();
+	}
+
+	@Test
+	public void testAddCart_InvalidCoupon() throws Exception {
+	    // Login and get the token
+	    JSONObject loginJson = new JSONObject();
+	    loginJson.put("email", "ssss567@gmail.com");
+	    loginJson.put("password", "mO8x@123");
+	    String loginUser = loginJson.toString();
+
+	    MvcResult mvcResult = mockMvc
+	            .perform(MockMvcRequestBuilders.post("/user/loginuser").content(loginUser)
+	                    .contentType(MediaType.APPLICATION_JSON))
+	            .andExpect(MockMvcResultMatchers.status().isCreated())
+	            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+	            .andReturn();
+
+	    String responseString = mvcResult.getResponse().getContentAsString();
+	    JSONObject responseJson = new JSONObject(responseString);
+	    String token = responseJson.getString("token");
+
+	    // Create mock product without coupons
+	    ProductDetails product = new ProductDetails();
+	    product.setProductId(702L);
+	    product.setProductPrice(100.0);
+	    product.setCoupons(new HashSet<>());
+
+	    // Mock the repository to return the product
+	    when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+	    // Add an item to the cart with an invalid coupon
+	    JSONObject cartItemJson = new JSONObject();
+	    cartItemJson.put("productId", 702L);
+	    cartItemJson.put("quantity", 1L);
+	    cartItemJson.put("selectedCouponId", 1L);
+
+	    mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add")
+	            .content(cartItemJson.toString())
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .header("Authorization", "Bearer " + token))
+	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+	            .andReturn();
+	}
 }

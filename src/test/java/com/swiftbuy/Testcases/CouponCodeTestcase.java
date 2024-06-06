@@ -37,8 +37,8 @@ public class CouponCodeTestcase {
     @BeforeEach
     public void setUpMocks() {
         CouponCodes coupon = new CouponCodes();
-        coupon.setCouponId(1L);
-        when(couponCodeRepository.findById(1L)).thenReturn(Optional.of(coupon));
+        coupon.setCouponId(2L);
+        when(couponCodeRepository.findById(2L)).thenReturn(Optional.of(coupon));
        
     }
     @Test
@@ -55,7 +55,7 @@ public class CouponCodeTestcase {
 
     @Test
     public void testGetAllCouponCodesById() throws Exception {
-        Long couponId=1L;
+        Long couponId=2L;
         when(couponCodeRepository.findAll()).thenReturn(new ArrayList<>());
 
         // Perform the GET request to retrieve all coupon codes
@@ -84,7 +84,7 @@ public class CouponCodeTestcase {
     }
     @Test
     public void testUpdateCoupon() throws Exception {
-        Long couponId = 1L;
+        Long couponId = 2L;
         
         // Prepare the request body with updated coupon details
         JSONObject couponJson = new JSONObject();
@@ -100,7 +100,7 @@ public class CouponCodeTestcase {
     }
     @Test
     public void testDeleteCouponCode() throws Exception {
-        Long couponId = 1L; // Replace with the ID of an existing coupon code
+        Long couponId = 2L; // Replace with the ID of an existing coupon code
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/coupons/{couponId}", couponId))
                 .andExpect(status().isOk())

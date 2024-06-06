@@ -1,5 +1,5 @@
-package com.swiftbuy.admin.service;
-
-public class AdminOfferForProductsService {
-
-}
+//package com.swiftbuy.admin.service;
+//
+//public class AdminOfferForProductsService {
+//
+//}

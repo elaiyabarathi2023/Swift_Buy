@@ -2,6 +2,8 @@ package com.swiftbuy.Testcases;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -43,7 +45,7 @@ import com.swiftbuy.user.repository.OrderRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AdminControllerTest {
+public class AdminOrderControllerTest {
 
     @Autowired
     private AdminOrderService adminOrderService;
@@ -66,8 +68,8 @@ public class AdminControllerTest {
         now = LocalDateTime.now();
         now1 = LocalDate.now();
         mockOrder = new Order();
-        mockOrder.setOrderId(1L);
-        when(adminOrderRepo.findById(1L)).thenReturn(Optional.of(mockOrder));
+        mockOrder.setOrderId(353L);
+        when(adminOrderRepo.findById(353L)).thenReturn(Optional.of(mockOrder));
         mockOrder.setShippedDate(now);
         mockOrder.setDeliveredDate(now.plusDays(2));
         mockOrder.setCancelledDate(now1);
@@ -78,17 +80,33 @@ public class AdminControllerTest {
     @Test
     public void testMarkOrderAsShipped() throws Exception {
         mockOrder.setOrderStatus(Order.OrderStatus.SHIPPED);  // Update status for this test
-        when(adminOrderService.markOrderAsShipped(1L)).thenReturn(mockOrder);
+        when(adminOrderService.markOrderAsShipped(353L)).thenReturn(mockOrder);
 
-        mockMvc.perform(put("/orders/1/shipped")
+        mockMvc.perform(put("/orders/353/shipped")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
     @Test
     public void testMarkOrderAsShipped_OrderNotFound() throws Exception {
-        when(adminOrderService.markOrderAsShipped(1L)).thenThrow(new ResourceNotFoundException("Order not found"));
+        // Arrange
+        Long orderId = 999L; // Assuming this orderId doesn't exist in the database
+        
+        // Act & Assert
+        mockMvc.perform(put("/orders/{orderId}/shipped", orderId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 
-        mockMvc.perform(put("/orders/1/shipped")
+   
+
+    @Test
+    public void testMarkOrderAsDelivered_OrderNotFound() throws Exception {
+        // Arrange
+        Long orderId = 999L; // Using an existing orderId for this test
+      
+
+        // Act & Assert
+        mockMvc.perform(put("/orders/{orderId}/delivered", orderId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
                 
@@ -99,18 +117,26 @@ public class AdminControllerTest {
         // Arrange: Set order status to CANCELLED
         mockOrder.setOrderStatus(Order.OrderStatus.CANCELLED);
         // Act and Assert: Expect an internal server error
-        mockMvc.perform(put("/orders/1/shipped")
+        mockMvc.perform(put("/orders/353/shipped")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+    @Test
+    public void testMarkOrderAsShipped_OrderDelivered() throws Exception {
+        // Arrange: Set order status to CANCELLED
+        mockOrder.setOrderStatus(Order.OrderStatus.DELIVERED);
+        // Act and Assert: Expect an internal server error
+        mockMvc.perform(put("/orders/353/shipped")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
-
     @Test
     public void testMarkOrderAsShipped_OrderNotPlaced() throws Exception {
         mockOrder.setOrderStatus(Order.OrderStatus.SHIPPED);  // Set status to SHIPPED for this test
-        when(adminOrderService.markOrderAsShipped(1L)).thenThrow(new IllegalStateException("Cannot mark an order as shipped that is not in PLACED status"));
+        when(adminOrderService.markOrderAsShipped(353L)).thenThrow(new IllegalStateException("Cannot mark an order as shipped that is not in PLACED status"));
 
-        mockMvc.perform(put("/orders/1/shipped")
+        mockMvc.perform(put("/orders/353/shipped")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
                
@@ -122,25 +148,14 @@ public class AdminControllerTest {
         mockOrder.setOrderStatus(Order.OrderStatus.DELIVERED);
 
         // Now mark the order as delivered
-        when(adminOrderService.markOrderAsDelivered(1L)).thenReturn(mockOrder);
-        mockMvc.perform(put("/orders/1/delivered")
+        when(adminOrderService.markOrderAsDelivered(353L)).thenReturn(mockOrder);
+        mockMvc.perform(put("/orders/353/delivered")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         // Add additional assertions or logging as needed
     }
 
-    @Test
-    public void testMarkOrderAsDelivered_OrderNotFound() throws Exception {
-    	mockOrder.setOrderStatus(Order.OrderStatus.DELIVERED);  // Set status to SHIPPED for this test
-        when(adminOrderService.markOrderAsDelivered(1L)).thenThrow(new IllegalStateException("Cannot mark an order as shipped that is not in PLACED status"));
-
-        mockMvc.perform(put("/orders/1/delivered")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
-               
-                
-    }
 
     @Test
     public void testMarkOrderAsDelivered_OrderCancelled() throws Exception {
@@ -150,12 +165,24 @@ public class AdminControllerTest {
         expectedErrorResponse.put("status", false);
         expectedErrorResponse.put("error", "Cannot mark a cancelled order as delivered");
 
-        mockMvc.perform(put("/orders/1/delivered")
+        mockMvc.perform(put("/orders/353/delivered")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedErrorResponse)));
     }
+    @Test
+    public void testMarkOrderAsDelivered_OrderPLACEDStatus() throws Exception {
+        mockOrder.setOrderStatus(Order.OrderStatus.PLACED);  // Set status to CANCELLED for this test
 
+        Map<String, Object> expectedErrorResponse = new HashMap<>();
+        expectedErrorResponse.put("status", false);
+        expectedErrorResponse.put("error", "Cannot mark an order as delivered that is not in SHIPPED status");
+
+        mockMvc.perform(put("/orders/353/delivered")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json(objectMapper.writeValueAsString(expectedErrorResponse)));
+    }
 
     @Test
 	public void testGetAllShippedOrders() throws Exception {

@@ -39,13 +39,14 @@ public class AddressDetailsController {
         Claims claims = (Claims) request.getAttribute("claims");
         String userIdString = claims.get("userId", String.class);
         Long userId = Long.valueOf(userIdString);
-
+try {
         AddressDetails addressDetails = addressDetailsService.getAddressDetailsById(id, userId);
 
-        if (addressDetails != null) {
+       
             return ResponseEntity.ok(addressDetails);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AddressDetails not found with id: " + id);
+}
+         catch(ResponseStatusException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -74,7 +75,7 @@ public class AddressDetailsController {
             addressDetailsService.deleteAddressDetails(id, userId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -1,73 +1,50 @@
 package com.swiftbuy.admin.service.CustomerServiceCategory;
-
-
-
+ 
 import com.swiftbuy.admin.model.CustomerServiceCategory.CustomerServiceCategory;
-import com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswer;
-import com.swiftbuy.admin.model.CustomerServiceSubCategory.CustomerServiceSubCategory;
-import com.swiftbuy.admin.repository.CustomerServiceCategory.CustomerServiceCategoryRepo;
-import com.swiftbuy.admin.repository.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswerRepo;
-import com.swiftbuy.admin.repository.CustomerServiceSubCategory.CustomerServiceSubCategoryRepo;
-
+import com.swiftbuy.admin.repository.CustomerServiceCategory.CustomerServiceCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
+ 
 import java.util.Optional;
-
+ 
 @Service
 public class CustomerServiceCategoryService {
-
+ 
     @Autowired
-    private CustomerServiceCategoryRepo customerServiceCategoryRepo;
-
-    @Autowired
-    private CustomerServiceQuestionsAnswerRepo customerServiceQuestionsAnswerRepo;
-    
-//    @Autowired
-//    private CustomerServiceQuestionsAnswer customerServiceQuestionsAnswer;
-    
-    @Autowired
-    private CustomerServiceSubCategoryRepo customerServiceSubCategoryRepository;
-    
-    
-
-    public List<CustomerServiceCategory> getAllCustomerServiceCategories() {
-        return (List<CustomerServiceCategory>) customerServiceCategoryRepo.findAll();
+    private CustomerServiceCategoryRepository repository;
+ 
+    public CustomerServiceCategory createCategory(CustomerServiceCategory category) {
+        return repository.save(category);
     }
-
-    public CustomerServiceCategory getCustomerServiceCategoryById(Long id) {
-        Optional<CustomerServiceCategory> optionalCustomerServiceCategory = customerServiceCategoryRepo.findById(id);
-        return optionalCustomerServiceCategory.orElse(null);
-    }
-
-    public CustomerServiceCategory createCustomerServiceCategory(CustomerServiceCategory customerServiceCategory) {
-    	Long subCategoryId = customerServiceCategory.getCustomerservicesubcategory().getId();  	
-    	CustomerServiceSubCategory subCategory = customerServiceSubCategoryRepository.findById(subCategoryId)
-    			.orElseThrow(() -> new RuntimeException("Sub Category not found with id " + subCategoryId));
-    	customerServiceCategory.setCustomerservicesubcategory(subCategory);
-    	return customerServiceSubCategoryRepository.save(customerServiceCategory);
-//    	Long subCategoryId = customerServiceQuestionsAnswer.getSubCategory().getId();
-    }
-
-    public CustomerServiceCategory updateCustomerServiceCategory(Long id, CustomerServiceCategory updatedCustomerServiceCategory) {
-        Optional<CustomerServiceCategory> optionalCustomerServiceCategory = customerServiceCategoryRepo.findById(id);
-        if (optionalCustomerServiceCategory.isPresent()) {
-            CustomerServiceCategory existingCustomerServiceCategory = optionalCustomerServiceCategory.get();
-            existingCustomerServiceCategory.setName(updatedCustomerServiceCategory.getName());
-            existingCustomerServiceCategory.setDescription(updatedCustomerServiceCategory.getDescription());
-            return customerServiceCategoryRepo.save(existingCustomerServiceCategory);
-        }
-        return null;
-    }
-
-    public void deleteCustomerServiceCategory(Long id) {
-        Optional<CustomerServiceCategory> optionalCustomerServiceCategory = customerServiceCategoryRepo.findById(id);
-        if (optionalCustomerServiceCategory.isPresent()) {
-            CustomerServiceCategory customerServiceCategory = optionalCustomerServiceCategory.get();
-            customerServiceCategoryRepo.delete(customerServiceCategory);
+ 
+    public CustomerServiceCategory getCategoryById(Long cscategoryid) {
+        Optional<CustomerServiceCategory> categoryOptional = repository.findById(cscategoryid);
+        if (categoryOptional.isPresent()) {
+            return categoryOptional.get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
         }
     }
+    public CustomerServiceCategory updateCategory(Long cscategoryid, CustomerServiceCategory categoryDetails) {
+        return repository.findById(cscategoryid)
+                         .map(existingCategory -> {
+                             existingCategory.setName(categoryDetails.getName());
+                             existingCategory.setDescription(categoryDetails.getDescription());
+                             return repository.save(existingCategory);
+                         })
+                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+    }
+ 
+    public boolean deleteCategory(Long cscategoryid) {
+        CustomerServiceCategory existingCategory = getCategoryById(cscategoryid);
+        repository.delete(existingCategory);
+        return true;
+    }
 
     
+    public Iterable<CustomerServiceCategory> getAllCategories() {
+        return repository.findAll();
+    }
 }

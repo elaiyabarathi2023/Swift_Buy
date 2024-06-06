@@ -41,39 +41,55 @@ public class ShoppingCartController {
    private AddressDetailsRepo addressDetailsRepository;
  
    @PostMapping("/add")
-   public ResponseEntity<ShoppingCart> addToCart(@RequestBody ShoppingCartRequest cartrequest, HttpServletRequest request) {
-    
+   public ResponseEntity<Map<String, Object>> addToCart(@RequestBody ShoppingCartRequest cartrequest, HttpServletRequest request) {
        Claims claims = (Claims) request.getAttribute("claims");
-     
- 
        String userIdString = claims.get("userId", String.class);
-  
        long userId = Long.parseLong(userIdString);
- try {
-      
-       // Call the service method with the userId
-       ShoppingCart cartItem = cartService.addToCart(cartrequest, userId);
-       
-       return new ResponseEntity<>(cartItem, HttpStatus.CREATED);
- }
- 
- catch(ResourceNotFoundException e)
- {
-	 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
- }
+
+       Map<String, Object> response = new HashMap<>();
+
+       try {
+           // Call the service method with the userId
+           cartService.addToCart(cartrequest, userId);
+
+           if(cartrequest.getQuantity()==0)
+           {
+        	   response.put("message", "Product deleted successfully!!!");
+               response.put("status", true);
+               return new ResponseEntity<>(response, HttpStatus.OK);
+           }
+           else {
+           response.put("message", "Product added to cart successfully");
+           response.put("status", true);
+
+           return new ResponseEntity<>(response, HttpStatus.CREATED);
+       }
+       }
+       catch(ResourceNotFoundException e) {
+           // Create a failure response
+           response.put("message", "Failed to add product to cart");
+           response.put("status", false);
+
+           return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+       }
    }
    @PostMapping("/address")
-   public ResponseEntity<?> addAddress(@RequestBody Map<String, Long> addressRequest, HttpServletRequest request) {
+   public ResponseEntity<Map<String, Object>>  addAddress(@RequestBody Map<String, Long> addressRequest, HttpServletRequest request) {
        Claims claims = (Claims) request.getAttribute("claims");
        String userIdString = claims.get("userId", String.class);
        Long userId = Long.valueOf(userIdString);
+       Map<String, Object> response = new HashMap<>();
+
        try {
            Long addressId = addressRequest.get("addressId");
-           // Assuming cartService.selectAddress returns the appropriate response
-           return ResponseEntity.ok(cartService.selectAddress(addressId, userId));
+           cartService.selectAddress(addressId, userId);
+           response.put("message", "Address Selected successfully!!!");
+           response.put("status", true);
+           return new ResponseEntity<>(response, HttpStatus.OK);
        } catch (ResourceNotFoundException e) {
-           // Provide an error message or appropriate response body
-           return ResponseEntity.badRequest().body("Address not found.");
+    	   response.put("message", "Unable To Select Address");
+           response.put("status", false);
+           return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
        }
    }
 

@@ -1,65 +1,57 @@
 package com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer;
-
  
 import com.swiftbuy.admin.model.CustomerServiceSubCategory.CustomerServiceSubCategory;
- 
 import jakarta.persistence.*;
  
-
-//Postman Query:
-//	
-//{
-//    "question": "How can I trsjkkxkjacksjkjksjksuiijksdkjkjx my ksiurrwnbnmxkjxj skkd?",
-//    "answer": "You can track your xkn,xm,mx osm,jxhjhjxmx rder xklkjxjknxnxm,by logging into your account and visiting the order trackidjkskjdjkwxkkxng section."
-//}
 @Entity
-
-@Table(name = "customer_service_questions_answers_finalise")
-
+@Table(name = "customer_service_questions_answers_part")
 public class CustomerServiceQuestionsAnswer {
  
     @Id
-
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long questionsanswersid;
  
-    
-
-	@Column(nullable = false)
-
+    @Column(nullable = false)
     private String question;
  
     @Column(nullable = false)
-
     private String answer;
-
-	public Long getQuestionsanswersid() {
-		return questionsanswersid;
-	}
-
-	public void setQuestionsanswersid(Long questionsanswersid) {
-		this.questionsanswersid = questionsanswersid;
-	}
-
-	public String getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(String question) {
-		this.question = question;
-	}
-
-	public String getAnswer() {
-		return answer;
-	}
-
-	public void setAnswer(String answer) {
-		this.answer = answer;
-	}
  
-
-    
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id", nullable = false)
+    private CustomerServiceSubCategory subCategory;
  
-
-
+    // Getters and setters
+ 
+    public Long getQuestionsanswersid() {
+        return questionsanswersid;
+    }
+ 
+    public void setQuestionsanswersid(Long questionsanswersid) {
+        this.questionsanswersid = questionsanswersid;
+    }
+ 
+    public String getQuestion() {
+        return question;
+    }
+ 
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+ 
+    public String getAnswer() {
+        return answer;
+    }
+ 
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+ 
+    public CustomerServiceSubCategory getSubCategory() {
+        return subCategory;
+    }
+ 
+    public void setSubCategory(CustomerServiceSubCategory subCategory) {
+        this.subCategory = subCategory;
+    }
 }

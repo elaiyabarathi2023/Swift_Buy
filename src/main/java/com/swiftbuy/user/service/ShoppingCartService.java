@@ -36,6 +36,7 @@ public class ShoppingCartService {
         this.addressRepository = addressRepository;
         this.userRepository = userRepository;
     }
+
     public Map<String, Double> calculateTotalPrice(List<ShoppingCart> cartItems) {
         double totalPrice = 0.0;
         double totalCouponDiscount = 0.0;
@@ -64,7 +65,7 @@ public class ShoppingCartService {
                 if (itemCoupon != null) {
                     double couponDiscountPercentage = itemCoupon.getDiscountPercentage();
                     double couponDiscountAmount = itemPrice * (couponDiscountPercentage / 100);
-                    totalCouponDiscount += couponDiscountPercentage / 100; // Add the discount percentage
+                    totalCouponDiscount += couponDiscountAmount;
                     itemPrice -= couponDiscountAmount; // Subtract the discount amount
                 }
             }
@@ -75,7 +76,7 @@ public class ShoppingCartService {
         Map<String, Double> result = new HashMap<>();
         result.put("totalPrice", totalPrice);
         result.put("totalCouponDiscount", totalCouponDiscount);
-        result.put("totalOfferDiscount", totalOfferDiscount / 100); // Convert to decimal for consistency
+        result.put("totalOfferDiscount", totalOfferDiscount);
         return result;
     }
 
@@ -83,46 +84,45 @@ public class ShoppingCartService {
         ProductDetails product = productRepository.findById(cartRequest.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        CouponCodes selectedCoupon = null;
         if (cartRequest.getSelectedCouponId() != null) {
-            selectedCoupon = product.getCoupons().stream()
+            product.getCoupons().stream()
                     .filter(coupon -> coupon.getCouponId().equals(cartRequest.getSelectedCouponId()))
                     .findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException("Selected coupon is not valid for this product"));
         }
 
-        ShoppingCart cartItem;
         Optional<ShoppingCart> cartItemOptional = shoppingCartRepository.findByUserIdAndProductProductId(userId, cartRequest.getProductId());
-       
-            cartItem = new ShoppingCart();
-            cartItem.setProduct(product);
-        
 
         if (cartRequest.getQuantity() == 0) {
-            shoppingCartRepository.delete(cartItem);
+            if (cartItemOptional.isPresent()) {
+                shoppingCartRepository.delete(cartItemOptional.get());
+            }
             return null;
-           
         }
 
         if (cartRequest.getQuantity() > product.getProductQuantity()) {
-            throw new IllegalArgumentException("Cannot add more products to the cart!!!!");
+            throw new IllegalArgumentException("Cannot add more products to the cart than available quantity!");
         }
 
-        cartItem.setUserId(userId);
-        cartItem.setProduct(product);
+        ShoppingCart cartItem = cartItemOptional.orElseGet(() -> {
+            ShoppingCart newItem = new ShoppingCart();
+            newItem.setProduct(product);
+            newItem.setUserId(userId);
+            return newItem;
+        });
+
         cartItem.setQuantity(cartRequest.getQuantity());
         cartItem.setSelectedCouponId(cartRequest.getSelectedCouponId());
 
         ShoppingCart savedCartItem = shoppingCartRepository.save(cartItem);
-        List<ShoppingCart> cartItems = shoppingCartRepository.findByUserId(userId);
-        Map<String, Double> priceAndDiscount = calculateTotalPrice(cartItems);
 
+        // No need to recalculate total price here, as it's done in the getCartByUserId method
         return savedCartItem;
     }
 
     public AddressDetails selectAddress(Long addressId, Long userId) {
-        Optional<UserDetails> user = userRepository.findById(userId);
-              
+        // No need to fetch user if not using it
+        // Optional<UserDetails> user = userRepository.findById(userId);
 
         // Unselect any previously selected address for the user
         List<AddressDetails> userAddresses = addressRepository.findByUserId(userId);
@@ -143,11 +143,7 @@ public class ShoppingCartService {
 
     public AddressDetails getAddressForUserByUserId(Long userId) {
         return addressRepository.findByUserIdAndIsSelectedTrue(userId);
-                
     }
-
-             
-    
 
     public List<ShoppingCart> getCartUserId(Long userId) {
         return shoppingCartRepository.findByUserId(userId);
