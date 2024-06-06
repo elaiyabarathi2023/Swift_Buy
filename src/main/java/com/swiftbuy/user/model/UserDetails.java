@@ -3,9 +3,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.swiftbuy.CustomValidations.PasswordValidations;
-import com.swiftbuy.CustomValidations.ValidEmail;
-import com.swiftbuy.CustomValidations.ValidUsername;
+import com.swiftbuy.admin.CustomValidations.PasswordValidationsAdmin;
+import com.swiftbuy.admin.CustomValidations.ValidUsername;
+import com.swiftbuy.user.CustomValidations.*;
 import com.swiftbuy.user.CustomValidations.ValidPhone;
 
 import jakarta.persistence.CascadeType;
@@ -25,7 +25,7 @@ private Long userId;
 @ValidUsername
 @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters long")
 private String firstname;
-@PasswordValidations
+@PasswordValidationsAdmin
 private String password;
 @ValidEmail
 private String email;

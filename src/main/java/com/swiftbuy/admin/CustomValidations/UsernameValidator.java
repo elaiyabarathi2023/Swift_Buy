@@ -1,4 +1,4 @@
-package com.swiftbuy.CustomValidations;
+package com.swiftbuy.admin.CustomValidations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

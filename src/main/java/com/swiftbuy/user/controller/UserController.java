@@ -47,23 +47,24 @@ public class UserController {
 		return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
 	}
 
-	@PostMapping(path = "/loginuser")
-	public ResponseEntity<Map<String, String>> loginUser(@Valid @RequestBody Map<String, String> body) {
-		// Retrieve email or phone number and password from the request body
-		String email = body.get("email");
-		String phoneNumber = body.get("phoneNumber");
-		String password = body.get("password");
+	 @PostMapping(path = "/loginuser")
+	    public ResponseEntity<Map<String, String>> loginUser(@Valid @RequestBody Map<String, String> body) {
+	        String email = body.get("email");
+	        String phoneNumber = body.get("phoneNumber");
+	        String password = body.get("password");
 
-		Map<String, String> loggedInUser;
-		try {
-			// Call the loginUser method with the combined email/phone number parameter
-			loggedInUser = userService.loginUser(email, phoneNumber, password);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		}
-		return new ResponseEntity<>(loggedInUser, HttpStatus.CREATED);
-	}
+	        Map<String, String> loggedInUser;
+	        try {
+	            loggedInUser = userService.loginUser(email, phoneNumber, password);
+	            if (loggedInUser.containsKey("message") && "Invalid details provided!!!!".equals(loggedInUser.get("message"))) {
+	                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(loggedInUser);
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	        }
+	        return new ResponseEntity<>(loggedInUser, HttpStatus.CREATED);
+	    }
 
 	@PostMapping("/forgot-password")
     public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> requestData) {
@@ -82,7 +83,6 @@ public class UserController {
 
 	
 }
-
 
 
 

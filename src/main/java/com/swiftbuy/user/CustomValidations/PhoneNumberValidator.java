@@ -38,7 +38,7 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhone, Str
 
 		// Check if the email already exists in the database
 
-		boolean existsInDatabase = userRepository.existsByEmail(value);
+		boolean existsInDatabase = userRepository.existsByPhoneNumber(value);
 
 		// Return false if the email exists in the database or doesn't match the pattern
 

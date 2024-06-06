@@ -45,7 +45,7 @@ public class AddressDetailsTest {
     public void testCreateAddressDetails() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ssss567@gmail.com");
+        loginJson.put("email", "riya567@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
  
@@ -118,8 +118,8 @@ public class AddressDetailsTest {
 //		loginJson.put("password", "SO8x@123882");
 		
 		
-		 loginJson.put("email", "ssss567@gmail.com");
-	        loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
         MvcResult mvcResult = mockMvc
@@ -145,8 +145,8 @@ public class AddressDetailsTest {
 //		loginJson.put("password", "SO8x@123882");
 		
 		
-		 loginJson.put("email", "ssss567@gmail.com");
-	        loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
         MvcResult mvcResult = mockMvc
@@ -160,7 +160,7 @@ public class AddressDetailsTest {
         JSONObject responseJson = new JSONObject(responseString);
         String token = responseJson.getString("token");
  
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/addresses/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/addresses/125")
                         .header("Authorization", "Bearer " + token))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -171,9 +171,8 @@ public class AddressDetailsTest {
 //		loginJson.put("email", "bharathiyaril@gmail.com");
 //		loginJson.put("password", "SO8x@123882");
 		
-		
-		 loginJson.put("email", "ssss567@gmail.com");
-	        loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
         MvcResult mvcResult = mockMvc
@@ -198,7 +197,7 @@ public class AddressDetailsTest {
     public void testCreateAndUpdateAddressDetails() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ssss567@gmail.com");
+        loginJson.put("email", "riya567@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
  
@@ -262,7 +261,7 @@ public class AddressDetailsTest {
     public void testCreateAndUpdateAddressDetails_InvalidId() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ssss567@gmail.com");
+        loginJson.put("email", "riya567@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
  
@@ -325,8 +324,8 @@ public class AddressDetailsTest {
 		JSONObject loginJson = new JSONObject();
 //		loginJson.put("email", "bharathiyarilen@gmail.com");
 //		loginJson.put("password", "SO8x@123881");
-		 loginJson.put("email", "ssss567@gmail.com");
-	        loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
       MvcResult mvcResult = mockMvc
@@ -355,8 +354,8 @@ public class AddressDetailsTest {
 		JSONObject loginJson = new JSONObject();
 //		loginJson.put("email", "bharathiyarilen@gmail.com");
 //		loginJson.put("password", "SO8x@123881");
-		 loginJson.put("email", "ssss567@gmail.com");
-	        loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
       MvcResult mvcResult = mockMvc
@@ -371,7 +370,7 @@ public class AddressDetailsTest {
       String token = responseJson.getString("token");
  
       // Assuming an address with id 1 exists for the test user
-      mockMvc.perform(MockMvcRequestBuilders.delete("/api/addresses/1")
+      mockMvc.perform(MockMvcRequestBuilders.delete("/api/addresses/125")
                       .header("Authorization", "Bearer " + token))
              .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
@@ -383,8 +382,8 @@ public class AddressDetailsTest {
 		JSONObject loginJson = new JSONObject();
  
 		
-		 loginJson.put("email", "ssss567@gmail.com");
-	        loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
         MvcResult mvcResult = mockMvc
@@ -397,8 +396,7 @@ public class AddressDetailsTest {
         String responseString = mvcResult.getResponse().getContentAsString();
         JSONObject responseJson = new JSONObject(responseString);
         String token = responseJson.getString("token");
- 
-        // Assuming an address with id 1 exists for the test user
+    	
         mockMvc.perform(MockMvcRequestBuilders.get("/api/addresses/78")
                         .header("Authorization", "Bearer " + token))
                .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -411,7 +409,7 @@ public class AddressDetailsTest {
 		public void testGetAddressDetailsById_NotFound_ThrowsException() throws Exception {
 		    // Login and get the token
 		    JSONObject loginJson = new JSONObject();
-		    loginJson.put("email", "ssss567@gmail.com");
+		    loginJson.put("email", "riya567@gmail.com");
 	        loginJson.put("password", "mO8x@123");
 		    String loginUser = loginJson.toString();
 		    MvcResult mvcResult = this.mockMvc

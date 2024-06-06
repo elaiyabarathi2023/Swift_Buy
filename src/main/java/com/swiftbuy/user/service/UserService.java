@@ -26,11 +26,23 @@ public class UserService {
 //        return userRepository.findById(userId)
 //                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
 //    }
+	private String hashPassword(String password) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		byte[] hashBytes = md.digest(password.getBytes());
+		BigInteger number = new BigInteger(1, hashBytes);
+		StringBuilder hexString = new StringBuilder(number.toString(16));
+//        while (hexString.length() < 32) {
+//            hexString.insert(0, '0');
+//        }
+		return hexString.toString();
+	}
 
-	public Map<String, String> signupUser(UserDetails userdata) {
+	public Map<String, String> signupUser(UserDetails userdata) throws Exception {
+		
 		Map<String, String> response = new HashMap<>();
 
-		// Save the user
+		   String hashedPassword = hashPassword(userdata.getPassword());
+		    userdata.setPassword(hashedPassword);
 		UserDetails savedUser = userRepository.save(userdata);
 
 		// Generate a token for the user
@@ -40,7 +52,7 @@ public class UserService {
 		return response;
 	}
 
-	public Map<String, String> loginUser(String email, String phoneNumber, String password) {
+	public Map<String, String> loginUser(String email, String phoneNumber, String password) throws Exception {
 		Map<String, String> response = new HashMap<>();
 
 		// Check if both email and phone number are provided
@@ -58,14 +70,14 @@ public class UserService {
 		} else if (phoneNumber != null) {
 			user = userRepository.findByPhoneNumber(phoneNumber);
 		}
-
+		String hashedPassword = hashPassword(password);
 		// Check if the user exists and the password matches
-		if (user != null && user.getPassword().equals(password)) {
+		if (user != null && user.getPassword().equals(hashedPassword)) {
 			// Generate a token for the user
 			Map<String, String> tokenResponse = jwtGenerator.generateToken(user);
 			response.putAll(tokenResponse);
 		} else {
-			response.put("message", "Invalid email or phone number, or password");
+			response.put("message", "Invalid details provided!!!!");
 		}
 
 		return response;

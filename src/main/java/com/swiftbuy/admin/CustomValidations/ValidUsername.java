@@ -1,4 +1,4 @@
-package com.swiftbuy.CustomValidations;
+package com.swiftbuy.admin.CustomValidations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -9,11 +9,11 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = PhoneNumberValidator.class)
+@Constraint(validatedBy = UsernameValidator.class)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidPhone {
-    String message() default "Invalid phone number";
+public @interface ValidUsername {
+    String message() default "Invalid username";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -86,7 +86,7 @@ private WishlistRepository wishlistRepo;
     public void testGetWishlistByUserId() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ssss567@gmail.com");
+        loginJson.put("email", "riya567@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
 

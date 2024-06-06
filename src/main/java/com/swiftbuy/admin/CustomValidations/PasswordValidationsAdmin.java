@@ -1,4 +1,4 @@
-package com.swiftbuy.CustomValidations;
+package com.swiftbuy.admin.CustomValidations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,8 +9,8 @@ import jakarta.validation.Payload;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PasswordValidators.class)
-public @interface PasswordValidations {
+@Constraint(validatedBy = PasswordValidatorsAdmin.class)
+public @interface PasswordValidationsAdmin {
   String message() default "Password Invalid";
   Class<?>[] groups() default {};
   Class<? extends Payload>[] payload() default {};

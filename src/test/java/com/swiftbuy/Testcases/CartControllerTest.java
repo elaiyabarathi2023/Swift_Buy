@@ -70,8 +70,8 @@ public class CartControllerTest {
 	public void testAddCart() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
-		loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
 		MvcResult mvcResult = mockMvc
@@ -100,7 +100,7 @@ public class CartControllerTest {
 	public void testAddAddress() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
+		loginJson.put("phoneNumber", "9873125008");
 		loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -127,8 +127,8 @@ public class CartControllerTest {
 	public void testGetCartByUserId() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
-		loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
 		MvcResult mvcResult = mockMvc
@@ -161,8 +161,8 @@ public class CartControllerTest {
 	public void testCalculateTotalPrice() throws Exception {
 	    // Prepare login request JSON
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ssss567@gmail.com");
-	    loginJson.put("password", "mO8x@123");
+	    loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
 	    // Perform login and retrieve token
@@ -293,8 +293,8 @@ public class CartControllerTest {
 	public void testAddAddress_NotFound() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
-		loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
 		MvcResult mvcResult = mockMvc
@@ -320,8 +320,8 @@ public class CartControllerTest {
 	public void testAddCart_QuantityGreaterThanProductQuantity() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
-		loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
 		MvcResult mvcResult = mockMvc
@@ -350,8 +350,8 @@ public class CartControllerTest {
 	public void testAddCart_ProductNotFound() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ssss567@gmail.com");
-		loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
 		MvcResult mvcResult = mockMvc
@@ -379,12 +379,12 @@ public class CartControllerTest {
 	public void testAddToCart_QuantityZero() throws Exception {
 	    // Mocking the behavior of the repository
 	    ShoppingCart shoppingCartMock = new ShoppingCart();
-	    when(cartRepository.findByUserIdAndProductProductId(1L, 702L)).thenReturn(Optional.of(shoppingCartMock));
+	    when(cartRepository.findByUserIdAndProductProductId(2L, 702L)).thenReturn(Optional.of(shoppingCartMock));
 	    
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ssss567@gmail.com");
-	    loginJson.put("password", "mO8x@123");
+	    loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
 	    MvcResult mvcResult = mockMvc
@@ -419,8 +419,8 @@ public class CartControllerTest {
 	public void testAddCart_ValidCoupon() throws Exception {
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ssss567@gmail.com");
-	    loginJson.put("password", "mO8x@123");
+	    loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
 	    MvcResult mvcResult = mockMvc
@@ -466,8 +466,8 @@ public class CartControllerTest {
 	public void testAddCart_InvalidCoupon() throws Exception {
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ssss567@gmail.com");
-	    loginJson.put("password", "mO8x@123");
+	    loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
 	    MvcResult mvcResult = mockMvc
