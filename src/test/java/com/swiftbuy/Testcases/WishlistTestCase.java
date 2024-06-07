@@ -49,7 +49,7 @@ private WishlistRepository wishlistRepo;
         // Add an item to the wishlist
         JSONObject wishlistJson = new JSONObject();
         JSONObject productJson = new JSONObject();
-        productJson.put("productId", 752L);
+        productJson.put("productId", 1L);
         wishlistJson.put("product", productJson);
 
         mockMvc.perform(post("/api/wishlists")

@@ -70,18 +70,18 @@ public class ReviewControllerTestCase {
     @BeforeEach
     public void setUp() {
         mockOrder = new Order();
-        mockOrder.setOrderId(402L);
-        when(orderRepo.findById(402L)).thenReturn(Optional.of(mockOrder));
+        mockOrder.setOrderId(1L);
+        when(orderRepo.findById(1L)).thenReturn(Optional.of(mockOrder));
     }
 
     @Test
     public void testAddReview() throws Exception {
         String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
-        Long orderId = 402L;
+        Long orderId = 1L;
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();
-        reviewJson.put("productId", 752L);
+        reviewJson.put("productId", 1L);
         reviewJson.put("review", "product is bad");
         reviewJson.put("reviewImage", "http://example.com/image.jpg");
 
@@ -94,7 +94,7 @@ public class ReviewControllerTestCase {
         List<OrderItem> orderItems = new ArrayList<>();
         OrderItem orderItem = new OrderItem();
         ProductDetails product = new ProductDetails();
-        product.setProductId(752L); // Set the product id to match with the reviewJson
+        product.setProductId(1L); // Set the product id to match with the reviewJson
         orderItem.setProduct(product);
         orderItems.add(orderItem);
         order.setOrderItems(orderItems);
