@@ -1,5 +1,7 @@
 package com.swiftbuy.admin.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -25,6 +27,7 @@ public class Offer {
     private Double discountPercentage;
 
     private boolean isActive;
+  
 
 //    @ManyToOne
 //    @JoinColumn(name = "category_id", nullable = false)
@@ -69,6 +72,8 @@ public class Offer {
 	public void setDiscountPercentage(Double discountPercentage) {
 		this.discountPercentage = discountPercentage;
 	}
+
+	
 
 	public boolean isActive() {
 		return isActive;

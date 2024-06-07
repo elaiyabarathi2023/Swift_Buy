@@ -35,10 +35,19 @@ public class CouponCodes {
     // Default constructor
     public CouponCodes() {
     }
-
+    @Column(nullable = false)
+    private boolean isDeleted = false;
     // Getters and setters
 
-    public Long getCouponId() {
+    public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public Long getCouponId() {
         return couponId;
     }
 

@@ -1,3 +1,4 @@
+
 package com.swiftbuy.user.CustomValidations;
 
 import java.util.regex.Pattern;
@@ -9,26 +10,40 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class PhoneNumberValidator implements ConstraintValidator<ValidPhone, String> {
 
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^\\d{10}$");
-    private UserRepository userRepository;
-    public PhoneNumberValidator(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+	private static Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^\\d{10}$");
 
-    @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-        // Check for null or empty string
-        if (value == null || value.trim().isEmpty()) {
-            return false;
-        }
+	private UserRepository userRepository;
 
-        // Check if the phone number matches the pattern
-        boolean matchesPattern = PHONE_NUMBER_PATTERN.matcher(value).matches();
+	public PhoneNumberValidator(UserRepository userRepository) {
 
-        // Check if the email already exists in the database
-        boolean existsInDatabase = userRepository.existsByEmail(value);
+		this.userRepository = userRepository;
 
-        // Return false if the email exists in the database or doesn't match the pattern
-        return matchesPattern && !existsInDatabase;
-    }
+	}
+
+	@Override
+
+	public boolean isValid(String value, ConstraintValidatorContext context) {
+
+		// Check for null or empty string
+
+		if (value == null || value.trim().isEmpty()) {
+
+			return false;
+
+		}
+
+		// Check if the phone number matches the pattern
+
+		boolean matchesPattern = PHONE_NUMBER_PATTERN.matcher(value).matches();
+
+		// Check if the email already exists in the database
+
+		boolean existsInDatabase = userRepository.existsByPhoneNumber(value);
+
+		// Return false if the email exists in the database or doesn't match the pattern
+
+		return matchesPattern && !existsInDatabase;
+
+	}
+
 }

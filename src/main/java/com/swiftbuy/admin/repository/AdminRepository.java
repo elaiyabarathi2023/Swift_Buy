@@ -11,6 +11,8 @@ public interface AdminRepository extends CrudRepository<AdminDetails, Long>{
 
 	AdminDetails findByUsername(String username);
 
+	boolean existsByUsername(String username);
+
 	
 
 }

@@ -11,6 +11,7 @@ public interface CouponCodeRepository extends CrudRepository<CouponCodes, Long> 
 
 	  Optional<CouponCodes> findByCouponId(Long couponId);
 	    Optional<List<CouponCodes>> findByCouponIdIn(List<Long> couponIds);
+	    List<CouponCodes> findByIsDeletedFalse();
 		
 		
 		

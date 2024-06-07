@@ -1,73 +1,69 @@
-//package com.swiftbuy.user.service;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//
-//import com.swiftbuy.admin.model.ProductDetails;
-//import com.swiftbuy.order.model.OrderDetails;
-//import com.swiftbuy.order.service.OrderService;
-//import com.swiftbuy.product.service.ProductService;
-//import com.swiftbuy.user.model.ReviewDetails;
-//import com.swiftbuy.user.model.UserDetails;
-//import com.swiftbuy.user.repository.ReviewRepository;
-//import com.swiftbuy.user.service.UserService;
-//
-//@Service
-//public class ReviewService {
-//
-//    private final ReviewRepository reviewRepository;
-//    private final ProductService productService;
-//    private final UserService userService;
-//    private final OrderService orderService;
-//
-//    @Autowired
-//    public ReviewService(ReviewRepository reviewRepository, ProductService productService, UserService userService, OrderService orderService) {
-//        this.reviewRepository = reviewRepository;
-//        this.productService = productService;
-//        this.userService = userService;
-//        this.orderService = orderService;
-//    }
-//
-//    public ReviewDetails saveOrUpdateReview(ReviewDetails review, Long userId, Long productId, Long orderId) {
-//        Optional<ReviewDetails> existingReview = reviewRepository.findByUserIdAndProductIdAndOrderId(userId, productId, orderId);
-//
-//        if (existingReview.isPresent()) {
-//            // Update the existing review
-//            ReviewDetails updatedReview = existingReview.get();
-//            updatedReview.setDescription(review.getDescription());
-//            updatedReview.setImage(review.getImage());
-//            updatedReview.setRatings(review.getRatings());
-//            updatedReview = reviewRepository.save(updatedReview);
-//            updateProductRating(updatedReview);
-//            return updatedReview;
-//        } else {
-//            // Create a new review
-//            // Retrieve existing instances of ProductDetails, UserDetails, and OrderDetails
-//            ProductDetails product = productService.getProductById(productId);
-//            UserDetails user = userService.getUserById(userId);
-//            OrderDetails order = orderService.getOrderById(orderId);
-//
-//            // Set the retrieved instances to the ReviewDetails object
-//            review.setProduct(product);
-//            review.setUser(user);
-//            review.setOrder(order);
-//
-//            // Save the ReviewDetails
-//            ReviewDetails savedReview = reviewRepository.save(review);
-//            updateProductRating(savedReview);
-//            return savedReview;
-//        }
-//    }
-//
-//    private void updateProductRating(ReviewDetails review) {
-//        ProductDetails product = review.getProduct();
-//        List<ReviewDetails> productReviews = reviewRepository.findByProduct(product);
-//        double sumOfRatings = productReviews.stream().mapToDouble(ReviewDetails::getRatings).sum();
-//        double averageRating = sumOfRatings / productReviews.size();
-//        product.setOverallRating(averageRating);
-//        productService.saveProduct(product);
-//    }
-//}
+package com.swiftbuy.user.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
+import com.swiftbuy.admin.model.ProductDetails;
+import com.swiftbuy.admin.product.repository.ProductRepository;
+import com.swiftbuy.user.model.Order;
+import com.swiftbuy.user.model.OrderItem;
+import com.swiftbuy.user.model.ReviewDetails;
+import com.swiftbuy.user.repository.OrderItemRepository;
+import com.swiftbuy.user.repository.OrderRepository;
+import com.swiftbuy.user.repository.ReviewRepository;
+import com.swiftbuy.user.repository.UserRepository;
+
+@Service
+public class ReviewService {
+    @Autowired
+    private ReviewRepository reviewRepository;
+    
+    @Autowired
+    private OrderRepository orderRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired 
+    private OrderItemRepository orderItemRepo;
+    
+    @Autowired
+    private ProductRepository productRepository;
+
+    public ReviewDetails addReviewForUserOrder(Long orderId, Long userId, ReviewDetails orderReview) {
+        Order order = orderRepository.findByOrderIdAndUserId(orderId, userId);
+        Long productId = orderReview.getProductId();
+        
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        // Check if the product exists in the repository
+        ProductDetails product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        
+        // Check if the product is part of the user's order
+        boolean productInOrder = order.getOrderItems().stream()
+                .anyMatch(item -> item.getProduct().getProductId().equals(productId));
+        
+       
+        
+        orderReview.setOrder(order);
+        orderReview.setUserId(userId);
+        return reviewRepository.save(orderReview);
+    }
+
+    public List<ReviewDetails> getReviewsByUserId(Long userId) {
+        return reviewRepository.findByUserId(userId);
+    }
+
+    public void deleteReview(Long reviewId, Long userId) {
+        ReviewDetails review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
+        if (!review.getUserId().equals(userId)) {
+            // Handle the case where the review does not belong to the specified user
+            throw new ResourceNotFoundException("Review does not belong to the specified user");
+        }
+        reviewRepository.deleteById(reviewId);
+    }
+}

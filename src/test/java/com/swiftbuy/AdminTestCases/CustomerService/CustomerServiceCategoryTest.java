@@ -1,130 +1,230 @@
 package com.swiftbuy.AdminTestCases.CustomerService;
 
-//public class CustomerServiceCategory {
-//
-//}
-
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swiftbuy.admin.controller.CustomerServiceCategory.CustomerServiceCategoryController;
-import com.swiftbuy.admin.model.CustomerServiceCategory.CustomerServiceCategory;
-import com.swiftbuy.admin.repository.CustomerServiceCategory.CustomerServiceCategoryRepo;
-import com.swiftbuy.admin.service.CustomerServiceCategory.CustomerServiceCategoryService;
-import com.swiftbuy.user.controller.AccountManangement.AddressDetailsController;
-
-import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
 
-@WebMvcTest(CustomerServiceCategoryController.class)
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swiftbuy.admin.model.CustomerService.CustomerServiceCategory;
+import com.swiftbuy.admin.repository.CustomerService.CustomerServiceCategoryRepository;
+import com.swiftbuy.admin.service.CustomerService.CustomerServiceCategoryService;
+
+import jakarta.transaction.Transactional;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 public class CustomerServiceCategoryTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private CustomerServiceCategoryRepo categoryRepository;
+    @Autowired
+    private CustomerServiceCategoryService service;
 
-    @MockBean
-    private CustomerServiceCategoryService categoryService;
+    @Autowired
+    private CustomerServiceCategoryRepository repository;
 
-    @MockBean
-    private CustomerServiceCategoryController categoryController;
-
+    @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
-        objectMapper = new ObjectMapper();
+    private List<Long> testCategoryIds = new ArrayList<>();
+
+    private Long testCategoryId;
+
+    @Test
+    public void testCreateCategory_Success() throws Exception {
+        CustomerServiceCategory category = new CustomerServiceCategory();
+        category.setName("Poweris");
+        category.setDescription("This category covers all aspects related to placing, managing, and tracking orders on the website");
+
+        MvcResult result = mockMvc
+                .perform(post("/api/customer-service-categories_part")
+                        .content(objectMapper.writeValueAsString(category))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseString = result.getResponse().getContentAsString();
+        CustomerServiceCategory responseCategory = objectMapper.readValue(responseString, CustomerServiceCategory.class);
+
+        assertThat(responseCategory.getCscategoryid()).isNotNull();
+        assertThat(responseCategory.getName()).isEqualTo("Poweris");
+        assertThat(responseCategory.getDescription()).isEqualTo("This category covers all aspects related to placing, managing, and tracking orders on the website");
+
+        testCategoryId = responseCategory.getCscategoryid();
     }
 
     @Test
-    public void testGetAllCategories() throws Exception {
-        
+    public void testGetCategoryById_NotFound() throws Exception {
+        Long nonExistentCategoryId = 999L;
 
-        // Perform the GET request with the JSONArray as the expected response body
-        mockMvc.perform(get("/api/categories"))
-            .andExpect(status().isOk());
-//            .andExpect(content().json(categoriesJson.toString()));
+        MvcResult result = mockMvc
+                .perform(get("/api/customer-service-categories_part/" + nonExistentCategoryId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).isEmpty();
+    }
+
+    @Test
+    public void testUpdateCategory_Success() throws Exception {
+        CustomerServiceCategory category = new CustomerServiceCategory();
+        category.setName("Electronics");
+        category.setDescription("This category covers all aspects related to placing, managing, and tracking orders on the website");
+        CustomerServiceCategory savedCategory = repository.save(category);
+
+        savedCategory.setName("Updated Electronics");
+        savedCategory.setDescription("Updated description of the electronics category");
+
+        MvcResult result = mockMvc
+                .perform(put("/api/customer-service-categories_part/" + savedCategory.getCscategoryid())
+                        .content(objectMapper.writeValueAsString(savedCategory))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseString = result.getResponse().getContentAsString();
+        CustomerServiceCategory responseCategory = objectMapper.readValue(responseString, CustomerServiceCategory.class);
+
+        assertThat(responseCategory.getCscategoryid()).isEqualTo(savedCategory.getCscategoryid());
+        assertThat(responseCategory.getName()).isEqualTo("Updated Electronics");
+        assertThat(responseCategory.getDescription()).isEqualTo("Updated description of the electronics category");
+
+        repository.deleteById(savedCategory.getCscategoryid());
+    }
+
+    @Test
+    public void testDeleteCategory_Success() throws Exception {
+        CustomerServiceCategory category = new CustomerServiceCategory();
+        category.setName("Electronics to Delete");
+        category.setDescription("This category covers all aspects related to placing, managing, and tracking orders on the website");
+        CustomerServiceCategory savedCategory = repository.save(category);
+        Long categoryId = savedCategory.getCscategoryid();
+
+        mockMvc.perform(delete("/api/customer-service-categories_part/" + categoryId))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+       
+    }
+
+    @Test
+    public void testGetAllCategories_Success() throws Exception {
+        CustomerServiceCategory category1 = new CustomerServiceCategory();
+        category1.setName("Electronics");
+        category1.setDescription("This category covers all aspects related to electronics.");
+        repository.save(category1);
+        testCategoryIds.add(category1.getCscategoryid());
+
+        CustomerServiceCategory category2 = new CustomerServiceCategory();
+        category2.setName("Books");
+        category2.setDescription("This category covers all aspects related to books.");
+        repository.save(category2);
+        testCategoryIds.add(category2.getCscategoryid());
+
+        MvcResult result = mockMvc
+                .perform(get("/api/customer-service-categories_part"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseString = result.getResponse().getContentAsString();
+        List<CustomerServiceCategory> responseCategories = objectMapper.readValue(responseString, new TypeReference<List<CustomerServiceCategory>>() {});
+
+        assertThat(responseCategories).isNotEmpty();
+        assertThat(responseCategories.size()).isGreaterThanOrEqualTo(2);
+
+        testCategoryIds.add(category1.getCscategoryid());
+        testCategoryIds.add(category2.getCscategoryid());
+    }
+
+    @Test
+    public void testUpdateCategory_NullArguments() throws Exception {
+        Long cscategoryid = null;
+
+        mockMvc.perform(put("/api/customer-service-categories_part/{cscategoryid}", cscategoryid)
+                        .content(objectMapper.writeValueAsString(null))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateCategory_NotFound() throws Exception {
+        Long nonExistentCategoryId = 999L;
+        CustomerServiceCategory updatedCategory = new CustomerServiceCategory();
+        updatedCategory.setName("Updated Category Name");
+        updatedCategory.setDescription("This is an updated category description.");
+
+        MvcResult result = mockMvc
+                .perform(put("/api/customer-service-categories_part/{cscategoryid}", nonExistentCategoryId)
+                        .content(objectMapper.writeValueAsString(updatedCategory))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).isEmpty();
+    }
+
+    @Test
+    public void testDeleteCategory_NotFound() throws Exception {
+        Long nonExistentCategoryId = 999L;
+
+        MvcResult result = mockMvc
+                .perform(delete("/api/customer-service-categories_part/" + nonExistentCategoryId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody).isEmpty();
     }
 
     @Test
     public void testGetCategoryById() throws Exception {
-        Long categoryId = 1L;
-//        CustomerServiceCategoryTest category = new CustomerServiceCategoryTest();
-//
-//      
+        CustomerServiceCategory category = new CustomerServiceCategory();
+        category.setName("Test Category");
+        category.setDescription("Test Category Description");
+        CustomerServiceCategory savedCategory = repository.save(category);
+        Long categoryId = savedCategory.getCscategoryid();
 
-        mockMvc.perform(get("/api/categories/{id}", categoryId))
-                .andExpect(status().isOk());
-                
+        mockMvc.perform(get("/api/customer-service-categories_part/" + categoryId))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+
+        repository.deleteById(categoryId);
     }
 
-    @Test
-    public void testCreateCategory() throws Exception {
-        // Create a JSONObject for the category
-        JSONObject categoryJson = new JSONObject();
-        categoryJson.put("name", "New Category");
-        categoryJson.put("description", "New Description");
-
-        String requestBody = categoryJson.toString();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-
-    @Test
-    public void testUpdateCategory() throws Exception {
-        // Create a JSONObject for the category
-        JSONObject categoryJson = new JSONObject();
-        categoryJson.put("name", "Updated Category");
-        categoryJson.put("description", "Updated Description");
-
-        String requestBody = categoryJson.toString();
-
-        Long categoryId = 3L;
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/categories/{id}", categoryId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-
-
-    @Test
-    public void testDeleteCategory() throws Exception {
-        Long categoryId = 1L;
-//        CustomerServiceCategoryTest category = new CustomerServiceCategoryTest();
-
-        
-
-        mockMvc.perform(delete("/api/categories/{id}", categoryId))
-                .andExpect(status().isOk());
+    @AfterEach
+    public void tearDown() {
+        if (testCategoryId != null && repository.existsById(testCategoryId)) {
+            repository.deleteById(testCategoryId);
+            testCategoryId = null;
+        }
+        for (Long id : testCategoryIds) {
+            if (repository.existsById(id)) {
+                repository.deleteById(id);
+            }
+        }
+        testCategoryIds.clear();
     }
 }

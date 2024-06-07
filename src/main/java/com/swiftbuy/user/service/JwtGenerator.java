@@ -2,6 +2,7 @@ package com.swiftbuy.user.service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,22 +32,23 @@ public class JwtGenerator implements TokenGeneratorAdmin {
 	@Override
 	public Map<String, String> generateToken(UserDetails userdata)throws InvalidKeyException {
 		   Map<String, String> jwtTokenGen = new HashMap<>();
-		Map<String, String> claims = new HashMap<>();
+		Map<String, String> claims = new LinkedHashMap<>();
 		claims.put("firstname", userdata.getFirstname());
+		claims.put("userId", userdata.getUserId().toString());
+		userdata.setCreatedAt(new Date());
 		 if (userdata.getEmail() != null && !userdata.getEmail().isEmpty()) {
 		        claims.put("email", userdata.getEmail());
 		    }
-		    if (userdata.getPhoneNumber() != null && !userdata.getPhoneNumber().isEmpty()) {
+		 if (userdata.getPhoneNumber() != null && !userdata.getPhoneNumber().isEmpty()) {
 		        claims.put("phoneNumber", userdata.getPhoneNumber());
 		    }
-		claims.put("userId", userdata.getUserId().toString());
-		userdata.setCreatedAt(new Date());
+		
        UserDetails savedUser = userRepository.save(userdata);
         
         Date expiration = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(30));
-  		 String token = null;
+  		 //String token = null;
   		//try {
-				token = Jwts.builder().claims(claims).subject(userdata.getUserId().toString()) // Use user ID instead of password
+			String	token = Jwts.builder().claims(claims).subject(userdata.getUserId().toString()) // Use user ID instead of password
  
 						.issuer("theertha")
 						.signWith(getSigningKey())
@@ -57,8 +59,9 @@ public class JwtGenerator implements TokenGeneratorAdmin {
 		//	} catch (Exception e) {
 			//	e.printStackTrace();
 		//	}
-  		jwtTokenGen.put("token", token);
+		jwtTokenGen.put("status", "true");
   		jwtTokenGen.put("message","Token generated successfully");
+  		jwtTokenGen.put("token", token);
 	    return jwtTokenGen;
 	  
 	  }
