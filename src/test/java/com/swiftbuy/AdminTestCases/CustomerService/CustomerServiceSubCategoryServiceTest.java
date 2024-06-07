@@ -20,10 +20,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.swiftbuy.admin.model.CustomerServiceCategory.CustomerServiceCategory;
-import com.swiftbuy.admin.model.CustomerServiceSubCategory.CustomerServiceSubCategory;
-import com.swiftbuy.admin.repository.CustomerServiceSubCategory.CustomerServiceSubCategoryRepo;
-import com.swiftbuy.admin.service.CustomerServiceSubCategory.CustomerServiceSubCategoryService;
+import com.swiftbuy.admin.model.CustomerService.CustomerServiceCategory;
+import com.swiftbuy.admin.model.CustomerService.CustomerServiceSubCategory;
+import com.swiftbuy.admin.repository.CustomerService.CustomerServiceSubCategoryRepo;
+import com.swiftbuy.admin.service.CustomerService.CustomerServiceSubCategoryService;
 
 @SpringBootTest
 @AutoConfigureMockMvc

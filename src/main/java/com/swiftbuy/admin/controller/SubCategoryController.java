@@ -1,67 +1,4 @@
 package com.swiftbuy.admin.controller;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import com.swiftbuy.admin.model.SubCategory;
-//import com.swiftbuy.admin.service.SubCategoryService;
-//
-//@RestController
-//@RequestMapping("/admin/dashboard/subcategories")
-//public class SubCategoryController {
-//
-//    @Autowired
-//    private SubCategoryService subCategoryService;
-//
-//    // Create SubCategory
-//    @PostMapping("/add")
-//    public ResponseEntity<SubCategory> createSubCategory(@RequestParam Long categoryId, @RequestBody SubCategory subCategory) {
-//        SubCategory createdSubCategory = subCategoryService.createSubCategory(categoryId, subCategory);
-//        return new ResponseEntity<>(createdSubCategory, HttpStatus.CREATED);
-//    }
-//
-//    // Read SubCategory
-//    @GetMapping("/{subCategoryId}")
-//    public ResponseEntity<SubCategory> getSubCategoryById(@PathVariable Long subCategoryId) {
-//        SubCategory subCategory = subCategoryService.getSubCategoryById(subCategoryId);
-//        if (subCategory != null) {
-//            return new ResponseEntity<>(subCategory, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-//
-//    // Update SubCategory
-//    @PutMapping("/{subCategoryId}")
-//    public ResponseEntity<SubCategory> updateSubCategory(@PathVariable Long subCategoryId, @RequestBody SubCategory subCategory) {
-//        SubCategory updatedSubCategory = subCategoryService.updateSubCategory(subCategoryId, subCategory);
-//        if (updatedSubCategory != null) {
-//            return new ResponseEntity<>(updatedSubCategory, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-//
-//    // Delete SubCategory
-//    @DeleteMapping("/{subCategoryId}")
-//    public ResponseEntity<Void> deleteSubCategory(@PathVariable Long subCategoryId) {
-//        boolean deleted = subCategoryService.deleteSubCategory(subCategoryId);
-//        if (deleted) {
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-//
-//    // Read All SubCategories
-//    @GetMapping
-//    public ResponseEntity<Iterable<SubCategory>> getAllSubCategories() {
-//        Iterable<SubCategory> subCategories = subCategoryService.getAllSubCategories();
-//        return new ResponseEntity<>(subCategories, HttpStatus.OK);
-//    }
-//}
 
 import com.swiftbuy.admin.model.SubCategory;
 import com.swiftbuy.admin.service.SubCategoryService;
@@ -69,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/subcategories")
@@ -80,29 +19,73 @@ public class SubCategoryController {
     private SubCategoryService subCategoryService;
 
     @GetMapping
-    public ResponseEntity<Iterable<SubCategory>> getAllSubCategories() {
-        return ResponseEntity.ok(subCategoryService.getAllSubCategories());
+    public ResponseEntity<Map<String, Object>> getAllSubCategories() {
+        Map<String, Object> response = new HashMap<>();
+      
+            Iterable<SubCategory> subCategories = subCategoryService.getAllSubCategories();
+            response.put("status", true);
+            response.put("message", "All subcategories retrieved successfully");
+            response.put("subcategories", subCategories);
+            return ResponseEntity.ok(response);
+        
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SubCategory> getSubCategoryById(@PathVariable Long id) {
-        return ResponseEntity.ok(subCategoryService.getSubCategoryById(id));
+    public ResponseEntity<Map<String, Object>> getSubCategoryById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+      
+            SubCategory subCategory = subCategoryService.getSubCategoryById(id);
+            response.put("status", true);
+            response.put("message", "Subcategory retrieved successfully");
+            response.put("subcategory", subCategory);
+            return ResponseEntity.ok(response);
+       
     }
 
     @PostMapping
-    public ResponseEntity<SubCategory> createSubCategory(@RequestBody SubCategory subCategory) {
-    	SubCategory sub = subCategoryService.createSubCategory(subCategory);
-        return ResponseEntity.status(HttpStatus.CREATED).body(sub);
+    public ResponseEntity<Map<String, Object>> createSubCategory(@RequestBody SubCategory subCategory) {
+        Map<String, Object> response = new HashMap<>();
+        if (subCategory.getCategory() == null || subCategory.getCategory().getCategory_id() == null) {
+            response.put("status", false);
+            response.put("error", "Required parameter 'category_id' is not present in the request body.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        
+            SubCategory createdSubCategory = subCategoryService.createSubCategory(subCategory);
+            response.put("status", true);
+            response.put("message", "Subcategory created successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SubCategory> updateSubCategory(@PathVariable Long id, @RequestBody SubCategory subCategory) {
-        return ResponseEntity.ok(subCategoryService.updateSubCategory(id, subCategory));
+    public ResponseEntity<Map<String, Object>> updateSubCategory(@PathVariable Long id, @RequestBody SubCategory subCategory) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            SubCategory updatedSubCategory = subCategoryService.updateSubCategory(id, subCategory);
+            response.put("status", true);
+            response.put("message", "Subcategory updated successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", false);
+            response.put("error", "Category not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSubCategory(@PathVariable Long id) {
-        subCategoryService.deleteSubCategory(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String, Object>> deleteSubCategory(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            subCategoryService.deleteSubCategory(id);
+            response.put("status", true);
+            response.put("message", "Subcategory deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", false);
+            response.put("error", "Internal Server Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }

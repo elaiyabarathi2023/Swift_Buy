@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import com.swiftbuy.admin.model.Category;
 import com.swiftbuy.admin.service.CategoryService;
 
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/admin/dashboard/categories")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     @Autowired
@@ -18,49 +20,77 @@ public class CategoryController {
 
     // Create Category
     @PostMapping("/add")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category createdCategory = categoryService.createCategory(category);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+    public ResponseEntity<Map<String, Object>> createCategory(@RequestBody Category category) {
+        Map<String, Object> response = new HashMap<>();
+        
+            Category createdCategory = categoryService.createCategory(category);
+            response.put("status", true);
+            response.put("message", "Category created successfully");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        
     }
 
     // Read Category
     @GetMapping("/{categoryId}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long categoryId) {
-        Category category = categoryService.getCategoryById(categoryId);
-        if (category != null) {
-            return new ResponseEntity<>(category, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> getCategoryById(@PathVariable Long categoryId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = categoryService.getCategoryById(categoryId);
+            response.put("status", true);
+            response.put("message", "Category retrieved successfully");
+            response.put("category", category);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("status", false);
+            response.put("error", "Category not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     // Update Category
     @PutMapping("/{categoryId}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
-        Category updatedCategory = categoryService.updateCategory(categoryId, category);
-        if (updatedCategory != null) {
-            return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category updatedCategory = categoryService.updateCategory(categoryId, category);
+            response.put("status", true);
+            response.put("message", "Category updated successfully");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("status", false);
+            response.put("error", "Category not found");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     // Delete Category
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId) {
-        boolean deleted = categoryService.deleteCategory(categoryId);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> deleteCategory(@PathVariable Long categoryId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            boolean deleted = categoryService.deleteCategory(categoryId);
+            
+                response.put("status", true);
+                response.put("message", "Category deleted successfully");
+                return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+            
+        } catch (Exception e) {
+            response.put("status", false);
+            response.put("error", "Internal Server Error: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
     // Read All Categories
     @GetMapping
-    public ResponseEntity<Iterable<Category>> getAllCategories() {
-        Iterable<Category> categories = categoryService.getAllCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllCategories() {
+        Map<String, Object> response = new HashMap<>();
+        
+            Iterable<Category> categories = categoryService.getAllCategories();
+            response.put("status", true);
+            response.put("message", "All categories retrieved successfully");
+            response.put("categories", categories);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        
     }
 }
-

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.product.repository.ProductRepository;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.OrderItem;
 import com.swiftbuy.user.model.ReviewDetails;

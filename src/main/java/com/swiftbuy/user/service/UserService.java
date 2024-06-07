@@ -51,36 +51,36 @@ public class UserService {
 
 		return response;
 	}
-
+	
 	public Map<String, String> loginUser(String email, String phoneNumber, String password) throws Exception {
-		Map<String, String> response = new HashMap<>();
+	    Map<String, String> response = new HashMap<>();
 
-		// Check if both email and phone number are provided
-		if ((email != null && !email.isEmpty()) && (phoneNumber != null && !phoneNumber.isEmpty())) {
-			response.put("message", "Please provide either email or phone number, not both.");
-			return response;
-		}
+	    // Check if both email and phone number are provided
+	    if ((email != null && !email.isEmpty()) && (phoneNumber != null && !phoneNumber.isEmpty())) {
+	        throw new Exception("Please provide either email or phone number, not both.");
+	    }
 
-		// Initialize user as null
-		UserDetails user = null;
+	    // Initialize user as null
+	    UserDetails user = null;
 
-		// Try to find the user by email or phone number
-		if (email != null && email.contains("@")) {
-			user = userRepository.findByEmail(email);
-		} else if (phoneNumber != null) {
-			user = userRepository.findByPhoneNumber(phoneNumber);
-		}
-		String hashedPassword = hashPassword(password);
-		// Check if the user exists and the password matches
-		if (user != null && user.getPassword().equals(hashedPassword)) {
-			// Generate a token for the user
-			Map<String, String> tokenResponse = jwtGenerator.generateToken(user);
-			response.putAll(tokenResponse);
-		} else {
-			response.put("message", "Invalid details provided!!!!");
-		}
+	    // Try to find the user by email or phone number
+	    if (email != null && email.contains("@")) {
+	        user = userRepository.findByEmail(email);
+	    } else if (phoneNumber != null) {
+	        user = userRepository.findByPhoneNumber(phoneNumber);
+	    }
+	    String hashedPassword = hashPassword(password);
+	    // Check if the user exists and the password matches
+	    if (user != null && user.getPassword().equals(hashPassword(password))) {
+	        // Generate a token for the user
+	        Map<String, String> tokenResponse = jwtGenerator.generateToken(user);
+	        response.putAll(tokenResponse);
+	    } else {
+	        // If user is not found or password does not match, return an error message
+	        throw new Exception("Invalid details provided!!!!");
+	    }
 
-		return response;
+	    return response;
 	}
 
 	public Map<String, String> forgotPassword(Map<String, String> requestData) {

@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftbuy.admin.model.CouponCodes;
 import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.product.repository.ProductRepository;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.ShoppingCartRequest;
 import com.swiftbuy.user.repository.OrderItemRepository;
@@ -70,7 +70,7 @@ public class CartControllerTest {
 	public void testAddCart() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "riya567@gmail.com");
+		loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -86,9 +86,9 @@ public class CartControllerTest {
 
 		// Add an item to the cart
 		JSONObject cartItemJson = new JSONObject();
-		cartItemJson.put("productId", 702L);
+		cartItemJson.put("productId", 752L);
 		cartItemJson.put("quantity", 1L);
-		cartItemJson.put("selectedCouponId", 2L);
+		cartItemJson.put("selectedCouponId", 1L);
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add").content(cartItemJson.toString())
 				.contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token))
@@ -100,8 +100,8 @@ public class CartControllerTest {
 	public void testAddAddress() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("phoneNumber", "9873125008");
-		loginJson.put("password", "mO8x@123");
+		loginJson.put("email", "ameha123@gmail.com");
+        loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
 		MvcResult mvcResult = mockMvc
@@ -127,7 +127,7 @@ public class CartControllerTest {
 	public void testGetCartByUserId() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "riya567@gmail.com");
+		loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -161,7 +161,7 @@ public class CartControllerTest {
 	public void testCalculateTotalPrice() throws Exception {
 	    // Prepare login request JSON
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "riya567@gmail.com");
+	    loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -179,11 +179,11 @@ public class CartControllerTest {
 
 	    // Create mock products
 	    ProductDetails product1 = new ProductDetails();
-	    product1.setProductId(702L);
+	    product1.setProductId(752L);
 	    product1.setProductPrice(50.0);
 
 	    ProductDetails product2 = new ProductDetails();
-	    product2.setProductId(703L);
+	    product2.setProductId(753L);
 	    product2.setProductPrice(100.0);
 
 	    // Create mock offers
@@ -193,11 +193,11 @@ public class CartControllerTest {
 
 	    // Create mock coupons
 	    CouponCodes coupon1 = new CouponCodes();
-	    coupon1.setCouponId(2L);
+	    coupon1.setCouponId(1L);
 	    coupon1.setDiscountPercentage(20.0);
 
 	    CouponCodes coupon2 = new CouponCodes();
-	    coupon2.setCouponId(2L);
+	    coupon2.setCouponId(1L);
 	    coupon2.setDiscountPercentage(15.0);
 
 	    // Set coupons for products
@@ -208,12 +208,12 @@ public class CartControllerTest {
 	    ShoppingCart item1 = new ShoppingCart();
 	    item1.setProduct(product1);
 	    item1.setQuantity(2);
-	    item1.setSelectedCouponId(2L);
+	    item1.setSelectedCouponId(1L);
 
 	    ShoppingCart item2 = new ShoppingCart();
 	    item2.setProduct(product2);
 	    item2.setQuantity(1);
-	    item2.setSelectedCouponId(2L);
+	    item2.setSelectedCouponId(1L);
 
 	    List<ShoppingCart> cartItems = Arrays.asList(item1, item2);
 
@@ -261,7 +261,7 @@ public class CartControllerTest {
 	public void testClearCart() {
 		// Create mock cart items
 		ProductDetails product1 = new ProductDetails();
-		product1.setProductId(702L);
+		product1.setProductId(752L);
 		product1.setProductPrice(50.0);
 
 		ShoppingCart item1 = new ShoppingCart();
@@ -293,7 +293,7 @@ public class CartControllerTest {
 	public void testAddAddress_NotFound() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "riya567@gmail.com");
+		loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -320,7 +320,7 @@ public class CartControllerTest {
 	public void testAddCart_QuantityGreaterThanProductQuantity() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "riya567@gmail.com");
+		loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -336,9 +336,9 @@ public class CartControllerTest {
 
 		// Add an item to the cart
 		JSONObject cartItemJson = new JSONObject();
-		cartItemJson.put("productId", 702L);
+		cartItemJson.put("productId", 752L);
 		cartItemJson.put("quantity", 1000L);
-		cartItemJson.put("selectedCouponId", 2L);
+		cartItemJson.put("selectedCouponId", 1L);
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add").content(cartItemJson.toString())
 				.contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token))
@@ -350,7 +350,7 @@ public class CartControllerTest {
 	public void testAddCart_ProductNotFound() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "riya567@gmail.com");
+		loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -379,11 +379,11 @@ public class CartControllerTest {
 	public void testAddToCart_QuantityZero() throws Exception {
 	    // Mocking the behavior of the repository
 	    ShoppingCart shoppingCartMock = new ShoppingCart();
-	    when(cartRepository.findByUserIdAndProductProductId(2L, 702L)).thenReturn(Optional.of(shoppingCartMock));
+	    when(cartRepository.findByUserIdAndProductProductId(1L, 752L)).thenReturn(Optional.of(shoppingCartMock));
 	    
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "riya567@gmail.com");
+	    loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -400,9 +400,9 @@ public class CartControllerTest {
 
 	    // Add an item with quantity 0 to the cart
 	    JSONObject cartItemJson = new JSONObject();
-	    cartItemJson.put("productId", 702L);
+	    cartItemJson.put("productId", 752L);
 	    cartItemJson.put("quantity", 0L);
-	    cartItemJson.put("selectedCouponId", 2L);
+	    cartItemJson.put("selectedCouponId", 1L);
 
 	    mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add")
 	            .content(cartItemJson.toString())
@@ -419,7 +419,7 @@ public class CartControllerTest {
 	public void testAddCart_ValidCoupon() throws Exception {
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "riya567@gmail.com");
+	    loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -436,23 +436,23 @@ public class CartControllerTest {
 
 	    // Create mock product with coupons
 	    ProductDetails product = new ProductDetails();
-	    product.setProductId(702L);
+	    product.setProductId(752L);
 	    product.setProductPrice(100.0);
 
 	    CouponCodes coupon = new CouponCodes();
-	    coupon.setCouponId(2L);
+	    coupon.setCouponId(1L);
 	    coupon.setDiscountPercentage(20.0);
 
 	    product.setCoupons(new HashSet<>(Arrays.asList(coupon)));
 
 	    // Mock the repository to return the product
-	    when(productRepository.findById(702L)).thenReturn(Optional.of(product));
+	    when(productRepository.findById(752L)).thenReturn(Optional.of(product));
 
 	    // Add an item to the cart with a valid coupon
 	    JSONObject cartItemJson = new JSONObject();
-	    cartItemJson.put("productId", 702L);
+	    cartItemJson.put("productId", 752L);
 	    cartItemJson.put("quantity", 1L);
-	    cartItemJson.put("selectedCouponId", 2L);
+	    cartItemJson.put("selectedCouponId", 1L);
 
 	    mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add")
 	            .content(cartItemJson.toString())
@@ -466,7 +466,7 @@ public class CartControllerTest {
 	public void testAddCart_InvalidCoupon() throws Exception {
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "riya567@gmail.com");
+		loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -483,18 +483,18 @@ public class CartControllerTest {
 
 	    // Create mock product without coupons
 	    ProductDetails product = new ProductDetails();
-	    product.setProductId(702L);
+	    product.setProductId(752L);
 	    product.setProductPrice(100.0);
 	    product.setCoupons(new HashSet<>());
 
 	    // Mock the repository to return the product
-	    when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+	    when(productRepository.findById(752L)).thenReturn(Optional.of(product));
 
 	    // Add an item to the cart with an invalid coupon
 	    JSONObject cartItemJson = new JSONObject();
-	    cartItemJson.put("productId", 702L);
+	    cartItemJson.put("productId", 752L);
 	    cartItemJson.put("quantity", 1L);
-	    cartItemJson.put("selectedCouponId", 1L);
+	    cartItemJson.put("selectedCouponId", 9L);
 
 	    mockMvc.perform(MockMvcRequestBuilders.post("/api/shoppingcart/add")
 	            .content(cartItemJson.toString())

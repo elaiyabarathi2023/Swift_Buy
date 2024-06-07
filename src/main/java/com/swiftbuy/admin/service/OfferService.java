@@ -18,14 +18,10 @@ import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
 
 import com.swiftbuy.admin.model.SubCategory;
-
+import com.swiftbuy.admin.product.repository.ProductRepository;
+import com.swiftbuy.admin.repository.CategoryRepository;
 import com.swiftbuy.admin.repository.OfferRepository;
-
-import com.swiftbuy.product.repository.ProductRepository;
-
-import com.swiftbuy.repository.CategoryRepository;
-
-import com.swiftbuy.subcrepository.SubCategoryRepository;
+import com.swiftbuy.admin.repository.SubCategoryRepository;
  
 @Service
 

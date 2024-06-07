@@ -2,7 +2,7 @@
 package com.swiftbuy.user.service;
  
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.product.repository.ProductRepository;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.UserDetails;
 import com.swiftbuy.user.model.WishList;
 import com.swiftbuy.user.repository.UserRepository;

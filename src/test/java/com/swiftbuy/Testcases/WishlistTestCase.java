@@ -39,18 +39,17 @@ private WishlistRepository wishlistRepo;
     @BeforeEach
     public void setUpMocks() {
         WishList wishlist = new WishList();
-        wishlist.setWishlistId(602L);
-        when(wishlistRepo.findById(602L)).thenReturn(Optional.of(wishlist));
+        wishlist.setWishlistId(752L);
+        when(wishlistRepo.findById(752L)).thenReturn(Optional.of(wishlist));
        
     }
     @Test
     public void testAddToWishlist() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
         // Add an item to the wishlist
         JSONObject wishlistJson = new JSONObject();
         JSONObject productJson = new JSONObject();
-        productJson.put("productId", 702L);
+        productJson.put("productId", 752L);
         wishlistJson.put("product", productJson);
 
         mockMvc.perform(post("/api/wishlists")
@@ -68,7 +67,7 @@ private WishlistRepository wishlistRepo;
         // Create a JSON object representing the wishlist item
         JSONObject wishlistJson = new JSONObject();
         JSONObject productJson = new JSONObject();
-        productJson.put("productId", 702L);
+        productJson.put("productId", 752L);
         wishlistJson.put("product", productJson);
 
         // Perform the HTTP request to add the item to the wishlist
@@ -86,7 +85,7 @@ private WishlistRepository wishlistRepo;
     public void testGetWishlistByUserId() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "riya567@gmail.com");
+        loginJson.put("email", "ameha123@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
 
@@ -114,9 +113,8 @@ private WishlistRepository wishlistRepo;
     @Test
     public void testRemoveFromWishlist() throws Exception {
         
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-
-        Long wishlistId = 602L; // Ensure this ID exists in the setup
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
+        Long wishlistId = 752L; // Ensure this ID exists in the setup
 
         // Perform the HTTP request to remove the item from the wishlist
         mockMvc.perform(delete("/api/wishlists/{wishlistId}", wishlistId)
@@ -128,8 +126,7 @@ private WishlistRepository wishlistRepo;
 
     @Test
     public void testAddToWishlist_ProductNotFound() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
         // Add an item to the wishlist
         JSONObject wishlistJson = new JSONObject();
         JSONObject productJson = new JSONObject();
@@ -146,8 +143,7 @@ private WishlistRepository wishlistRepo;
     @Test
     public void testRemoveFromWishlist_IdNotPresent() throws Exception {
         
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
         Long wishlistId = 699L; // Ensure this ID exists in the setup
 
         // Perform the HTTP request to remove the item from the wishlist

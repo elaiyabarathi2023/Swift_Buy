@@ -2,8 +2,9 @@ package com.swiftbuy.admin.service;
 
 import com.swiftbuy.admin.model.CouponCodes;
 import com.swiftbuy.admin.model.ProductDetails;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.admin.repository.CouponCodeRepository;
-import com.swiftbuy.product.repository.ProductRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;

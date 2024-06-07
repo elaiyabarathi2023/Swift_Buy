@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.product.repository.ProductRepository;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.OrderItem;
 import com.swiftbuy.user.model.ReviewDetails;
@@ -70,18 +70,18 @@ public class ReviewControllerTestCase {
     @BeforeEach
     public void setUp() {
         mockOrder = new Order();
-        mockOrder.setOrderId(353L);
-        when(orderRepo.findById(353L)).thenReturn(Optional.of(mockOrder));
+        mockOrder.setOrderId(402L);
+        when(orderRepo.findById(402L)).thenReturn(Optional.of(mockOrder));
     }
 
     @Test
     public void testAddReview() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long orderId = 353L;
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
+        Long orderId = 402L;
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();
-        reviewJson.put("productId", 702L);
+        reviewJson.put("productId", 752L);
         reviewJson.put("review", "product is bad");
         reviewJson.put("reviewImage", "http://example.com/image.jpg");
 
@@ -94,7 +94,7 @@ public class ReviewControllerTestCase {
         List<OrderItem> orderItems = new ArrayList<>();
         OrderItem orderItem = new OrderItem();
         ProductDetails product = new ProductDetails();
-        product.setProductId(1L); // Set the product id to match with the reviewJson
+        product.setProductId(752L); // Set the product id to match with the reviewJson
         orderItem.setProduct(product);
         orderItems.add(orderItem);
         order.setOrderItems(orderItems);
@@ -110,8 +110,7 @@ public class ReviewControllerTestCase {
     }
     @Test
     public void GetReview() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-   
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";
         // Perform the POST request to add a review
         mockMvc.perform(get("/review")
                 .header("Authorization", "Bearer " + token))
@@ -120,8 +119,7 @@ public class ReviewControllerTestCase {
     }
     @Test
     public void testAddReview_ProductNotFound() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long orderId = 303L;
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2"; Long orderId = 402L;
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();
@@ -154,8 +152,7 @@ public class ReviewControllerTestCase {
     }
     @Test
     public void testDeleteReview_Success() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long reviewId = 1L;
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";     Long reviewId = 1L;
         Long userId = 1L;
 
         // Mocking the review
@@ -175,8 +172,7 @@ public class ReviewControllerTestCase {
 
     @Test
     public void testDeleteReview_ReviewNotFound() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long reviewId = 1L;
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";   Long reviewId = 1L;
         Long userId = 1L;
 
         // Mocking the absence of the review
@@ -194,8 +190,7 @@ public class ReviewControllerTestCase {
 
     @Test
     public void testDeleteReview_ReviewNotBelongsToUser() throws Exception {
-        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long reviewId = 1L;
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";  Long reviewId = 1L;
         Long userId = 1L;
 
         // Mocking a review with a different userId
@@ -214,8 +209,7 @@ public class ReviewControllerTestCase {
     }
     @Test
     public void testAddReview_ProductNotInOrder() throws Exception {
-    	 String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJzc3NzIiwidXNlcklkIjoiMSIsImVtYWlsIjoic3NzczU2N0BnbWFpbC5jb20iLCJwaG9uZU51bWJlciI6Ijk4NzExMTAwMDMiLCJzdWIiOiIxIiwiaXNzIjoidGhlZXJ0aGEiLCJpYXQiOjE3MTcwNDcwMDgsImV4cCI6MTcxOTYzOTAwOH0.gSWRJwRu_9A6_eHYXfHfl4u-9WFdq8c6ILZtWoez24Yhe3rpyrDEKoLWQT7hWTVT";
-        Long orderId = 353L;
+        String token = "eyJhbGciOiJIUzM4NCJ9.eyJmaXJzdG5hbWUiOiJhbWVoYSIsInVzZXJJZCI6IjEiLCJlbWFpbCI6ImFtZWhhMTIzQGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiOTg3MzEyNTAwOCIsInN1YiI6IjEiLCJpc3MiOiJ0aGVlcnRoYSIsImlhdCI6MTcxNzcwODE2NSwiZXhwIjoxNzIwMzAwMTY1fQ.T75IyAq0U4R_iOEhrGHVck01aPfAEwwJxCnR9BADxe8Mi0HhcAhuEOVF8Bt2F6l2";  Long orderId = 402L;
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();

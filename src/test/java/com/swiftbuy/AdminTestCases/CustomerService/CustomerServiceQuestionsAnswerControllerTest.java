@@ -1,10 +1,11 @@
 package com.swiftbuy.AdminTestCases.CustomerService;
 
-import com.swiftbuy.admin.model.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswer;
-import com.swiftbuy.admin.model.CustomerServiceSubCategory.CustomerServiceSubCategory;
-import com.swiftbuy.admin.repository.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswerRepository;
-import com.swiftbuy.admin.repository.CustomerServiceSubCategory.CustomerServiceSubCategoryRepo;
-import com.swiftbuy.admin.service.CustomerServiceQuestionsAnswer.CustomerServiceQuestionsAnswerService;
+import com.swiftbuy.admin.model.CustomerService.CustomerServiceQuestionsAnswer;
+import com.swiftbuy.admin.model.CustomerService.CustomerServiceSubCategory;
+import com.swiftbuy.admin.repository.CustomerService.CustomerServiceQuestionsAnswerRepository;
+import com.swiftbuy.admin.repository.CustomerService.CustomerServiceSubCategoryRepo;
+import com.swiftbuy.admin.service.CustomerService.CustomerServiceQuestionsAnswerService;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

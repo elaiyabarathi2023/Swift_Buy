@@ -22,9 +22,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swiftbuy.admin.model.CustomerServiceCategory.CustomerServiceCategory;
-import com.swiftbuy.admin.repository.CustomerServiceCategory.CustomerServiceCategoryRepository;
-import com.swiftbuy.admin.service.CustomerServiceCategory.CustomerServiceCategoryService;
+import com.swiftbuy.admin.model.CustomerService.CustomerServiceCategory;
+import com.swiftbuy.admin.repository.CustomerService.CustomerServiceCategoryRepository;
+import com.swiftbuy.admin.service.CustomerService.CustomerServiceCategoryService;
 
 import jakarta.transaction.Transactional;
 

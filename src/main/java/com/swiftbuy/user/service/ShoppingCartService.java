@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.swiftbuy.admin.model.CouponCodes;
 import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
-import com.swiftbuy.product.repository.ProductRepository;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.ShoppingCartRequest;
 import com.swiftbuy.user.model.UserDetails;

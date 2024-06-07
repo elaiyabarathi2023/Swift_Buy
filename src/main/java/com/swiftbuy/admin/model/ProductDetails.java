@@ -1,4 +1,3 @@
-
 package com.swiftbuy.admin.model;
  
 import java.util.Set;
@@ -38,39 +37,16 @@ public class ProductDetails {
 		ACTIVE, INACTIVE, DISCONTINUED
 	}
  
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "shopping_cart_id")
-//    private ShoppingCart shoppingCart;
- 
-//    public ShoppingCart getShoppingCart() {
-//        return shoppingCart;
-//    }
-//
-//    public void setShoppingCart(ShoppingCart shoppingCart) {
-//        this.shoppingCart = shoppingCart;
-	// }
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 	public Category getCategory() {
 		return category;
 	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
+ 
 	@OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JsonIgnore
 	private Offer offer;
- 
-	public Offer getOffer() {
-		return offer;
-	}
- 
-	public void setOffer(Offer offer) {
-		this.offer = offer;
-	}
  
 	@Enumerated(EnumType.STRING)
 	@NotNull(message = "Product status is mandatory")
@@ -102,85 +78,96 @@ public class ProductDetails {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "product_coupons", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "coupon_id", nullable = true))
 	private Set<CouponCodes> coupons;
+ 
 	public Long getProductId() {
 		return productId;
 	}
-
+ 
 	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
-
+ 
+	public Offer getOffer() {
+		return offer;
+	}
+ 
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+	}
+ 
 	public ProductStatus getProductStatus() {
 		return productStatus;
 	}
-
+ 
 	public void setProductStatus(ProductStatus productStatus) {
 		this.productStatus = productStatus;
 	}
-
+ 
 	public String getProductName() {
 		return productName;
 	}
-
+ 
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-
+ 
 	public String getProductDescription() {
 		return productDescription;
 	}
-
+ 
 	public void setProductDescription(String productDescription) {
 		this.productDescription = productDescription;
 	}
-
+ 
 	public String getProductImage() {
 		return productImage;
 	}
-
+ 
 	public void setProductImage(String productImage) {
 		this.productImage = productImage;
 	}
-
+ 
 	public Double getProductPrice() {
 		return productPrice;
 	}
-
+ 
 	public void setProductPrice(Double productPrice) {
 		this.productPrice = productPrice;
 	}
-
+ 
 	public Integer getProductQuantity() {
 		return productQuantity;
 	}
-
+ 
 	public void setProductQuantity(Integer productQuantity) {
 		this.productQuantity = productQuantity;
 	}
-
+ 
 	public String getEstimatedDelivery() {
 		return estimatedDelivery;
 	}
-
+ 
 	public void setEstimatedDelivery(String estimatedDelivery) {
 		this.estimatedDelivery = estimatedDelivery;
 	}
-
+ 
 	public SubCategory getSubcategory() {
 		return subcategory;
 	}
-
+ 
 	public void setSubcategory(SubCategory subcategory) {
 		this.subcategory = subcategory;
 	}
-
+ 
 	public Set<CouponCodes> getCoupons() {
 		return coupons;
 	}
-
+ 
 	public void setCoupons(Set<CouponCodes> coupons) {
 		this.coupons = coupons;
 	}
  
-
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 }

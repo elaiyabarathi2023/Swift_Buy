@@ -20,9 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.swiftbuy.admin.model.CouponCodes;
 import com.swiftbuy.admin.model.ProductDetails;
+import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.admin.repository.CouponCodeRepository;
 import com.swiftbuy.admin.service.ProductCouponService;
-import com.swiftbuy.product.repository.ProductRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc

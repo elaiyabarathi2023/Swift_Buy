@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class CouponCodeTestcase {
                 .andExpect(status().isCreated())
                 .andReturn();
     }
+    
     @Test
     public void testUpdateCoupon() throws Exception {
         Long couponId = 2L;
@@ -102,9 +104,10 @@ public class CouponCodeTestcase {
     public void testDeleteCouponCode() throws Exception {
         Long couponId = 2L; // Replace with the ID of an existing coupon code
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/coupons/{couponId}", couponId))
+        mockMvc.perform(delete("/api/coupons/{couponId}", couponId))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Coupon deleted successfully"));
+                .andExpect(jsonPath("$.message").value("Coupon code deleted successfully"))
+                .andExpect(jsonPath("$.status").value(true));
     }
     @Test
     public void testDeleteCouponCode_NonExistentCouponId() throws Exception {

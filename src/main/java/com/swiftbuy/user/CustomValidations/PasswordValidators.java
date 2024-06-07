@@ -12,14 +12,14 @@ public class PasswordValidators implements ConstraintValidator<PasswordValidatio
 
 	@Override
 	public boolean isValid(String password, ConstraintValidatorContext context) {
-		String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$";
+	    String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$";
 
-		if (password.isEmpty() || password == null) {
-			return false;
-		}
+	    if (password == null || password.isEmpty()) {
+	        return false;
+	    }
 
-		return password.length() >= 8 && password.matches(regex);
-
+	    return password.length() >= 8 && password.matches(regex);
 	}
+
 
 }

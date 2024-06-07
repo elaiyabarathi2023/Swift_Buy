@@ -3,8 +3,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.swiftbuy.admin.CustomValidations.PasswordValidationsAdmin;
-import com.swiftbuy.admin.CustomValidations.ValidUsername;
+
 import com.swiftbuy.user.CustomValidations.*;
 import com.swiftbuy.user.CustomValidations.ValidPhone;
 
@@ -15,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "UserDetails")
@@ -22,10 +22,10 @@ public class UserDetails {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long userId;
-@ValidUsername
-@Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters long")
+@NotBlank
+@Size(min = 3, max = 5, message = "Firstname must be between 3 and 20 characters long")
 private String firstname;
-@PasswordValidationsAdmin
+@PasswordValidations
 private String password;
 @ValidEmail
 private String email;
@@ -58,9 +58,9 @@ private String phoneNumber;
 public Long getUserId() {
 return userId;
 }
-public void setUserId(Long userId) {
-this.userId = userId;
-}
+//public void setUserId(Long userId) {
+//this.userId = userId;
+//}
 public String getFirstname() {
 return firstname;
 }
