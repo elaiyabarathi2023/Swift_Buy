@@ -86,7 +86,7 @@ public class CartControllerTest {
 
 		// Add an item to the cart
 		JSONObject cartItemJson = new JSONObject();
-		cartItemJson.put("productId", 752L);
+		cartItemJson.put("productId", 1L);
 		cartItemJson.put("quantity", 1L);
 		cartItemJson.put("selectedCouponId", 1L);
 
@@ -336,7 +336,7 @@ public class CartControllerTest {
 
 		// Add an item to the cart
 		JSONObject cartItemJson = new JSONObject();
-		cartItemJson.put("productId", 752L);
+		cartItemJson.put("productId", 1L);
 		cartItemJson.put("quantity", 1000L);
 		cartItemJson.put("selectedCouponId", 1L);
 
@@ -379,7 +379,7 @@ public class CartControllerTest {
 	public void testAddToCart_QuantityZero() throws Exception {
 	    // Mocking the behavior of the repository
 	    ShoppingCart shoppingCartMock = new ShoppingCart();
-	    when(cartRepository.findByUserIdAndProductProductId(1L, 752L)).thenReturn(Optional.of(shoppingCartMock));
+	    when(cartRepository.findByUserIdAndProductProductId(1L, 1L)).thenReturn(Optional.of(shoppingCartMock));
 	    
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
@@ -400,7 +400,7 @@ public class CartControllerTest {
 
 	    // Add an item with quantity 0 to the cart
 	    JSONObject cartItemJson = new JSONObject();
-	    cartItemJson.put("productId", 752L);
+	    cartItemJson.put("productId", 1L);
 	    cartItemJson.put("quantity", 0L);
 	    cartItemJson.put("selectedCouponId", 1L);
 
@@ -450,7 +450,7 @@ public class CartControllerTest {
 
 	    // Add an item to the cart with a valid coupon
 	    JSONObject cartItemJson = new JSONObject();
-	    cartItemJson.put("productId", 752L);
+	    cartItemJson.put("productId", 1L);
 	    cartItemJson.put("quantity", 1L);
 	    cartItemJson.put("selectedCouponId", 1L);
 

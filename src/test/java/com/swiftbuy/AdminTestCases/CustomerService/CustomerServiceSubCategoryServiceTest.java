@@ -84,7 +84,7 @@ public class CustomerServiceSubCategoryServiceTest {
         JSONObject categoryJson = new JSONObject();
         subCategoryJson.put("name", "New Sub-Category");
         subCategoryJson.put("description", "Description of the new sub-category");
-        categoryJson.put("cscategoryid", 1L);
+        categoryJson.put("cscategoryid", 103L);
         subCategoryJson.put("category", categoryJson);
 
         // Perform the POST request and verify the response
@@ -134,7 +134,7 @@ public class CustomerServiceSubCategoryServiceTest {
         updatedSubCategoryJson.put("name", "Updated Sub-Category");
         updatedSubCategoryJson.put("description", "Updated description");
         JSONObject categoryJson = new JSONObject();
-        categoryJson.put("cscategoryid", 1L); // Valid category ID
+        categoryJson.put("cscategoryid", 103L); // Valid category ID
         updatedSubCategoryJson.put("category", categoryJson);
 
         // Perform the PUT request and verify the response

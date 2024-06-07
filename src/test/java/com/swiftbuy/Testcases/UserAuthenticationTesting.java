@@ -71,7 +71,7 @@ public class UserAuthenticationTesting {
 
         // Add an item to the cart
         JSONObject cartItemJson = new JSONObject();
-        cartItemJson.put("productId", 752L);
+        cartItemJson.put("productId", 1L);
         cartItemJson.put("quantity", 1L);
         cartItemJson.put("selectedCouponId", 1L);
 

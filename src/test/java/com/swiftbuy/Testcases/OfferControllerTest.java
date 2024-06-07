@@ -54,7 +54,7 @@ public class OfferControllerTest {
         json.put("discountPercentage", 70.0);
  
         JSONObject productJson = new JSONObject();
-        productJson.put("productId", 752); // Ensure this productId exists in your test database
+        productJson.put("productId", 1); // Ensure this productId exists in your test database
         json.put("product", productJson);
  
         String offer = json.toString();
@@ -91,7 +91,7 @@ public class OfferControllerTest {
         json.put("discountPercentage", 50.0);
  
         JSONObject productJson = new JSONObject();
-        productJson.put("productId", 752); // Ensure this productId exists in your test database
+        productJson.put("productId", 1); // Ensure this productId exists in your test database
         json.put("product", productJson);
  
         String offer = json.toString();
