@@ -55,13 +55,13 @@ public class CouponCodes {
         this.couponId = couponId;
     }
 
-    public Set<ProductDetails> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Set<ProductDetails> products) {
-        this.products = products;
-    }
+//    public Set<ProductDetails> getProducts() {
+//        return products;
+//    }
+//
+//    public void setProducts(Set<ProductDetails> products) {
+//        this.products = products;
+//    }
 
     public String getName() {
         return name;

@@ -35,8 +35,8 @@ public class ReviewService {
         Order order = orderRepository.findByOrderIdAndUserId(orderId, userId);
         Long productId = orderReview.getProductId();
         
-        userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        userRepository.findById(userId);
+               
         
         // Check if the product exists in the repository
         ProductDetails product = productRepository.findById(productId)

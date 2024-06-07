@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -81,6 +82,7 @@ public class ProductControllerTestCase {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.productName").value("Test Product"));
     }
+
     @Test
     public void testGetProduct() throws Exception {
         Long productId = 1L;
@@ -112,6 +114,7 @@ public class ProductControllerTestCase {
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isNotEmpty());
     }
+
     @Test
     public void testUpdateProduct() throws Exception {
         Long productId = 1L;
@@ -180,6 +183,7 @@ public class ProductControllerTestCase {
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isNotEmpty());
     }
+
     @Test
     public void testDeleteProduct() throws Exception {
         Long productId = 1L;
@@ -203,7 +207,7 @@ public class ProductControllerTestCase {
         product1.setProductDescription("Ferocious Black Design");
         product1.setProductPrice(300000.0);
         product1.setProductQuantity(1);
-     
+
         ProductDetails product2 = new ProductDetails();
         product2.setProductId(553L);
         product2.setProductName("Orange");
@@ -211,19 +215,113 @@ public class ProductControllerTestCase {
         product2.setProductDescription("Ferocious Black Design");
         product2.setProductPrice(300000.0);
         product2.setProductQuantity(1);
-     
+
         Pageable pageable = PageRequest.of(0, 10);
-     
+
         // Mock repository method
         when(productRepository.findByProductNameContainingIgnoreCase("Apple", pageable))
                 .thenReturn(new PageImpl<>(Arrays.asList(product1, product2)));
-     
+
         // Perform request and assert results
         mockMvc.perform(get("/admin/productpart/search")
-                .param("keyword", "Apple")
-                .param("page", "0")
-                .param("size", "10")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("keyword", "Apple")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    // New Test Cases for ResourceNotFoundException
+
+    @Test
+    public void testCreateProduct_CategoryNotFound() throws Exception {
+        SubCategory subCategory = new SubCategory();
+        subCategory.setId(1L);
+
+        ProductDetails product = new ProductDetails();
+        product.setProductName("Test Product");
+        product.setCategory(new Category());
+        product.setSubcategory(subCategory);
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+        when(subCategoryRepository.findById(1L)).thenReturn(Optional.of(subCategory));
+
+        JSONObject productJson = new JSONObject();
+        productJson.put("productName", "Test Product");
+        JSONObject categoryJson = new JSONObject();
+        categoryJson.put("category_id", 1L);
+        productJson.put("category", categoryJson);
+        JSONObject subCategoryJson = new JSONObject();
+        subCategoryJson.put("id", 1L);
+        productJson.put("subcategory", subCategoryJson);
+
+        mockMvc.perform(post("/admin/productpart/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productJson.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testCreateProduct_SubCategoryNotFound() throws Exception {
+        Category category = new Category();
+        category.setCategory_id(1L);
+
+        ProductDetails product = new ProductDetails();
+        product.setProductName("Test Product");
+        product.setCategory(category);
+        product.setSubcategory(new SubCategory());
+
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(subCategoryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        JSONObject productJson = new JSONObject();
+        productJson.put("productName", "Test Product");
+        JSONObject categoryJson = new JSONObject();
+        categoryJson.put("category_id", 1L);
+        productJson.put("category", categoryJson);
+        JSONObject subCategoryJson = new JSONObject();
+        subCategoryJson.put("id", 1L);
+        productJson.put("subcategory", subCategoryJson);
+
+        mockMvc.perform(post("/admin/productpart/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productJson.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetProduct_NotFound() throws Exception {
+        Long productId = 1L;
+
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/admin/productpart/products/{id}", productId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateProduct_NotFound() throws Exception {
+        Long productId = 1L;
+
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        JSONObject productJson = new JSONObject();
+        productJson.put("productName", "Updated Product Name");
+
+        mockMvc.perform(put("/admin/productpart/products/{id}", productId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productJson.toString()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteProduct_NotFound() throws Exception {
+        Long productId = 1L;
+
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/admin/productpart/products/{id}", productId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

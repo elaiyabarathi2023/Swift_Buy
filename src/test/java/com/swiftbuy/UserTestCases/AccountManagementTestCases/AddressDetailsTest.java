@@ -45,7 +45,7 @@ public class AddressDetailsTest {
     public void testCreateAddressDetails() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ameha123@gmail.com");
+        loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
  
@@ -118,7 +118,7 @@ public class AddressDetailsTest {
 //		loginJson.put("password", "SO8x@123882");
 		
 		
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
@@ -145,7 +145,7 @@ public class AddressDetailsTest {
 //		loginJson.put("password", "SO8x@123882");
 		
 		
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
@@ -160,7 +160,7 @@ public class AddressDetailsTest {
         JSONObject responseJson = new JSONObject(responseString);
         String token = responseJson.getString("token");
  
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/addresses/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/addresses/103")
                         .header("Authorization", "Bearer " + token))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -171,7 +171,7 @@ public class AddressDetailsTest {
 //		loginJson.put("email", "bharathiyaril@gmail.com");
 //		loginJson.put("password", "SO8x@123882");
 		
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
@@ -197,7 +197,7 @@ public class AddressDetailsTest {
     public void testCreateAndUpdateAddressDetails() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ameha123@gmail.com");
+        loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
  
@@ -261,7 +261,7 @@ public class AddressDetailsTest {
     public void testCreateAndUpdateAddressDetails_InvalidId() throws Exception {
         // Login and get the token
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ameha123@gmail.com");
+        loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
         String loginUser = loginJson.toString();
  
@@ -324,7 +324,7 @@ public class AddressDetailsTest {
 		JSONObject loginJson = new JSONObject();
 //		loginJson.put("email", "bharathiyarilen@gmail.com");
 //		loginJson.put("password", "SO8x@123881");
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
@@ -354,7 +354,7 @@ public class AddressDetailsTest {
 		JSONObject loginJson = new JSONObject();
 //		loginJson.put("email", "bharathiyarilen@gmail.com");
 //		loginJson.put("password", "SO8x@123881");
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
@@ -382,7 +382,7 @@ public class AddressDetailsTest {
 		JSONObject loginJson = new JSONObject();
  
 		
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
  
@@ -409,7 +409,7 @@ public class AddressDetailsTest {
 		public void testGetAddressDetailsById_NotFound_ThrowsException() throws Exception {
 		    // Login and get the token
 		    JSONObject loginJson = new JSONObject();
-		    loginJson.put("email", "ameha123@gmail.com");
+		    loginJson.put("email", "alan789@gmail.com");
 	        loginJson.put("password", "mO8x@123");
 		    String loginUser = loginJson.toString();
 		    MvcResult mvcResult = this.mockMvc

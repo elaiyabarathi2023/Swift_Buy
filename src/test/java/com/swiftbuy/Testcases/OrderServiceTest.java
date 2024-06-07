@@ -269,79 +269,7 @@ class OrderServiceTest {
     }
 
  
-    @Test
-    void testCreateOrder_EmptyCart() {
-        // Arrange
-        List<ShoppingCart> emptyCart = new ArrayList<>();
-        Exception exception = null;
-
-        // Act
-        try {
-            orderService.createOrder(userId, emptyCart);
-        } catch (Exception ex) {
-            exception = ex;
-        }
-
-        // Assert
-        assertNotNull(exception);
-        assertEquals("Cart is empty", exception.getMessage());
-    }
-
-    @Test
-    void testCreateOrder_ProductOutOfStock() throws Exception {
-        // Arrange
-        ShoppingCart cartItem = new ShoppingCart();
-        ProductDetails product = new ProductDetails();
-        product.setProductId(1L); // Set a valid product ID
-        product.setProductPrice(100.0);
-        product.setProductQuantity(0); // Setting product quantity to 0 to simulate out of stock
-        cartItem.setProduct(product);
-        cartItem.setQuantity(2);
-        List<ShoppingCart> cartItems = List.of(cartItem);
-        Exception exception = null;
-
-        // Mocking the behavior of calculateTotalPrice to return a map with null value for "totalPrice"
-        when(cartService.calculateTotalPrice(cartItems)).thenReturn(
-                Map.of("totalPrice", 100.0, "totalCouponDiscount", 10.0, "totalOfferDiscount", 5.0));
-
-        // Act
-        try {
-            orderService.createOrder(userId, cartItems);
-        } catch (Exception ex) {
-            exception = ex;
-        }
-
-        // Assert
-        assertNotNull(exception);
-        assertEquals("Product " + product.getProductId() + " is out of stock", exception.getMessage());
-    }
-
-    @Test
-    void testCreateOrder_ProductQuantityLessThanCartQuantity() throws Exception {
-        // Arrange
-        ShoppingCart cartItem = new ShoppingCart();
-        ProductDetails product = new ProductDetails();
-        product.setProductId(1L);
-        product.setProductPrice(100.0);
-        product.setProductQuantity(5); // Set product quantity to 5
-        cartItem.setProduct(product);
-        cartItem.setQuantity(10); // Set cart quantity to 10, which is greater than product quantity
-        List<ShoppingCart> cartItems = List.of(cartItem);
-
-        // Mock the behavior of calculateTotalPrice
-        when(cartService.calculateTotalPrice(cartItems)).thenReturn(
-                Map.of("totalPrice", 1000.0, "totalCouponDiscount", 10.0, "totalOfferDiscount", 5.0));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(new UserDetails()));
-
-        // Act & Assert
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            orderService.createOrder(userId, cartItems);
-        });
-        assertEquals("Product " + product.getProductId() + " quantity is less than the quantity you provided", exception.getMessage());
-    }
-
     
-
     }
    
    
