@@ -1,5 +1,6 @@
 package com.swiftbuy.Testcases;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -123,6 +124,7 @@ public class ReviewControllerTestCase {
 
         // Create a review JSON object
         JSONObject reviewJson = new JSONObject();
+        reviewJson.put("reviewId", 3);
         reviewJson.put("productId", 1000L);
         reviewJson.put("review", "product is bad");
         reviewJson.put("reviewImage", "http://example.com/image.jpg");
@@ -230,6 +232,29 @@ public class ReviewControllerTestCase {
                 .andReturn();
     }
 
+    @Test
+    public void testReviewDetailsModel_Id() {
+        ReviewDetails review = new ReviewDetails();
+        review.setId(1L);
+
+        assertEquals(1L, review.getId());
+    }
+
+    @Test
+    public void testReviewDetailsModel_Review() {
+        ReviewDetails review = new ReviewDetails();
+        review.setReview("This product is great!");
+
+        assertEquals("This product is great!", review.getReview());
+    }
+
+    @Test
+    public void testReviewDetailsModel_ReviewImage() {
+        ReviewDetails review = new ReviewDetails();
+        review.setReviewImage("http://example.com/image.jpg");
+
+        assertEquals("http://example.com/image.jpg", review.getReviewImage());
+    }
 
 
 

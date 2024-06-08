@@ -1,9 +1,11 @@
 package com.swiftbuy.Testcases;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.json.JSONArray;
@@ -19,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.swiftbuy.admin.model.CouponCodes;
+import com.swiftbuy.admin.model.ProductCouponRequest;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.admin.repository.CouponCodeRepository;
@@ -130,5 +133,20 @@ public class ProductCouponTestcase {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
+    }
+
+    // New tests for ProductCouponRequest getters and setters
+    @Test
+    public void testProductCouponRequestGettersAndSetters() {
+        ProductCouponRequest request = new ProductCouponRequest();
+
+        request.setProductcoupon_id(1L);
+        assertEquals(1L, request.getProductcoupon_id());
+
+        request.setProductId(2L);
+        assertEquals(2L, request.getProductId());
+
+        request.setCouponIds(Arrays.asList(1L, 2L, 3L));
+        assertEquals(Arrays.asList(1L, 2L, 3L), request.getCouponIds());
     }
 }

@@ -313,7 +313,7 @@ public class UserAuthenticationTesting {
     public void loginUser_WithValidEmail_ShouldSearchByEmail() throws Exception {
         // Assuming the user with email "test@example.com" exists in the database
         JSONObject loginJson = new JSONObject();
-        loginJson.put("email", "ameha123@gmail.com");
+        loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 
         
@@ -327,7 +327,7 @@ public class UserAuthenticationTesting {
     public void loginUser_WithValidEmail_ShouldSearchByPhone() throws Exception {
         // Assuming the user with email "test@example.com" exists in the database
         JSONObject loginJson = new JSONObject();
-        loginJson.put("phoneNumber", "9873125008");
+        loginJson.put("phoneNumber", "9874325008");
         loginJson.put("password", "mO8x@123");
 
         

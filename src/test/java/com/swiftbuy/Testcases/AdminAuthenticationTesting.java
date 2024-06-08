@@ -192,6 +192,137 @@ public class AdminAuthenticationTesting {
 				.content(admin)).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(jsonPath("$.message").value("Password recovery not implemented."));
 	}
- 
+	// Test cases for empty username and password in signupUser
+
+	@Test
+	public void signupUser_WithNullUsername() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("firstname", "Test");
+	    json.put("lastname", "User");
+	    json.put("username", JSONObject.NULL);
+	    json.put("password", "Test@123");
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/signupuser")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+	            .andExpect(jsonPath("$.message").value("Username cannot be empty."));
+	}
+
+	@Test
+	public void signupUser_WithWhitespaceUsername() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("firstname", "Test");
+	    json.put("lastname", "User");
+	    json.put("username", "   ");
+	    json.put("password", "Test@123");
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/signupuser")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+	            .andExpect(jsonPath("$.message").value("Username cannot be empty."));
+	}
+
+	@Test
+	public void signupUser_WithNullPassword() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("firstname", "Test");
+	    json.put("lastname", "User");
+	    json.put("username", "testuser");
+	    json.put("password", JSONObject.NULL);
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/signupuser")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+	            .andExpect(jsonPath("$.message").value("Password cannot be empty."));
+	}
+
+	@Test
+	public void signupUser_WithWhitespacePassword() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("firstname", "Test");
+	    json.put("lastname", "User");
+	    json.put("username", "testuser");
+	    json.put("password", "   ");
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/signupuser")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+	            .andExpect(jsonPath("$.message").value("Password cannot be empty."));
+	}
+
+	// Test cases for empty username and password in loginUser
+
+	@Test
+	public void loginUser_WithNullUsername() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("username", JSONObject.NULL);
+	    json.put("password", "Test@123");
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/login")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+	            .andExpect(jsonPath("$.error").value("Invalid Details Provided"));
+	}
+
+	@Test
+	public void loginUser_WithWhitespaceUsername() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("username", "   ");
+	    json.put("password", "Test@123");
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/login")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+	            .andExpect(jsonPath("$.error").value("Invalid Details Provided"));
+	}
+
+	@Test
+	public void loginUser_WithNullPassword() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("username", "testuser");
+	    json.put("password", JSONObject.NULL);
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/login")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+	            .andExpect(jsonPath("$.error").value("Invalid Details Provided"));
+	}
+
+	@Test
+	public void loginUser_WithWhitespacePassword() throws Exception {
+	    JSONObject json = new JSONObject();
+	    json.put("username", "testuser");
+	    json.put("password", "   ");
+	    String admin = json.toString();
+
+	    mockMvc.perform(
+	            MockMvcRequestBuilders.post("/admin/login")
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(admin))
+	            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+	            .andExpect(jsonPath("$.error").value("Invalid Details Provided"));
+	}
+
  
 }

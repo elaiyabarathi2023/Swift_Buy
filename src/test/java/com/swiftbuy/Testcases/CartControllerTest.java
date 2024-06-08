@@ -1,27 +1,19 @@
 package com.swiftbuy.Testcases;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.hamcrest.Matchers;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,9 +32,6 @@ import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
-import com.swiftbuy.user.model.ShoppingCartRequest;
-import com.swiftbuy.user.repository.OrderItemRepository;
-import com.swiftbuy.user.repository.OrderRepository;
 import com.swiftbuy.user.repository.ShoppingCartRepository;
 import com.swiftbuy.user.service.ShoppingCartService;
 
@@ -70,7 +58,7 @@ public class CartControllerTest {
 	public void testAddCart() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -100,7 +88,7 @@ public class CartControllerTest {
 	public void testAddAddress() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -127,7 +115,7 @@ public class CartControllerTest {
 	public void testGetCartByUserId() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -161,7 +149,7 @@ public class CartControllerTest {
 	public void testCalculateTotalPrice() throws Exception {
 	    // Prepare login request JSON
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ameha123@gmail.com");
+	    loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -293,7 +281,7 @@ public class CartControllerTest {
 	public void testAddAddress_NotFound() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -320,7 +308,7 @@ public class CartControllerTest {
 	public void testAddCart_QuantityGreaterThanProductQuantity() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -350,7 +338,7 @@ public class CartControllerTest {
 	public void testAddCart_ProductNotFound() throws Exception {
 		// Login and get the token
 		JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+		loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 		String loginUser = loginJson.toString();
 
@@ -379,11 +367,11 @@ public class CartControllerTest {
 	public void testAddToCart_QuantityZero() throws Exception {
 	    // Mocking the behavior of the repository
 	    ShoppingCart shoppingCartMock = new ShoppingCart();
-	    when(cartRepository.findByUserIdAndProductProductId(1L, 1L)).thenReturn(Optional.of(shoppingCartMock));
+	    when(cartRepository.findByUserIdAndProductProductId(227L, 1L)).thenReturn(Optional.of(shoppingCartMock));
 	    
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ameha123@gmail.com");
+	    loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -419,7 +407,7 @@ public class CartControllerTest {
 	public void testAddCart_ValidCoupon() throws Exception {
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-	    loginJson.put("email", "ameha123@gmail.com");
+	    loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
@@ -466,7 +454,7 @@ public class CartControllerTest {
 	public void testAddCart_InvalidCoupon() throws Exception {
 	    // Login and get the token
 	    JSONObject loginJson = new JSONObject();
-		loginJson.put("email", "ameha123@gmail.com");
+	    loginJson.put("email", "alan789@gmail.com");
         loginJson.put("password", "mO8x@123");
 	    String loginUser = loginJson.toString();
 
