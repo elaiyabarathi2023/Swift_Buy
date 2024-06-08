@@ -16,27 +16,34 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.swiftbuy.user.model.UserDetails;
 import com.swiftbuy.user.repository.UserRepository;
+import com.swiftbuy.user.service.JwtGenerator;
 import com.swiftbuy.user.service.TokenService;
 import com.swiftbuy.user.service.UserService;
 
 import jakarta.transaction.Transactional;
 
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import java.util.Map;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @Transactional
 public class UserAuthenticationTesting {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    UserService userService;
+    
+    
+//    @Autowired
+//    private UserService userService;
+    
     @Autowired
     TokenService tokenService;
+    
     @Autowired
     private MockMvc mockMvc;
 
@@ -172,7 +179,7 @@ public class UserAuthenticationTesting {
     @Test
     public void forgotPassword_ResponseOk() throws Exception {
         JSONObject json = new JSONObject();
-        json.put("email", "sheena23@gmail.com");
+        json.put("email", "ameha123@gmail.com");
         json.put("newPassword", "Rs7x@123");
 
         String user = json.toString();
@@ -191,7 +198,7 @@ public class UserAuthenticationTesting {
         String user = json.toString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/forgot-password").contentType(MediaType.APPLICATION_JSON)
-                .content(user)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+                .content(user)).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
     }
 
     @Test
@@ -204,7 +211,20 @@ public class UserAuthenticationTesting {
         String user = json.toString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/forgot-password").contentType(MediaType.APPLICATION_JSON)
-                .content(user)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+                .content(user)).andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+    }
+    @Test
+    public void forgotPassword_EmptyEmail() throws Exception {
+        JSONObject json = new JSONObject();
+        json.put("email","");
+        json.put("newPassword", "Rs7x@123");
+        // Assuming this email does not exist in the database
+
+        String user = json.toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/forgot-password").contentType(MediaType.APPLICATION_JSON)
+                .content(user)).andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("Please enter a valid email address."));
     }
 
     @Test
@@ -386,5 +406,124 @@ public class UserAuthenticationTesting {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Your password has been updated successfully."));
     }
+    
+    @Test
+    public void signupWithMissingFields() throws Exception {
+        JSONObject json = new JSONObject();
+        json.put("firstname", "John");
+        json.put("email", "john@example.com");
+        // Missing password and phone number
+
+        String user = json.toString();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/signupuser").contentType(MediaType.APPLICATION_JSON).content(user))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
+    }
+    
+    @Test
+    public void loginWithInvalidEmailFormat() throws Exception {
+        JSONObject loginJson = new JSONObject();
+        loginJson.put("email", "invalid-email-format");
+        loginJson.put("password", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/loginuser")
+                .content(loginJson.toString()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+    
+    @Test
+    public void loginWithBothEmptyEmailAndPhoneNumber() throws Exception {
+        JSONObject loginJson = new JSONObject();
+        loginJson.put("email", "");
+        loginJson.put("phoneNumber", "");
+        loginJson.put("password", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/loginuser")
+                .content(loginJson.toString()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+    
+    @Test
+    public void forgotPasswordWithNonMatchingEmail() throws Exception {
+        JSONObject json = new JSONObject();
+        json.put("email", "nonexistent@example.com");
+        json.put("newPassword", "newPassword123!");
+
+        String user = json.toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/forgot-password")
+                .contentType(MediaType.APPLICATION_JSON).content(user))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Please enter a valid email address."));
+    }
+    @Test
+    public void updatePasswordAfterLogin() throws Exception {
+        // Sign up user
+        JSONObject signupJson = new JSONObject();
+        signupJson.put("firstname", "jane");
+        signupJson.put("phoneNumber", "9800910004");
+        signupJson.put("password", "mO8x@123");
+        signupJson.put("email", "jane123@gmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/signupuser")
+                .content(signupJson.toString()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        // Login user
+        JSONObject loginJson = new JSONObject();
+        loginJson.put("email", "jane123@gmail.com");
+        loginJson.put("password", "mO8x@123");
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/user/loginuser")
+                .content(loginJson.toString()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
+
+        String responseString = mvcResult.getResponse().getContentAsString();
+        JSONObject responseJson = new JSONObject(responseString);
+        String token = responseJson.getString("token");
+
+        // Update password
+        JSONObject updatePasswordJson = new JSONObject();
+        updatePasswordJson.put("email", "jane123@gmail.com");
+        updatePasswordJson.put("newPassword", "NewP@ssword123");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/forgot-password")
+                .content(updatePasswordJson.toString()).contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Your password has been updated successfully."));
+    }
+    
+    @Test
+    public void loginWithCorrectPhoneNumberAndIncorrectPassword() throws Exception {
+        JSONObject signupJson = new JSONObject();
+        signupJson.put("firstname", "jane");
+        signupJson.put("phoneNumber", "9800910004");
+        signupJson.put("password", "mO8x@123");
+        signupJson.put("email", "jane123@gmail.com");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/signupuser")
+                .content(signupJson.toString()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        JSONObject loginJson = new JSONObject();
+        loginJson.put("phoneNumber", "9800910004");
+        loginJson.put("password", "wrongpassword");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/loginuser")
+                .content(loginJson.toString()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+    
+    @Test
+    public void getAllUsers() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/user").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    }
+    
+    
+  
 
 }

@@ -68,11 +68,14 @@ public class UserController {
 	}
  
  
-	@PostMapping("/forgot-password")
-    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> requestData) {
-        Map<String, String> response = userService.forgotPassword(requestData);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+	 @PostMapping("/forgot-password")
+	    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody Map<String, String> requestData) {
+	        Map<String, String> response = userService.forgotPassword(requestData);
+	        if (response.containsKey("error")) {
+	        	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	        }
+	        return ResponseEntity.ok(response);
+	    }
 	@GetMapping
  
 	public Iterable<UserDetails> getAllUsers() {

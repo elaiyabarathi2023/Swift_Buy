@@ -88,7 +88,7 @@ public class UserService {
  
 		// Check if the email is null or empty
 		if (email == null || email.isEmpty()) {
-			response.put("message", "Please enter a valid email address.");
+			response.put("error", "Please enter a valid email address.");
 			return response;
 		}
  
@@ -111,7 +111,7 @@ public class UserService {
 			response.put("message", "Your password has been updated successfully.");
 		} else {
 			// If the user is not found, return a message asking for a valid email
-			response.put("message", "Please enter a valid email address.");
+			response.put("error", "Please enter a valid email address.");
 		}
  
 		return response;
