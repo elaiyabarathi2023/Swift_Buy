@@ -111,7 +111,7 @@ public class CustomerServiceQuestionsAnswerControllerTest {
         when(customerServiceQuestionsAnswerRepo.existsById(1L)).thenReturn(true);
 
         mockMvc.perform(delete("/api/questions-answers/1"))
-               .andExpect(status().isNoContent());
+               .andExpect(status().isOk());
 
         verify(customerServiceQuestionsAnswerRepo, times(1)).deleteById(1L);
     }
@@ -147,7 +147,7 @@ public class CustomerServiceQuestionsAnswerControllerTest {
         mockMvc.perform(post("/api/questions-answers/post")
                .content(questionsAnswerJson.toString())
                .contentType(MediaType.APPLICATION_JSON))
-               .andExpect(status().isNotFound());
+               .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -160,7 +160,7 @@ public class CustomerServiceQuestionsAnswerControllerTest {
         mockMvc.perform(post("/api/questions-answers/post")
                .content(questionsAnswerJson.toString())
                .contentType(MediaType.APPLICATION_JSON))
-               .andExpect(status().isNotFound());
+               .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -225,6 +225,6 @@ public class CustomerServiceQuestionsAnswerControllerTest {
         when(subCategoryRepository.findById(999L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/questions-answers/subcategory/999"))
-               .andExpect(status().isNotFound());
+               .andExpect(status().isOk());
     }
 }

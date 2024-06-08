@@ -17,6 +17,9 @@ public interface ProductRepository extends CrudRepository<ProductDetails, Long>,
 	
 	Page<ProductDetails> findByProductStatus(ProductDetails.ProductStatus status, Pageable pageable);
 
-	Page<ProductDetails> findByProductNameContainingIgnoreCase(String keyword, Pageable pageable);
+	//Page<ProductDetails> findByProductNameContainingIgnoreCase(String keyword, Pageable pageable);
+
+	Page<ProductDetails> findByProductNameContainingIgnoreCaseAndProductStatus(String keyword, ProductStatus active,
+			Pageable pageable);
  
 }

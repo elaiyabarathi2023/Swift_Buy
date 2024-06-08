@@ -51,12 +51,16 @@ public class SubCategoryController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        
+        try {
             SubCategory createdSubCategory = subCategoryService.createSubCategory(subCategory);
             response.put("status", true);
             response.put("message", "Subcategory created successfully");
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        
+        } catch (RuntimeException e) {
+            response.put("status", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @PutMapping("/{id}")
@@ -67,10 +71,10 @@ public class SubCategoryController {
             response.put("status", true);
             response.put("message", "Subcategory updated successfully");
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+        } catch (ResponseStatusException e) {
             response.put("status", false);
             response.put("error", "Category not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.status(e.getStatusCode()).body(response);
         }
     }
 

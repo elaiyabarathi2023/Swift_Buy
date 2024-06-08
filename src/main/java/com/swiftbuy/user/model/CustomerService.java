@@ -1,7 +1,7 @@
-package com.swiftbuy.user.model;
-
-public class CustomerService {
-
-	
-
-}
+//package com.swiftbuy.user.model;
+//
+//public class CustomerService {
+//
+//	
+//
+//}

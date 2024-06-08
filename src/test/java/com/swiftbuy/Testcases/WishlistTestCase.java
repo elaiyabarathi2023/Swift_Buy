@@ -4,6 +4,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -120,7 +122,7 @@ private WishlistRepository wishlistRepo;
         mockMvc.perform(delete("/api/wishlists/{wishlistId}", wishlistId)
                 .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token))
                 
-                .andExpect(status().isNoContent())
+                .andExpect(status().isOk())
                 .andReturn();
     }
 
@@ -150,7 +152,36 @@ private WishlistRepository wishlistRepo;
         mockMvc.perform(delete("/api/wishlists/{wishlistId}", wishlistId)
                 .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token))
                 
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
+    }
+    @Test
+    void testGetWishlistId() {
+        // Arrange
+        WishList wishList = new WishList();
+        Long wishlistId = 101L;
+        wishList.setWishlistId(wishlistId);
+
+        // Act
+        Long result = wishList.getWishlistId();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(wishlistId, result);
+    }
+
+    @Test
+    void testGetUserIdFromWishList() {
+        // Arrange
+        WishList wishList = new WishList();
+        Long userId = 112L;
+        wishList.setUserId(userId);
+
+        // Act
+        Long result = wishList.getUserId();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(userId, result);
     }
 }

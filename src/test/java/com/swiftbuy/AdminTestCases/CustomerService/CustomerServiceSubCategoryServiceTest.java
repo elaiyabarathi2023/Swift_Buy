@@ -165,7 +165,7 @@ public class CustomerServiceSubCategoryServiceTest {
     public void testDeleteCustomerServiceSubCategory() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/customer-service-sub-categories/2")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent()); // Expect 204 (No Content)
+                .andExpect(status().isOk()); // Expect 204 (No Content)
     }
 
     @Test

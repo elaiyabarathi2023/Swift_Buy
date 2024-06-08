@@ -95,12 +95,17 @@ public class OfferController {
     
 
     @PutMapping("/{offerId}/reactivate")
-    public ResponseEntity<String> reactivateOffer(@PathVariable Long offerId) {
+    public ResponseEntity<Map<String, Object>> reactivateOffer(@PathVariable Long offerId) {
+        Map<String, Object> response = new HashMap<>();
         try {
             offerService.reactivateOffer(offerId);
-            return new ResponseEntity<>("Offer reactivated successfully", HttpStatus.OK);
+            response.put("status", true);
+            response.put("message", "Offer reactivated successfully");
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            response.put("status", false);
+            response.put("message", "Failed to reactivate offer: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 }

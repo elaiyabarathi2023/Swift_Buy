@@ -28,6 +28,7 @@ import com.swiftbuy.user.model.Order;
 import com.swiftbuy.user.model.OrderItem;
 import com.swiftbuy.user.model.ShoppingCart;
 import com.swiftbuy.user.model.UserDetails;
+import com.swiftbuy.user.model.AccountManangement.AddressDetails;
 import com.swiftbuy.user.repository.OrderRepository;
 import com.swiftbuy.user.repository.UserRepository;
 import com.swiftbuy.user.service.OrderService;
@@ -226,6 +227,24 @@ class OrderServiceTest {
        assertEquals(7, orderItem.getProduct().getProductQuantity());
     }
     @Test
+    void testGetOrderFromOrderItem() {
+        // Arrange
+        Order order = new Order();
+        order.setOrderId(1L);
+        order.setUserId(1L);
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(order);
+
+        // Act
+        Order result = orderItem.getOrder();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(order.getOrderId(), result.getOrderId());
+        assertEquals(order.getUserId(), result.getUserId());
+    }
+    @Test
     void testGetAllDeliveredOrders() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
@@ -268,8 +287,78 @@ class OrderServiceTest {
         assertNotNull(result);
     }
 
- 
-    
+    @Test
+    void testGetAddressFromOrderItem() {
+        // Arrange
+        AddressDetails addressDetails = new AddressDetails();
+        addressDetails.setId(1L);;
+        addressDetails.setCity("New York");
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setAddress(addressDetails);
+
+        // Act
+        AddressDetails result = orderItem.getAddress();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(addressDetails.getId(), result.getId());
+        assertEquals(addressDetails.getCity(), result.getCity());
+    }
+    @Test
+    void testGetOrderItemId() {
+        // Arrange
+        OrderItem orderItem = new OrderItem();
+        Long orderItemId = 123L;
+        orderItem.setOrderItemId(orderItemId);
+
+        // Act
+        Long result = orderItem.getOrderItemId();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(orderItemId, result);
+    }
+    @Test
+    void testSetOrderItemId() {
+        // Arrange
+        OrderItem orderItem = new OrderItem();
+        Long orderItemId =3L;
+
+        // Act
+        orderItem.setOrderItemId(orderItemId);
+
+        // Assert
+        assertEquals(orderItemId, orderItem.getOrderItemId());
+    }
+    @Test
+    void testGetPriceFromOrderItem() {
+        // Arrange
+        OrderItem orderItem = new OrderItem();
+        double price = 99.99;
+        orderItem.setPrice(price);
+
+        // Act
+        double result = orderItem.getPrice();
+
+        // Assert
+        assertEquals(price, result);
+    }
+
+    @Test
+    void testGetCoupondiscountIdFromOrderItem() {
+        // Arrange
+        OrderItem orderItem = new OrderItem();
+        Long coupondiscountId = 123L;
+        orderItem.setCoupondiscountId(coupondiscountId);
+
+        // Act
+        Long result = orderItem.getCoupondiscountId();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(coupondiscountId, result);
+    }
     }
    
    

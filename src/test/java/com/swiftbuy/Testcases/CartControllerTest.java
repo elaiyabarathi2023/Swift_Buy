@@ -1,6 +1,7 @@
 package com.swiftbuy.Testcases;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -32,6 +33,7 @@ import com.swiftbuy.admin.model.Offer;
 import com.swiftbuy.admin.model.ProductDetails;
 import com.swiftbuy.admin.product.repository.ProductRepository;
 import com.swiftbuy.user.model.ShoppingCart;
+import com.swiftbuy.user.model.ShoppingCartRequest;
 import com.swiftbuy.user.repository.ShoppingCartRepository;
 import com.swiftbuy.user.service.ShoppingCartService;
 
@@ -490,5 +492,73 @@ public class CartControllerTest {
 	            .header("Authorization", "Bearer " + token))
 	            .andExpect(MockMvcResultMatchers.status().isBadRequest())
 	            .andReturn();
+	}
+	@Test
+	void testGetCartItemId() {
+	    // Arrange
+	    ShoppingCart shoppingCart = new ShoppingCart();
+	    Long cartItemId = 123L;
+	    shoppingCart.setCartItemId(cartItemId);
+
+	    // Act
+	    Long result = shoppingCart.getCartItemId();
+
+	    // Assert
+	    assertNotNull(result);
+	    assertEquals(cartItemId, result);
+	}
+
+	@Test
+	void testSetCartItemId() {
+	    // Arrange
+	    ShoppingCart shoppingCart = new ShoppingCart();
+	    Long cartItemId = 456L;
+
+	    // Act
+	    shoppingCart.setCartItemId(cartItemId);
+
+	    // Assert
+	    assertEquals(cartItemId, shoppingCart.getCartItemId());
+	}
+	@Test
+	void testGetUserId() {
+	    // Arrange
+	    ShoppingCart shoppingCart = new ShoppingCart();
+	    Long userId = 789L;
+	    shoppingCart.setUserId(userId);
+
+	    // Act
+	    Long result = shoppingCart.getUserId();
+
+	    // Assert
+	    assertNotNull(result);
+	    assertEquals(userId, result);
+	}
+	@Test
+	void testGetUserIdFromShoppingCartRequest() {
+	    // Arrange
+	    ShoppingCartRequest request = new ShoppingCartRequest(1L, 2, null);
+	    Long userId = 123L;
+	    request.setUserId(userId);
+
+	    // Act
+	    Long result = request.getUserId();
+
+	    // Assert
+	    assertNotNull(result);
+	    assertEquals(userId, result);
+	}
+
+	@Test
+	void testSetUserIdInShoppingCartRequest() {
+	    // Arrange
+	    ShoppingCartRequest request = new ShoppingCartRequest(1L, 2, null);
+	    Long userId = 456L;
+
+	    // Act
+	    request.setUserId(userId);
+
+	    // Assert
+	    assertEquals(userId, request.getUserId());
 	}
 }

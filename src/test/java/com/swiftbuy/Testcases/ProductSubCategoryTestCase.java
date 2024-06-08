@@ -13,12 +13,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
- 
+import org.springframework.web.server.ResponseStatusException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftbuy.admin.controller.SubCategoryController;
 import com.swiftbuy.admin.model.Category;
@@ -243,6 +245,130 @@ public class ProductSubCategoryTestCase {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
- 
- 
+//    @Test
+//    public void testUpdateSubCategory_Success() throws Exception {
+//        // Create a valid subcategory object
+//        SubCategory subCategory = new SubCategory();
+//        subCategory.setId(1L); // Assuming ID 1 represents an existing subcategory
+//        subCategory.setName("UpdatedSubCategory");
+//
+//        // Mock the service to return the updated subcategory
+//        Mockito.when(subCategoryService.updateSubCategory(Mockito.anyLong(), Mockito.any(SubCategory.class)))
+//                .thenReturn(subCategory);
+//
+//        // Convert SubCategory to JSON
+//        String subCategoryJson = objectMapper.writeValueAsString(subCategory);
+//
+//        mockMvc.perform(MockMvcRequestBuilders.put("/api/subcategories/1")
+//                .content(subCategoryJson)
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
+
+//    @Test
+//    public void testUpdateSubCategory_SubCategoryNotFound() throws Exception {
+//        // Mock the service to throw a ResponseStatusException when subcategory is not found
+//       
+//        // Create a valid subcategory object to update
+//        SubCategory subCategory = new SubCategory();
+//        subCategory.setId(1L); // Assuming ID 1 represents a non-existent subcategory
+//        subCategory.setName("UpdatedSubCategory");
+//
+//        // Convert SubCategory to JSON
+//        String subCategoryJson = objectMapper.writeValueAsString(subCategory);
+//
+//        mockMvc.perform(MockMvcRequestBuilders.put("/api/subcategories/1")
+//                .content(subCategoryJson)
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNotFound());
+//    }
+
+//    @Test
+//    public void testUpdateSubCategory_CategoryNotFound() throws Exception {
+//        // Mock the service to throw a ResponseStatusException when category is not found
+//        
+//        // Create a valid subcategory object to update
+//        SubCategory subCategory = new SubCategory();
+//        subCategory.setId(1L); // Assuming ID 1 represents an existing subcategory
+//        subCategory.setName("UpdatedSubCategory");
+//
+//        // Convert SubCategory to JSON
+//        String subCategoryJson = objectMapper.writeValueAsString(subCategory);
+//
+//        mockMvc.perform(MockMvcRequestBuilders.put("/api/subcategories/1")
+//                .content(subCategoryJson)
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNotFound());
+//    }
+    @Test
+    public void testCreateSubCategory_CategoryNotFound() throws Exception {
+        // Prepare the SubCategory JSON with a non-existent category ID
+        JSONObject subCategoryJson = new JSONObject();
+        subCategoryJson.put("name", "TestSubCategory");
+
+        JSONObject categoryJson = new JSONObject();
+        categoryJson.put("category_id", 99999L); // Non-existent category ID
+
+        subCategoryJson.put("category", categoryJson);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/subcategories")
+                .content(subCategoryJson.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                
+    }
+
+    @Test
+    public void testUpdateSubCategory_SubCategoryNotFound() throws Exception {
+        // Create a category
+        Category category = new Category();
+        category.setName("TestCategory");
+        category = categoryRepository.save(category);
+
+        // Prepare the SubCategory JSON
+        SubCategory subCategory = new SubCategory();
+        subCategory.setName("UpdatedSubCategory");
+        subCategory.setCategory(category);
+
+        String subCategoryJson = objectMapper.writeValueAsString(subCategory);
+
+        // Try to update a non-existent subcategory
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/subcategories/99999")
+                .content(subCategoryJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateSubCategory_CategoryNotFound() throws Exception {
+        // Create a category and subcategory
+        Category category = new Category();
+        category.setName("TestCategory");
+        category = categoryRepository.save(category);
+
+        SubCategory subCategory = new SubCategory();
+        subCategory.setName("TestSubCategory");
+        subCategory.setCategory(category);
+        subCategory = subCategoryRepository.save(subCategory);
+
+        // Prepare the SubCategory JSON with a non-existent category
+        SubCategory updatedSubCategory = new SubCategory();
+        updatedSubCategory.setName("UpdatedSubCategory");
+
+        Category nonExistentCategory = new Category();
+        nonExistentCategory.setCategory_id(99999L);
+        updatedSubCategory.setCategory(nonExistentCategory);
+
+        String updatedSubCategoryJson = objectMapper.writeValueAsString(updatedSubCategory);
+
+        // Try to update the subcategory with a non-existent category
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/subcategories/" + subCategory.getId())
+                .content(updatedSubCategoryJson)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+               
+
+       
+    }
+
 }

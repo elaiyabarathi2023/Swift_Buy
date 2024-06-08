@@ -83,8 +83,8 @@ public class AdminDetails {
         this.lastname = lastname;
     }
 
-	public void setCreatedAt(Date date) {
-		// TODO Auto-generated method stub
-		
-	}
+//	public void setCreatedAt(Date date) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 }

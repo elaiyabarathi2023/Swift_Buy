@@ -2,6 +2,7 @@ package com.swiftbuy.Testcases;
  
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
  
@@ -337,6 +339,23 @@ public class AdminAuthenticationTesting {
 	            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
 	            .andExpect(jsonPath("$.error").value("Invalid Details Provided"));
 	}
+	@Test
+    public void testGetFirstname() {
+        AdminDetails adminDetails = new AdminDetails();
+        adminDetails.setFirstname("John");
 
- 
+        assertEquals("John", adminDetails.getFirstname());
+    }
+
+    // Test for getLastname()
+    @Test
+    public void testGetLastname() {
+        AdminDetails adminDetails = new AdminDetails();
+        adminDetails.setLastname("Doe");
+
+        assertEquals("Doe", adminDetails.getLastname());
+    }
+
+    // Test for setCreatedAt(Date date)
+    
 }

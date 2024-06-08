@@ -80,7 +80,7 @@ public class ProductService {
     }
  
     public Page<ProductDetails> searchProducts(String keyword, Pageable pageable) {
-        return productRepository.findByProductNameContainingIgnoreCase(keyword, pageable);
+        return productRepository.findByProductNameContainingIgnoreCaseAndProductStatus(keyword, ProductDetails.ProductStatus.ACTIVE, pageable);
     }
  
 }

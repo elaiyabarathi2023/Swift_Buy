@@ -25,9 +25,9 @@ public class TokenService {
 	}
 	
 	public Claims verifyToken(String token) throws Exception {
-//	    if (token == null || token.isEmpty()) {
-//	        return null; 
-//	    }
+	    if (token == null || token.isEmpty()) {
+	        return null; 
+	    }
 
 	    Claims claims;
 //	    try {
@@ -41,9 +41,9 @@ public class TokenService {
 	    String email = claims.get("email").toString();
 	    String phoneNumber=claims.get("phoneNumber").toString();
 	    UserDetails user = userRepository.findByEmailOrPhoneNumber( email, phoneNumber);
-	    if (user == null || isTokenExpired(claims)) { // Check user existence and expiration
-	        return null;
-	    }
+//	    if (user == null || isTokenExpired(claims)) { // Check user existence and expiration
+//	        return null;
+//	    }
 	    return claims; // Return claims only if valid
 	}
 
